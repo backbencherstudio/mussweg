@@ -13,6 +13,11 @@ class RouteNames {
   static const String editProductPage = '/editProductPage';
   static const String boostProductPage = '/boostProductPage';
   static const String boostSuccessPage = '/boostSuccessPage';
+  static const String inboxPage = '/inboxPage';
+  static const String accountSettingsPage = '/accountSettingsPage';
+  static const String notificationsPage = '/notificationsPage';
+  static const String languagePage = '/languagePage';
+  static const String transactionsHistoryPage = '/transactionsHistoryPage';
 
 
 
