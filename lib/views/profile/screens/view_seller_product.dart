@@ -1,3 +1,4 @@
+import 'dart:ui'; //
 import 'package:flutter/material.dart';
 import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
 
@@ -17,17 +18,17 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Stack(
             children: [
               ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                child: Image.network(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(12),
+                ),
+                child: Image.asset(
                   imageUrl,
                   height: 120,
                   width: double.infinity,
@@ -43,7 +44,11 @@ class ProductCard extends StatelessWidget {
                     color: Colors.white,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.more_vert, color: Colors.grey, size: 18),
+                  child: const Icon(
+                    Icons.more_vert,
+                    color: Colors.grey,
+                    size: 18,
+                  ),
                 ),
               ),
             ],
@@ -55,7 +60,10 @@ class ProductCard extends StatelessWidget {
               children: [
                 Text(
                   productName,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -74,18 +82,11 @@ class ProductCard extends StatelessWidget {
                   children: [
                     const Text(
                       'Aug 6, 13:55',
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: Colors.grey,
-                      ),
+                      style: TextStyle(fontSize: 10, color: Colors.grey),
                     ),
                     Row(
                       children: [
-                        const Icon(
-                          Icons.circle,
-                          color: Colors.red,
-                          size: 8,
-                        ),
+                        const Icon(Icons.circle, color: Colors.red, size: 8),
                         const SizedBox(width: 4),
                         const Text(
                           'Boost product',
@@ -115,13 +116,14 @@ class SellerProfilePage extends StatefulWidget {
   State<SellerProfilePage> createState() => _SellerProfilePageState();
 }
 
-class _SellerProfilePageState extends State<SellerProfilePage> with SingleTickerProviderStateMixin {
+class _SellerProfilePageState extends State<SellerProfilePage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -134,195 +136,176 @@ class _SellerProfilePageState extends State<SellerProfilePage> with SingleTicker
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: SimpleApppbar(title: 'View Profile'),
-      body: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            SliverAppBar(
-              expandedHeight: 250.0,
-              floating: false,
-              pinned: true,
-              flexibleSpace: FlexibleSpaceBar(
-                background: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Image.asset(
-                      'assets/images/cover.png',
-                      fit: BoxFit.cover,
-                    ),
-                    // Profile info overlay
-                    Positioned(
-                      top: 250,
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: SizedBox(
-                        height: 200,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Stack(
-                                    children: [
-                                      // Profile picture
-                                      const CircleAvatar(
-                                        radius: 40,
-                                        backgroundImage: NetworkImage('https://via.placeholder.com/150'),
-                                      ),
-                                      Positioned(
-                                        bottom: 0,
-                                        right: 0,
-                                        child: Container(
-                                          padding: const EdgeInsets.all(2),
-                                          decoration: BoxDecoration(
-                                            color: Colors.red,
-                                            borderRadius: BorderRadius.circular(10),
-                                          ),
-                                          child: const Icon(Icons.camera_alt, color: Colors.white, size: 16),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(width: 16),
-                                  // User details
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Cameron Williamson',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Row(
-                                        children: [
-                                          const Icon(Icons.star, color: Colors.orange, size: 16),
-                                          const SizedBox(width: 4),
-                                          const Text(
-                                            '5.0',
-                                            style: TextStyle(fontWeight: FontWeight.bold),
-                                          ),
-                                          const Text(' 86 Reviewers', style: TextStyle(color: Colors.grey)),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 4),
-                                      const Text(
-                                        '📍 Switzerland',
-                                        style: TextStyle(color: Colors.grey),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: Colors.red,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    side: const BorderSide(color: Colors.red),
-                                  ),
-                                ),
-                                child: const Text('Change Cover'),
-                              ),
-                            ],
-                          ),
-                        ),
+      body: Column(
+        children: [
+          // Profile Header
+          SizedBox(
+            height: 280,
+            child: Stack(
+              children: [
+                SizedBox(
+                  height: 180,
+                  width: double.infinity,
+                  child: Image.asset(
+                    'assets/images/cover.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Positioned(
+                  top: 120,
+                  left: 16,
+                  child: SizedBox(
+                    width: 120,
+                    height: 120,
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/icons/user_profile.png',
+                        fit: BoxFit.cover, // fills the box
+                        width: 120,
+                        height: 120,
                       ),
                     ),
-                  ],
+                  ),
+                ),
+
+
+            Positioned(
+            bottom: 120,
+            right: 16,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2), // blur intensity
+                child: Container(
+                  height: 40,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2), // semi-transparent
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.grey.withOpacity(0.5),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      'Change Cover',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
                 ),
               ),
-              bottom: TabBar(
-                controller: _tabController,
-                indicatorColor: Colors.red,
-                labelColor: Colors.black,
-                unselectedLabelColor: Colors.grey,
-                tabs: const [
-                  Tab(text: 'Closet'),
-                  Tab(text: 'Reviews'),
-                ],
-              ),
             ),
-          ];
-        },
-        body: TabBarView(
-          controller: _tabController,
-          children: [
-            // Tab 1: Closet
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ),
+
+          Positioned(
+                 top: 190,
+                  left: 160,
+                  right: 16,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        '50+ products uploaded',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      ElevatedButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.add_box),
-                        label: const Text('Create Sell'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          foregroundColor: Colors.white,
+                        'Cameron Williamson',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xff4A4C56)
                         ),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(Icons.star, color: Colors.orange.shade300, size: 16),
+                          SizedBox(width: 4),
+                          Text(
+                            '5.0',
+                            style: TextStyle(fontWeight: FontWeight.w500,color: Color(0xff777980)),
+                          ),
+                          Text(
+                            ' 86 Reviewers',
+                            style: TextStyle(color: Color(0xff777980)),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Image.asset('assets/icons/location.png',scale: 3,),
+                          const SizedBox(width: 6),
+                          const Text(
+                            'Switzerland',
+                            style: TextStyle(color: Color(0xff777980)),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
-                // Expanded(
-                //   child: GridView.count(
-                //     crossAxisCount: 2,
-                //     crossAxisSpacing: 8,
-                //     mainAxisSpacing: 8,
-                //     padding: const EdgeInsets.all(16.0),
-                //     childAspectRatio: 0.7,
-                //     children: const [
-                //       ProductCard(
-                //         imageUrl: 'https://via.placeholder.com/300x400',
-                //         productName: 'Man Exclusive T-Shirt',
-                //         price: '\$20.00',
-                //       ),
-                //       ProductCard(
-                //         imageUrl: 'https://via.placeholder.com/300x400',
-                //         productName: 'Man Exclusive T-Shirt',
-                //         price: '\$20.00',
-                //       ),
-                //       ProductCard(
-                //         imageUrl: 'https://via.placeholder.com/300x400',
-                //         productName: 'Man Exclusive T-Shirt',
-                //         price: '\$20.00',
-                //       ),
-                //       ProductCard(
-                //         imageUrl: 'https://via.placeholder.com/300x400',
-                //         productName: 'Man Exclusive T-Shirt',
-                //         price: '\$20.00',
-                //       ),
-                //     ],
-                //   ),
-                // ),
               ],
             ),
-            // Tab 2: Reviews (Placeholder)
-            const Center(child: Text('Reviews Content')),
-            // Tab 3: More (Placeholder)
-            const Center(child: Text('More Content')),
-          ],
-        ),
+          ),
+
+          // Tab Bar
+          TabBar(
+            controller: _tabController,
+            indicatorColor: Colors.red,
+            labelColor: Colors.black,
+            unselectedLabelColor: Colors.grey,
+            tabs: const [
+              Tab(text: 'Closet'),
+              Tab(text: 'Reviews'),
+            ],
+          ),
+
+          // Tab Bar Views
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                // Closet Tab
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    childAspectRatio: 0.7,
+                    children: const [
+                      ProductCard(
+                        imageUrl: 'assets/images/card.png',
+                        productName: 'Man Exclusive T-Shirt',
+                        price: '\$20.00',
+                      ),
+                      ProductCard(
+                        imageUrl: 'assets/images/card.png',
+                        productName: 'Man Exclusive T-Shirt',
+                        price: '\$20.00',
+                      ),
+                      ProductCard(
+                        imageUrl: 'assets/images/card.png',
+                        productName: 'Man Exclusive T-Shirt',
+                        price: '\$20.00',
+                      ),
+                      ProductCard(
+                        imageUrl: 'assets/images/card.png',
+                        productName: 'Man Exclusive T-Shirt',
+                        price: '\$20.00',
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Reviews Tab
+                const Center(child: Text('Reviews Content')),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
