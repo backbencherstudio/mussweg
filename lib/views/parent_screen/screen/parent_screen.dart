@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mussweg/views/profile/screen.dart';
+import 'package:mussweg/views/wishlist/wishlist_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../../view_model/parent_provider/parent_screen_provider.dart';
@@ -20,8 +22,8 @@ class ParentScreen extends StatelessWidget {
               HomeScreen(),
               HomeScreen(),
               HomeScreen(),
-              HomeScreen(),
-              HomeScreen(),
+              WishlistScreen(),
+              ProfileScreen(),
             ],
           );
         },

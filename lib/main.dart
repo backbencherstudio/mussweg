@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: ThemeData(scaffoldBackgroundColor: Colors.white),
-            initialRoute: '/', // Starting route
+            initialRoute: '/',
             routes: AppRoutes.routes,
             onUnknownRoute: (settings) {
               debugPrint(
