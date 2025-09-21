@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../view_model/parent_provider/parent_screen_provider.dart';
 import '../../home/screen/home_screen.dart';
+import '../../profile/screen.dart';
 
 class ParentScreen extends StatelessWidget {
   const ParentScreen({super.key});
@@ -21,7 +22,7 @@ class ParentScreen extends StatelessWidget {
               HomeScreen(), // tab 0
               HomeScreen(), // tab 0
               HomeScreen(), // tab 0
-              HomeScreen(), // tab 0
+              ProfileScreen(), // tab 0
             ],
           );
         },
