@@ -6,53 +6,92 @@ class ProductCard extends StatelessWidget {
   final String imageUrl;
   final String productName;
   final String price;
+  final bool isBoosted; // show boost icon in stack
+  final bool showBoostBottom; // show boost icon at bottom
 
   const ProductCard({
     Key? key,
     required this.imageUrl,
     required this.productName,
     required this.price,
+    this.isBoosted = false,
+    this.showBoostBottom = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.white,
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+           SizedBox(height: 10),
           Stack(
             children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(12),
-                ),
-                child: Image.asset(
-                  imageUrl,
-                  height: 120,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Positioned(
-                top: 8,
-                right: 8,
+              Align(
+                alignment: Alignment.topCenter,
                 child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.more_vert,
-                    color: Colors.grey,
-                    size: 18,
+                  width: 170,
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                    child: Image.asset(
+                      imageUrl,
+                      height: 120,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
+
+              // More options icon
+              Positioned(
+                top: 7,
+                right: 15,
+                child: PopupMenuButton<String>(
+                  icon: Image.asset(
+                    'assets/icons/more_option.png',
+                    scale: 2.4,
+                  ),
+                  onSelected: (value) {
+                    if (value == 'edit') {
+                      print('Edit tapped');
+                    } else if (value == 'delete') {
+                      print('Delete tapped');
+                    }
+                  },
+                  itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                    const PopupMenuItem<String>(
+                      value: 'edit',
+                      child: Text('Edit'),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: 'delete',
+                      child: Text('Delete'),
+                    ),
+                  ],
+                ),
+              ),
+
+
+              // Boost icon (dynamic)
+              if (isBoosted)
+                Positioned(
+                  top: 10,
+                  left: 18,
+                  child: GestureDetector(
+                    onTap: (){},
+                    child: Image.asset(
+                      'assets/icons/boost.png',
+                      scale: 2.4,
+                    ),
+                  ),
+                ),
             ],
           ),
+
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -61,45 +100,78 @@ class ProductCard extends StatelessWidget {
                 Text(
                   productName,
                   style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                    color: Color(0xff4A4C56),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  price,
-                  style: const TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 5),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Aug 6, 13:55',
-                      style: TextStyle(fontSize: 10, color: Colors.grey),
+                  children: const [
+                    Text(
+                      'Size XL',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xff777980),
+                      ),
                     ),
-                    Row(
-                      children: [
-                        const Icon(Icons.circle, color: Colors.red, size: 8),
-                        const SizedBox(width: 4),
-                        const Text(
-                          'Boost product',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
+                    SizedBox(width: 5),
+                    Text(
+                      '(New Condition)',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xff777980),
+                      ),
+                    )
                   ],
                 ),
+                const SizedBox(height: 5),
+                Row(
+                  children: const [
+                    Text(
+                      'Aug 6 ,13:55',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xff777980),
+                      ),
+                    ),
+                    SizedBox(width: 5),
+                    Text(
+                      '(12h :12m :30s)',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xff1A9882),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 8),
+                const Divider(color: Color(0xffE9E9EA)),
+                Row(
+                  children: [
+                    Text(
+                      price,
+                      style: const TextStyle(
+                        color: Color(0xffDE3526),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(width: 25),
+                    if (showBoostBottom)
+                      Image.asset(
+                        'assets/icons/boost_product.png',
+                        scale: 3, // works fine here
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 4),
               ],
             ),
           ),
@@ -254,7 +326,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
           TabBar(
             controller: _tabController,
             indicatorColor: Colors.red,
-            labelColor: Colors.black,
+            labelColor: Colors.red,
             unselectedLabelColor: Colors.grey,
             tabs: const [
               Tab(text: 'Closet'),
@@ -280,21 +352,25 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                         imageUrl: 'assets/images/card.png',
                         productName: 'Man Exclusive T-Shirt',
                         price: '\$20.00',
+                        isBoosted: true,
                       ),
                       ProductCard(
                         imageUrl: 'assets/images/card.png',
                         productName: 'Man Exclusive T-Shirt',
                         price: '\$20.00',
+                        isBoosted: true,
                       ),
                       ProductCard(
                         imageUrl: 'assets/images/card.png',
                         productName: 'Man Exclusive T-Shirt',
                         price: '\$20.00',
+                        showBoostBottom: true,
                       ),
                       ProductCard(
                         imageUrl: 'assets/images/card.png',
                         productName: 'Man Exclusive T-Shirt',
                         price: '\$20.00',
+                        showBoostBottom: true,
                       ),
                     ],
                   ),
