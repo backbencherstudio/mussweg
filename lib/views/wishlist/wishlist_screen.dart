@@ -10,14 +10,17 @@ class WishlistScreen extends StatelessWidget {
     return Scaffold(
       appBar: SimpleApppbar(title: 'Wishlist'),
       body: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text("Favourite List", style: TextStyle(color: Colors.black, fontSize: 15.sp, fontWeight: FontWeight.bold),),
-          ListView.builder(itemBuilder: (context, index) {
-            return Container(
+          Expanded(
+            child: ListView.builder(itemBuilder: (context, index) {
+              return Container(
 
-            );
-          })
+              );
+            }),
+          )
         ],
       ),
     );
