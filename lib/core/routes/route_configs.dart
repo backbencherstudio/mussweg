@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/views/parent_screen/screen/parent_screen.dart';
 import 'package:mussweg/views/splash/splash_screen.dart';
+
+import '../../views/auth/sign_up/screen/signup_screen.dart';
 import '../../views/profile/screen.dart';
 import '../../views/profile/screens/boost_product.dart';
 import '../../views/profile/screens/boost_success_page.dart';
@@ -15,6 +17,7 @@ class AppRoutes {
 
     RouteNames.splashScreen: (context) => const SplashScreen(),
     RouteNames.parentScreen: (context) => const ParentScreen(),
+    RouteNames.signUpScreen: (context) => const SignupScreen(),
     RouteNames.profileScreen: (context) => const ProfileScreen(),
     RouteNames.sellerProfilePage: (context) => const SellerProfilePage(),
     RouteNames.sellItemPage: (context) => const SellItemPage(),
