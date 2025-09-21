@@ -1,21 +1,35 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+
 import 'core/provider/app_provider.dart';
 import 'core/provider/inject.dart';
 import 'core/routes/route_configs.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded(() async {
+    // Everything stays in the same zone
+    WidgetsFlutterBinding.ensureInitialized();
 
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  await ScreenUtil.ensureScreenSize();
+    // Lock orientation
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  setup();
+    // Ensure screen util
+    await ScreenUtil.ensureScreenSize();
 
-  // Run the app
-  runApp(const MyApp());
+    // Dependency injection setup
+    try {
+      setup();
+    } catch (e, st) {
+      debugPrint("❌ setup() failed: $e\n$st");
+    }
+
+    runApp(const MyApp());
+  }, (error, stack) {
+    debugPrint("❌ Uncaught zone error: $error\n$stack");
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -33,11 +47,20 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: ThemeData(scaffoldBackgroundColor: Colors.white),
+
+            // Make sure your initial route exists
             initialRoute: '/',
-            routes: AppRoutes.routes,
+            routes: {
+              '/': (context) => const Scaffold(
+                body: Center(child: Text("✅ Home Screen Placeholder")),
+              ),
+              ...AppRoutes.routes,
+            },
+
+            // Catch unknown routes
             onUnknownRoute: (settings) {
               debugPrint(
-                'Attempted to navigate to unknown route: ${settings.name}',
+                '⚠️ Attempted to navigate to unknown route: ${settings.name}',
               );
               return MaterialPageRoute(
                 builder: (context) => Scaffold(

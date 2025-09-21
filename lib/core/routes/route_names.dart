@@ -8,6 +8,9 @@ class RouteNames {
 
   static const String profileScreen = '/profileScreen';
   static const String sellerProfilePage = '/sellerProfilePage';
+  static const String wishListScreen = '/wishListScreen';
+  static const String boughtItemsScreen = '/boughtItemsScreen';
+  static const String sellingItemsScreen = '/sellingItemsScreen';
 
 
 

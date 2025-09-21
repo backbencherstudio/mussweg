@@ -115,13 +115,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ProfileMenuItem(
                     image: 'assets/icons/sell.png',
                     title: 'Bought items',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(context, RouteNames.boughtItemsScreen);
+                    },
                   ),
                   Divider(color: Colors.grey[350]),
                   ProfileMenuItem(
                     image: 'assets/icons/sell.png',
                     title: 'Selling items',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(context, RouteNames.sellingItemsScreen);
+                    },
                   ),
                   Divider(color: Colors.grey[350]),
                   ProfileMenuItem(
@@ -139,7 +143,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ProfileMenuItem(
                     image: 'assets/icons/profile_user.png',
                     title: 'Account Settings',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(context, RouteNames.wishListScreen);
+                    },
                   ),
                   Divider(color: Colors.grey[350]),
                   ProfileMenuItem(
