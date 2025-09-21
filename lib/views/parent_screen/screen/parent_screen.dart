@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mussweg/views/profile/screen.dart';
+import 'package:mussweg/views/wishlist/wishlist_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../../view_model/parent_provider/parent_screen_provider.dart';
 import '../../home/screen/home_screen.dart';
-import '../../profile/screen.dart';
 
 class ParentScreen extends StatelessWidget {
   const ParentScreen({super.key});
@@ -16,13 +17,13 @@ class ParentScreen extends StatelessWidget {
       body: Consumer<ParentScreenProvider>(
         builder: (_, vm, __) {
           return IndexedStack(
-            index: vm.index, // Shows the screen corresponding to the index
+            index: vm.index,
             children: [
-              HomeScreen(), // tab 0
-              HomeScreen(), // tab 0
-              HomeScreen(), // tab 0
-              HomeScreen(), // tab 0
-              ProfileScreen(), // tab 0
+              HomeScreen(),
+              HomeScreen(),
+              HomeScreen(),
+              WishlistScreen(),
+              ProfileScreen(),
             ],
           );
         },
@@ -37,8 +38,7 @@ class _BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const bg = Color(0xFF131C24);
-    const active = Color(0xFFE33632);
+    const active = Color(0xFFFFFFFF);
     const inactive = Color(0xFF8A96A3);
 
     final vm = context.watch<ParentScreenProvider>();
@@ -49,9 +49,10 @@ class _BottomNavBar extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
         child: Container(
+          clipBehavior:Clip.none,
           height: 84,
           decoration: BoxDecoration(
-            color: bg,
+            color: Color(0xffDE3526),
             borderRadius: BorderRadius.circular(24),
           ),
           child: Column(
@@ -82,6 +83,7 @@ class _BottomNavBar extends StatelessWidget {
                       activeIcon: 'assets/icons/foller.png',
                       isActive: vm.index == 2,
                       onTap: () => vm.setIndex(2),
+                      isDollar: true,
                     ),
                     _Item(
                       label: 'Chat',
@@ -111,46 +113,68 @@ class _Item extends StatelessWidget {
   final String activeIcon;
   final bool isActive;
   final VoidCallback onTap;
+  final bool isDollar;
 
   const _Item({
     required this.label,
     required this.activeIcon,
     required this.isActive,
     required this.onTap,
+    this.isDollar = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    const active = Color(0xFFE33632);
+    const active = Color(0xFFFFFFFF);
     const inactive = Color(0xFF8A96A3);
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: SizedBox(
-        width: 70,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Adjusted for better icon sizing
-            Image.asset(
-              activeIcon,
-              height: 22.h, // Ensure these are responsive with ScreenUtil
-              width: 22.w,
-              color: isActive
-                  ? active
-                  : inactive, // Color change on active/inactive
-            ),
-            const SizedBox(height: 6),
-            Text(
-              label,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
+            if (isDollar)
+              Transform.translate(
+                offset: Offset(0, -30),
+                child: Container(
+                  width: 55.w,
+                  height: 55.h,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white, width: 7),
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+
+                  child: Center(
+                    child: Image.asset(
+                      activeIcon,
+                      width: 30.w,
+                      height: 30.h,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            if (!isDollar) ...[
+              Image.asset(
+                activeIcon,
+                height: 22.h,
+                width: 22.w,
                 color: isActive ? active : inactive,
               ),
-            ),
+              SizedBox(height: 6.h),
+              Text(
+                label,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: isActive ? active : inactive,
+                ),
+              ),
+            ],
           ],
         ),
       ),
