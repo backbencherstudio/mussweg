@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:mussweg/views/parent_screen/screen/parent_screen.dart';
 import 'package:provider/provider.dart';
 import 'core/provider/app_provider.dart';
 import 'core/provider/inject.dart';
@@ -13,7 +12,6 @@ Future<void> main() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await ScreenUtil.ensureScreenSize();
 
-  // Call the setup function to register dependencies with GetIt
   setup();
 
   // Run the app
