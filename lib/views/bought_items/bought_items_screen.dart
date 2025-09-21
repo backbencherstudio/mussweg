@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:mussweg/core/utils/dialogs/review_dialog.dart';
 import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
 
+import '../widgets/custom_primary_button.dart';
 import '../widgets/item_cards.dart';
 
 class BoughtItemsScreen extends StatefulWidget {
@@ -108,21 +110,11 @@ class _BoughtItemsScreenState extends State<BoughtItemsScreen> {
                                       Text(' Switzerland'),
                                     ],
                                   ),
-                                  trailing: ElevatedButton(
-                                    onPressed: () {},
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.red,
-                                      foregroundColor: Colors.white,
-                                      fixedSize: Size(80.w, 40.h),
-                                    ),
-                                    child: Text(
-                                      'Leave Review',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 11.sp,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
+                                  trailing: CustomPrimaryButton(
+                                    onTap: () {
+                                      ReviewDialog().showReviewDialog(context);
+                                    },
+                                    title: 'Leave Review',
                                   ),
                                 ),
                                 Divider(),
