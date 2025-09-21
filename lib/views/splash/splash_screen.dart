@@ -15,13 +15,15 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _moveToHomeScreen();
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, RouteNames.profileScreen);
+      }
+    });
   }
 
-  Future<void> _moveToHomeScreen() async {
-    await Future.delayed(Duration(seconds: 2));
-    Navigator.pushReplacementNamed(context, RouteNames.parentScreen);
-  }
+
+
 
   @override
   Widget build(BuildContext context) {
