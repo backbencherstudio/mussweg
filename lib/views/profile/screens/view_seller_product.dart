@@ -1,13 +1,16 @@
 import 'dart:ui'; //
 import 'package:flutter/material.dart';
+import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
+
+import 'edit_product_page.dart';
 
 class ProductCard extends StatelessWidget {
   final String imageUrl;
   final String productName;
   final String price;
-  final bool isBoosted; // show boost icon in stack
-  final bool showBoostBottom; // show boost icon at bottom
+  final bool isBoosted;
+  final bool showBoostBottom;
 
   const ProductCard({
     Key? key,
@@ -27,7 +30,7 @@ class ProductCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-           SizedBox(height: 10),
+          SizedBox(height: 10),
           Stack(
             children: [
               Align(
@@ -35,7 +38,9 @@ class ProductCard extends StatelessWidget {
                 child: Container(
                   width: 170,
                   child: ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(12),
+                    ),
                     child: Image.asset(
                       imageUrl,
                       height: 120,
@@ -47,46 +52,74 @@ class ProductCard extends StatelessWidget {
               ),
 
               // More options icon
-              Positioned(
-                top: 7,
-                right: 15,
-                child: PopupMenuButton<String>(
-                  icon: Image.asset(
-                    'assets/icons/more_option.png',
-                    scale: 2.4,
+        Positioned(
+          bottom: 75,
+          right: 6,
+          child: PopupMenuButton<String>(
+            icon: Image.asset(
+              'assets/icons/more_option.png',
+              scale: 2.4,
+            ),
+            onSelected: (value) {
+              if (value == 'edit') {
+                // ✅ Example: Navigate to Edit Screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditProductPage(), // Replace with your screen
                   ),
-                  onSelected: (value) {
-                    if (value == 'edit') {
-                      print('Edit tapped');
-                    } else if (value == 'delete') {
-                      print('Delete tapped');
-                    }
-                  },
-                  itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                    const PopupMenuItem<String>(
-                      value: 'edit',
-                      child: Text('Edit'),
-                    ),
-                    const PopupMenuItem<String>(
-                      value: 'delete',
-                      child: Text('Delete'),
-                    ),
-                  ],
-                ),
+                );
+              } else if (value == 'delete') {
+                // ✅ Example: Show confirmation before delete
+                showDialog(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text("Delete Product"),
+                    content: const Text("Are you sure you want to delete this product?"),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx), // cancel
+                        child: const Text("Cancel"),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(ctx); // close dialog
+                          // ✅ Perform delete logic here
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Product Deleted")),
+                          );
+                        },
+                        child: const Text("Delete"),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'edit',
+                child: Text('Edit'),
               ),
+              const PopupMenuItem<String>(
+                value: 'delete',
+                child: Text('Delete'),
+              ),
+            ],
+          ),
+        ),
 
 
-              // Boost icon (dynamic)
+        // Boost icon (dynamic)
               if (isBoosted)
                 Positioned(
                   top: 10,
                   left: 18,
                   child: GestureDetector(
-                    onTap: (){},
-                    child: Image.asset(
-                      'assets/icons/boost.png',
-                      scale: 2.4,
-                    ),
+                    onTap: () {
+                 Navigator.pushNamed(context, RouteNames.boostProductPage);
+                    },
+                    child: Image.asset('assets/icons/boost.png', scale: 2.4),
                   ),
                 ),
             ],
@@ -126,7 +159,7 @@ class ProductCard extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                         color: Color(0xff777980),
                       ),
-                    )
+                    ),
                   ],
                 ),
                 const SizedBox(height: 5),
@@ -148,7 +181,7 @@ class ProductCard extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                         color: Color(0xff1A9882),
                       ),
-                    )
+                    ),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -240,42 +273,46 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                   ),
                 ),
 
-
-            Positioned(
-            bottom: 120,
-            right: 16,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2), // blur intensity
-                child: Container(
-                  height: 40,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2), // semi-transparent
+                Positioned(
+                  bottom: 120,
+                  right: 16,
+                  child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.grey.withOpacity(0.5),
-                      width: 1.5,
-                    ),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'Change Cover',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 15,
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(
+                        sigmaX: 2,
+                        sigmaY: 2,
+                      ), // blur intensity
+                      child: Container(
+                        height: 40,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(
+                            0.2,
+                          ), // semi-transparent
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.grey.withOpacity(0.5),
+                            width: 1.5,
+                          ),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'Change Cover',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          ),
 
-          Positioned(
-                 top: 190,
+                Positioned(
+                  top: 190,
                   left: 160,
                   right: 16,
                   child: Column(
@@ -286,17 +323,24 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
-                          color: Color(0xff4A4C56)
+                          color: Color(0xff4A4C56),
                         ),
                       ),
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          Icon(Icons.star, color: Colors.orange.shade300, size: 16),
+                          Icon(
+                            Icons.star,
+                            color: Colors.orange.shade300,
+                            size: 16,
+                          ),
                           SizedBox(width: 4),
                           Text(
                             '5.0',
-                            style: TextStyle(fontWeight: FontWeight.w500,color: Color(0xff777980)),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xff777980),
+                            ),
                           ),
                           Text(
                             ' 86 Reviewers',
@@ -307,7 +351,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          Image.asset('assets/icons/location.png',scale: 3,),
+                          Image.asset('assets/icons/location.png', scale: 1),
                           const SizedBox(width: 6),
                           const Text(
                             'Switzerland',
@@ -342,35 +386,59 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                 // Closet Tab
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
-                    childAspectRatio: 0.7,
-                    children: const [
-                      ProductCard(
-                        imageUrl: 'assets/images/card.png',
-                        productName: 'Man Exclusive T-Shirt',
-                        price: '\$20.00',
-                        isBoosted: true,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Text(
+                            '50+ products uploaded',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff4A4C56),
+                            ),
+                          ),
+                          Spacer(),
+                          GestureDetector(
+                            onTap: (){Navigator.pushNamed(context, RouteNames.sellItemPage);},
+                              child: Image.asset('assets/icons/sell_items.png',scale: 3.4,))
+                        ],
                       ),
-                      ProductCard(
-                        imageUrl: 'assets/images/card.png',
-                        productName: 'Man Exclusive T-Shirt',
-                        price: '\$20.00',
-                        isBoosted: true,
-                      ),
-                      ProductCard(
-                        imageUrl: 'assets/images/card.png',
-                        productName: 'Man Exclusive T-Shirt',
-                        price: '\$20.00',
-                        showBoostBottom: true,
-                      ),
-                      ProductCard(
-                        imageUrl: 'assets/images/card.png',
-                        productName: 'Man Exclusive T-Shirt',
-                        price: '\$20.00',
-                        showBoostBottom: true,
+                      const SizedBox(height: 8),
+                      Expanded(
+                        child: GridView.count(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 8,
+                          childAspectRatio: 0.7,
+                          children: const [
+                            ProductCard(
+                              imageUrl: 'assets/images/card.png',
+                              productName: 'Man Exclusive T-Shirt',
+                              price: '\$20.00',
+                              isBoosted: true,
+                            ),
+                            ProductCard(
+                              imageUrl: 'assets/images/card.png',
+                              productName: 'Man Exclusive T-Shirt',
+                              price: '\$20.00',
+                              isBoosted: true,
+                            ),
+                            ProductCard(
+                              imageUrl: 'assets/images/card.png',
+                              productName: 'Man Exclusive T-Shirt',
+                              price: '\$20.00',
+                              showBoostBottom: true,
+                            ),
+                            ProductCard(
+                              imageUrl: 'assets/images/card.png',
+                              productName: 'Man Exclusive T-Shirt',
+                              price: '\$20.00',
+                              showBoostBottom: true,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -381,6 +449,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
               ],
             ),
           ),
+
         ],
       ),
     );
