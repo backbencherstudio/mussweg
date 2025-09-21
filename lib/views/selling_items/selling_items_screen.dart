@@ -93,44 +93,11 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
                         ),
                         children: [
                           Card(
-                            color: Colors.white,
+                            color: Colors.grey.shade50,
                             elevation: 1.w,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                ListTile(
-                                  leading: CircleAvatar(
-                                    radius: 20.r,
-                                    child: Image.asset(
-                                      'assets/icons/user_profile.png',
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  title: const Text('Cameron Williamson'),
-                                  subtitle: Row(
-                                    children: [
-                                      SvgPicture.asset('assets/icons/location-04.svg', color: Colors.black,),
-                                      Text(' Switzerland'),
-                                    ],
-                                  ),
-                                  trailing: ElevatedButton(
-                                    onPressed: () {},
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.red,
-                                      foregroundColor: Colors.white,
-                                      fixedSize: Size(80.w, 40.h),
-                                    ),
-                                    child: Text(
-                                      'Leave Review',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 11.sp,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Divider(),
                                 Padding(
                                   padding: EdgeInsets.all(8.0),
                                   child: Column(
@@ -144,38 +111,17 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
                                           spacing: 4.h,
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Container(
-                                              height: 25.h,
-                                              width: 100.w,
-                                              margin: EdgeInsets.only(right: 8.w),
-                                              padding: EdgeInsets.symmetric(horizontal: 16.w),
-                                              decoration: BoxDecoration(
-                                                color: Colors.green.shade100,
-                                                borderRadius: BorderRadius.circular(16.r),
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  'Paid',
-                                                  style: TextStyle(
-                                                    color: Colors.green.shade600,
-                                                    fontSize: 13.sp,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Text('Men Exclusive T-Shirt', style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500), ),
-                                            Text('Size: XL (New Condition)'),
-                                            _buildInfoRow(first: 'Quantity: 3', second: 'Price: \$200'),
-                                            SizedBox(height: 4.h,),
-                                            _buildInfoRow(first: 'Subtotal:', second: '\$600'),
-                                            _buildInfoRow(first: 'Shipping Charge:', second: '\$50'),
+                                            _buildInfoRow(first: 'Client Name', second: 'ABC'),
+                                            _buildInfoRow(first: 'Email:', second: 'abc@gmail.com'),
+                                            _buildInfoRow(first: 'Address:', second: 'St.Gallen& Eastern Switzerland'),
+                                            _buildInfoRow(first: 'Product:', second: 'Man Exclusive T-Shirt'),
+                                            _buildInfoRow(first: 'Quantity:', second: '3'),
+                                            _buildInfoRow(first: 'Amount:', second: '\$650'),
+                                            _buildInfoRow(first: 'Amount Paid:', second: '\$650'),
+                                            _buildInfoRow(first: 'Status:', second: 'Paid'),
                                           ],
                                         ),
                                       ),
-                                      Divider(),
-                                      _buildInfoRow(first: 'Total Price:', second: '\$650', isLast: true),
-                                      SizedBox(height: 4.h,),
                                     ],
                                   ),
                                 )
@@ -195,12 +141,12 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
     );
   }
 
-  Widget _buildInfoRow({required String first, required String second, bool isLast = false}) {
+  Widget _buildInfoRow({required String first, required String second}) {
     return Row(
       children: [
-        Text(first, style: TextStyle(fontSize: isLast ? 15.sp : 13.sp),),
+        Text(first, style: TextStyle(fontSize: 14.sp, color: Colors.black54, fontWeight:FontWeight.w600),),
         Spacer(),
-        Text(second, style: TextStyle(fontSize: isLast ? 15.sp : 13.sp),),
+        SizedBox(width: 180.w, child: Text(second, textAlign: TextAlign.end, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 14.sp, color: Colors.black, fontWeight:FontWeight.w400),)),
       ],
     );
   }
