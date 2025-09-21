@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:mussweg/view_model/app_providers.dart';
+import 'package:mussweg/views/parent_screen/screen/parent_screen.dart';
 import 'package:provider/provider.dart';
+import 'core/provider/app_provider.dart';
+import 'core/provider/inject.dart';
 import 'core/routes/route_configs.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await ScreenUtil.ensureScreenSize();
+
+  // Call the setup function to register dependencies with GetIt
+  setup();
+
+  // Run the app
   runApp(const MyApp());
 }
 
@@ -18,12 +26,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: AppProviders.getProviders().isNotEmpty
-          ? AppProviders.getProviders()
-          : [
-        // fallback dummy provider to avoid empty list error
-        Provider(create: (_) => "dummy"),
-      ],
+      providers: AppProviders.providers,
       child: ScreenUtilInit(
         minTextAdapt: true,
         splitScreenMode: true,
@@ -31,7 +34,8 @@ class MyApp extends StatelessWidget {
         builder: (context, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            initialRoute: '/',
+            theme: ThemeData(scaffoldBackgroundColor: Colors.white),
+            initialRoute: '/', // Starting route
             routes: AppRoutes.routes,
             onUnknownRoute: (settings) {
               debugPrint(
@@ -56,10 +60,6 @@ class MyApp extends StatelessWidget {
                 ),
               );
             },
-            builder: (context, child) {
-              return child ?? const Placeholder();
-            },
-            navigatorObservers: [HeroController()],
           );
         },
       ),

@@ -1,5 +1,5 @@
-class RouteName {
-  static const splashScreen = "splashScreen";
-  static const profileScreen = "profileScreen";
-
+class RouteNames {
+  static const String parentScreen = '/';
+  static const String chooseAccount = '/chooseAccount';
+  static const String loginScreen = '/loginScreen';
 }
