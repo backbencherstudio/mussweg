@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
 
 class SellItemPage extends StatelessWidget {
@@ -7,55 +8,56 @@ class SellItemPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:SimpleApppbar(title: 'Sell an Item'),
+      appBar: SimpleApppbar(title: 'Sell an Item'),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0.sp),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Upload photos section
             Container(
-              padding: const EdgeInsets.symmetric(vertical: 30.0),
+              padding: EdgeInsets.symmetric(vertical: 30.h),
               decoration: BoxDecoration(
                 color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(10.r),
               ),
               child: Column(
                 children: [
                   OutlinedButton.icon(
-                    icon: const Icon(Icons.add_a_photo, color: Colors.red),
-                    label: const Text('Upload photos', style: TextStyle(color: Colors.red)),
-                    onPressed: () {
-                      // Handle upload photos
-                    },
+                    icon: Icon(Icons.add_a_photo, color: Colors.red, size: 20.w),
+                    label: Text('Upload photos',
+                        style: TextStyle(color: Colors.red, fontSize: 14.sp)),
+                    onPressed: () {},
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Colors.red),
+                      side: BorderSide(color: Colors.red, width: 1.w),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
+                        borderRadius: BorderRadius.circular(20.r),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8.0),
-                  const Text('Add up to 20 photos.',style: TextStyle(color: Color(0xff929292)),),
+                  SizedBox(height: 8.h),
+                  Text(
+                    'Add up to 20 photos.',
+                    style: TextStyle(color: Color(0xff929292), fontSize: 12.sp),
+                  ),
                 ],
               ),
             ),
-            const SizedBox(height: 24.0),
+            SizedBox(height: 24.h),
 
-            // Form fields
-            Card(color: Colors.white,
+            Card(
+              color: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-                side: const BorderSide(
-                  color: Color(0xffE9E9EA), // your border color
-                  width: 1.5,
+                borderRadius: BorderRadius.circular(12.r),
+                side: BorderSide(
+                  color: Color(0xffE9E9EA),
+                  width: 1.5.w,
                 ),
               ),
-              elevation: 0, // remove shadow if you just want border
+              elevation: 0,
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(16.0.sp),
                 child: Column(
-                  children: const [
+                  children: [
                     CustomTextField(
                       title: 'Title',
                       hintText: 'e.g. Blue Pottery Vase',
@@ -89,25 +91,21 @@ class SellItemPage extends StatelessWidget {
                 ),
               ),
             ),
+            SizedBox(height: 20.h),
 
-
-            const SizedBox(height: 20.0),
-
-            // Sell button
             ElevatedButton(
-              onPressed: () {
-                // Handle sell button press
-              },
+              onPressed: () {},
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                padding: EdgeInsets.symmetric(vertical: 16.h),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+                  borderRadius: BorderRadius.circular(10.r),
                 ),
               ),
-              child: const Text('Sell', style: TextStyle(color: Colors.white, fontSize: 18)),
+              child: Text('Sell',
+                  style: TextStyle(color: Colors.white, fontSize: 18.sp)),
             ),
-            const SizedBox(height: 24.0),
+            SizedBox(height: 24.h),
           ],
         ),
       ),
@@ -128,20 +126,21 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
+      padding: EdgeInsets.only(bottom: 16.0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8.0),
+          Text(title,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp)),
+          SizedBox(height: 8.h),
           TextField(
             decoration: InputDecoration(
               hintText: hintText,
-              hintStyle: TextStyle(color: Color(0xffA5A5AB)),
+              hintStyle: TextStyle(color: Color(0xffA5A5AB), fontSize: 14.sp),
               filled: true,
               fillColor: Colors.grey[200],
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(10.r),
                 borderSide: BorderSide.none,
               ),
             ),
@@ -165,27 +164,27 @@ class CustomDropdownField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
+      padding: EdgeInsets.only(bottom: 16.0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8.0),
+          Text(title,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp)),
+          SizedBox(height: 8.h),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
             decoration: BoxDecoration(
               color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(10.r),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 isExpanded: true,
                 value: null,
-                hint: Text(hintText,style: TextStyle(color: Color(0xffA5A5AB)),),
+                hint: Text(hintText,
+                    style: TextStyle(color: Color(0xffA5A5AB), fontSize: 14.sp)),
                 items: const [],
-                onChanged: (String? newValue) {
-                  // Handle dropdown change
-                },
+                onChanged: (String? newValue) {},
               ),
             ),
           ),
@@ -206,21 +205,23 @@ class CustomTimeField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
+      padding: EdgeInsets.only(bottom: 16.0.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8.0),
+          Text(title,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp)),
+          SizedBox(height: 8.h),
           TextField(
             decoration: InputDecoration(
               hintText: 'Set time',
-              hintStyle: TextStyle(color: Color(0xffA5A5AB)),
-              suffixIcon: const Icon(Icons.access_time,color: Color(0xff777980),),
+              hintStyle: TextStyle(color: Color(0xffA5A5AB), fontSize: 14.sp),
+              suffixIcon: Icon(Icons.access_time,
+                  color: Color(0xff777980), size: 20.w),
               filled: true,
               fillColor: Colors.grey[200],
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
+                borderRadius: BorderRadius.circular(10.r),
                 borderSide: BorderSide.none,
               ),
             ),

@@ -10,12 +10,17 @@ import 'package:mussweg/views/splash/splash_screen.dart';
 import 'package:mussweg/views/wishlist/wishlist_screen.dart';
 
 import '../../views/auth/sign_up/screen/signup_screen.dart';
+import '../../views/inbox/screen.dart';
+import '../../views/inbox/screens/account_settings.dart';
 import '../../views/profile/screen.dart';
-import '../../views/profile/screens/boost_product.dart';
-import '../../views/profile/screens/boost_success_page.dart';
-import '../../views/profile/screens/edit_product_page.dart';
-import '../../views/profile/screens/sell_item.dart';
-import '../../views/profile/screens/view_seller_product.dart';
+import '../../views/profile/screens/boost_product/boost_product.dart';
+import '../../views/profile/screens/boost_product/boost_success_page.dart';
+import '../../views/profile/screens/languages/language_page.dart';
+import '../../views/profile/screens/transaction/transactions_history.dart';
+import '../../views/profile/screens/view_profile/edit_product_page.dart';
+import '../../views/profile/screens/notifications/notifications_page.dart';
+import '../../views/profile/screens/view_profile/sell_item.dart';
+import '../../views/profile/screens/view_profile/view_seller_product.dart';
 
 
 class AppRoutes {
@@ -33,5 +38,11 @@ class AppRoutes {
     RouteNames.editProductPage: (context) => const EditProductPage(),
     RouteNames.boostProductPage: (context) => const BoostProductPage(),
     RouteNames.boostSuccessPage: (context) => const BoostSuccessPage(),
+    RouteNames.inboxPage: (context) => const InboxPage(),
+    RouteNames.accountSettingsPage: (context) => const AccountSettingsPage(),
+    RouteNames.notificationsPage: (context) => const NotificationsPage(),
+    RouteNames.languagePage: (context) => const LanguagePage(),
+    RouteNames.transactionsHistoryPage: (context) => const TransactionsHistoryPage(),
+    //RouteNames.wishlistScreen: (context) => const WishlistScreen(),
   };
 }

@@ -131,27 +131,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ProfileMenuItem(
                     image: 'assets/icons/notification.png',
                     title: 'Notifications',
-                    onTap: () {},
+                    onTap: () { Navigator.pushNamed(context, RouteNames.notificationsPage);},
                   ),
                   Divider(color: Colors.grey[350]),
                   ProfileMenuItem(
                     image: 'assets/icons/credit_card.png',
                     title: 'Transactions History',
-                    onTap: () {},
+                    onTap: () { Navigator.pushNamed(context, RouteNames.transactionsHistoryPage);},
                   ),
                   Divider(color: Colors.grey[350]),
                   ProfileMenuItem(
                     image: 'assets/icons/profile_user.png',
                     title: 'Account Settings',
                     onTap: () {
-                      Navigator.pushNamed(context, RouteNames.wishListScreen);
+                      Navigator.pushNamed(context, RouteNames.accountSettingsPage);
                     },
                   ),
                   Divider(color: Colors.grey[350]),
                   ProfileMenuItem(
                     image: 'assets/icons/language.png',
                     title: 'Language',
-                    onTap: () {},
+                    onTap: () { Navigator.pushNamed(context, RouteNames.languagePage);},
                   ),
                   Divider(color: Colors.grey[350]),
                 ],
