@@ -54,7 +54,8 @@ class _StripeCheckoutScreenState extends State<StripeCheckoutScreen> {
                       SizedBox(height: 6.h,),
                       CustomTextFormField(hintText: 'CVC',),
                       SizedBox(height: 10.h,),
-                      CustomButton(text: 'Pay Now : \$60.00', textColor: Colors.white, buttonColor: Colors.red, onPressed: (){})
+                      CustomButton(text: 'Pay Now : \$60.00', textColor: Colors.white, buttonColor: Colors.red, onPressed: (){}),
+                      SizedBox(height: 6.h,),
                     ],
                   ),
                 ),
