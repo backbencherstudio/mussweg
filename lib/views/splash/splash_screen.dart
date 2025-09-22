@@ -11,16 +11,14 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
   void initState() {
     super.initState();
-    _moveToHomeScreen();
-  }
-
-  Future<void> _moveToHomeScreen() async {
-    await Future.delayed(Duration(seconds: 2));
-    Navigator.pushReplacementNamed(context, RouteNames.onBoardingScreen);
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, RouteNames.onboardingScreen);
+      }
+    });
   }
 
   @override
