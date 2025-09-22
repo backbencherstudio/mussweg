@@ -88,7 +88,7 @@ class BoostSuccessPage extends StatelessWidget {
                           SizedBox(height: 32.h),
                           ElevatedButton(
                             onPressed: () {
-                           Navigator.pushNamed(context, RouteNames.sellerProfilePage);
+                           Navigator.pushReplacementNamed(context, RouteNames.sellerProfilePage);
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Color(0xffDE3526),

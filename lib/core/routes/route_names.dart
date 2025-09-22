@@ -29,6 +29,7 @@ class RouteNames {
   static const String stripeCheckoutScreen = '/stripeCheckoutScreen';
   static const String searchPage = '/searchPage';
   static const String orderPlacedScreen = '/orderPlacedScreen';
+  static const String cartScreen = '/cartScreen';
 
 
 

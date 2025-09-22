@@ -205,7 +205,7 @@ class BoostProductPage extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(
+                      Navigator.pushReplacementNamed(
                           context, RouteNames.boostSuccessPage);
                     },
                     style: ElevatedButton.styleFrom(

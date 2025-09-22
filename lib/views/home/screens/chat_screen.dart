@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mussweg/core/routes/route_names.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mussweg/core/routes/route_names.dart';
+import 'package:mussweg/views/widgets/simple_apppbar.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
@@ -8,14 +9,7 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        surfaceTintColor: Colors.transparent,
-        leading: Icon(Icons.arrow_back_ios_new, color: Colors.black),
-        title: Text("Chat", style: TextStyle(color: Colors.black)),
-        centerTitle: true,
-        actions: [Icon(Icons.more_vert, color: Colors.black)],
-      ),
+      appBar: SimpleApppbar(title: 'Chat'),
       body: Column(
         children: [
           // User Information
@@ -196,7 +190,7 @@ class ChatScreen extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 25.h,)
+          SizedBox(height: 16.h,)
         ],
       ),
     );
@@ -241,6 +235,7 @@ class MessageBubble extends StatelessWidget {
             ),
             SizedBox(height: 4),
             Text(timestamp, style: TextStyle(color: Colors.grey, fontSize: 10)),
+
           ],
         ),
       ),

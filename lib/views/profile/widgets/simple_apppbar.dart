@@ -28,12 +28,12 @@ class SimpleApppbar extends StatelessWidget implements PreferredSizeWidget {
         onPressed: onBack ?? () => Navigator.pop(context),
         icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
       ),
-      actions: [
-        IconButton(
-          onPressed: onMore ?? () {},
-          icon: const Icon(Icons.more_horiz, color: Colors.black),
-        ),
-      ],
+      // actions: [
+      //   IconButton(
+      //     onPressed: onMore ?? () {},
+      //     icon: const Icon(Icons.more_horiz, color: Colors.black),
+      //   ),
+      // ],
     );
   }
 

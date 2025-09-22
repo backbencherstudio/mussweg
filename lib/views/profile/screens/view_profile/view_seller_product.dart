@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
+import 'package:provider/provider.dart';
+import '../../../../view_model/parent_provider/parent_screen_provider.dart';
 import '../../widgets/product_card.dart';
 
 class SellerProfilePage extends StatefulWidget {
@@ -139,6 +141,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                       ),
                       SizedBox(height: 4.h),
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Icon(
                             Icons.star,
@@ -223,38 +226,20 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                       ),
                       SizedBox(height: 8.h),
                       Expanded(
-                        child: GridView.count(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 8.w,
-                          mainAxisSpacing: 8.h,
-                          childAspectRatio: 0.7,
-                          children: const [
-                            ProductCard(
-                              imageUrl: 'assets/images/dress.png',
-                              productName: 'Man Exclusive T-Shirt',
-                              price: '\$20.00',
-                              isBoosted: true,
+                        child: GridView.builder(itemCount: 6,
+                            gridDelegate:
+                            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,
+                            crossAxisSpacing: 8.w,mainAxisSpacing: 8.w, childAspectRatio: .65
                             ),
-                            ProductCard(
-                              imageUrl: 'assets/images/dress.png',
-                              productName: 'Man Exclusive T-Shirt',
-                              price: '\$20.00',
-                              isBoosted: true,
-                            ),
-                            ProductCard(
-                              imageUrl: 'assets/images/dress.png',
-                              productName: 'Man Exclusive T-Shirt',
-                              price: '\$20.00',
-                              showBoostBottom: true,
-                            ),
-                            ProductCard(
-                              imageUrl: 'assets/images/dress.png',
-                              productName: 'Man Exclusive T-Shirt',
-                              price: '\$20.00',
-                              showBoostBottom: true,
-                            ),
-                          ],
-                        ),
+                            itemBuilder: (context, index) {
+                          return ProductCard(
+                            imageUrl: 'assets/images/dress.png',
+                            productName: 'Man Exclusive T-Shirt',
+                            price: '\$20.00',
+                            isBoosted: true,
+                            showBoostBottom: true,
+                          );
+                        }),
                       ),
                     ],
                   ),

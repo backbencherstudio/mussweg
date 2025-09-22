@@ -65,18 +65,19 @@ class _TabButton extends StatelessWidget {
           onTap: () =>
               context.read<ParentScreensProvider>().onSelectedIndex(index),
           child: Container(
-            height: 37.h,
+            height: 56.h,
             decoration: BoxDecoration(
               color: Colors.transparent,
-              borderRadius: BorderRadius.circular(8.r),
+              shape: BoxShape.circle,
+              border: Border.all(color: index == 2 ? Colors.white : Colors.transparent, width: 5.w)
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
                   iconPath,
-                  width: (index == 2) ? 50.w : 20.w,
-                  height: (index == 2) ? 50.h : 20.h,
+                  width: (index == 2) ? 32.w : 24.w,
+                  height: (index == 2) ? 32.h : 24.h,
                   color: (index == 2)
                       ? null
                       : isSelected

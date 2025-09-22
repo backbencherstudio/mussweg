@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:mussweg/views/widgets/seller_profile_refresh.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mussweg/views/widgets/simple_apppbar.dart';
+
+import '../../widgets/seller_profile_refresh.dart';
 
 class ViewProfileScreen extends StatelessWidget {
   const ViewProfileScreen({super.key});
@@ -8,17 +11,7 @@ class ViewProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        surfaceTintColor: Colors.transparent,
-        centerTitle: true,
-        leading: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
-        title: const Text(
-          "View Profile",
-          style: TextStyle(color: Colors.black),
-        ),
-        actions: const [Icon(Icons.more_horiz, color: Colors.black)],
-      ),
+      appBar: SimpleApppbar(title: 'View Profile'),
       body: Column(
         children: [
           Stack(
@@ -31,14 +24,14 @@ class ViewProfileScreen extends StatelessWidget {
             child: Row(
               children: [
                 Transform.translate(
-                  offset: const Offset(0, -40),
+                  offset: Offset(0, -40),
                   child: Image.asset("assets/images/user_2.png", scale: 0.5),
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       "Cameron Williamson",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -46,7 +39,7 @@ class ViewProfileScreen extends StatelessWidget {
                       ),
                     ),
                     Row(
-                      children: const [
+                      children: [
                         Icon(Icons.star, color: Colors.orange, size: 18),
                         SizedBox(width: 4),
                         Text("5.0", style: TextStyle(fontSize: 14)),
@@ -57,10 +50,10 @@ class ViewProfileScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 6),
+                    SizedBox(height: 6),
                     Row(
-                      children: const [
-                        Icon(Icons.location_on, color: Colors.grey, size: 16),
+                      children: [
+                        SvgPicture.asset('assets/icons/location-04.svg'),
                         SizedBox(width: 4),
                         Text(
                           "Switzerland",
@@ -70,21 +63,19 @@ class ViewProfileScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                const Spacer(),
+                Spacer(),
+                // Message Button
                 GestureDetector(
                   onTap: () {
                     // Navigate to the message screen
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       color: Colors.red,
                       borderRadius: BorderRadius.circular(99),
                     ),
-                    child: const Text(
+                    child: Text(
                       "Message",
                       style: TextStyle(color: Colors.white),
                     ),
@@ -93,146 +84,205 @@ class ViewProfileScreen extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
 
-          // Tabs
-          DefaultTabController(
-            length: 2,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: const TabBar(
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    labelColor: Colors.black,
-                    unselectedLabelColor: Colors.grey,
-                    indicatorColor: Colors.red,
-                    tabs: [
-                      Tab(text: 'Closet'),
-                      Tab(text: 'Reviews'),
-                    ],
+          Expanded(
+            child: DefaultTabController(
+              length: 2,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: TabBar(
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      labelColor: Colors.black,
+                      unselectedLabelColor: Colors.grey,
+                      indicatorColor: Colors.red,
+                      tabs: [
+                        Tab(text: 'Closet'),
+                        Tab(text: 'Reviews'),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  height: 350, // fixed height for TabBarView
-                  child: TabBarView(
-                    children: [
-                      // Closet Tab
-                      GridView.builder(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 10,
-                        ),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 16.0,
-                              mainAxisSpacing: 16.0,
-                              childAspectRatio: 0.56,
-                            ),
-                        itemCount: 4,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Colors.grey),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Image.asset(
-                                      "assets/images/shirt.png",
-                                      width: double.infinity,
-                                      height: 120,
-                                      fit: BoxFit.cover,
+                  SizedBox(height: 10),
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        GridView.builder(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.0,
+                            vertical: 10,
+                          ),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 8.w,
+                            mainAxisSpacing: 8.w,
+                            childAspectRatio: 0.65,
+                          ),
+                          itemCount: 4,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Card(
+                              color: Colors.white,
+                              elevation: 1,
+                              child: Padding(
+                                padding: EdgeInsets.all(8.w),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  spacing: 4.h,
+                                  children: [
+                                    Stack(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            12.r,
+                                          ),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              border: Border.all(
+                                                color: Colors.grey,
+                                              ),
+                                              borderRadius: BorderRadius.circular(
+                                                12.r,
+                                              ),
+                                            ),
+                                            child: Image.asset(
+                                              'assets/images/post_card.png',
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: 8.w,
+                                          left: 8.w,
+                                          child: Container(
+                                            height: 36.h,
+                                            width: 36.w,
+                                            padding: EdgeInsets.all(4.w),
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Color(0xffC7C8C8),
+                                            ),
+                                            child: Center(
+                                              child: Icon(
+                                                Icons.favorite,
+                                                color: Colors.red,
+                                                size: 20.h,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  const Text(
-                                    "Men Exclusive T-Shirt",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
+                                    Text(
+                                      'Men Exclusive T-Shirt',
+                                      style: TextStyle(
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  const Text(
-                                    "Size XL (New Condition)",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey,
+                                    Text(
+                                      'Size Xl (New condition)',
+                                      style: TextStyle(
+                                        fontSize: 13.sp,
+                                        color: Colors.grey,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  const Text(
-                                    "\$20.00",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
+
+                                    Text(
+                                      'Aug 6, 13:55 ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 13.sp,
+                                        color: Colors.grey,
+                                      ),
                                     ),
-                                  ),
-                                  const Spacer(),
-                                  Row(
-                                    mainAxisAlignment:
+                                    Text(
+                                      '(12h: 12m :12s)',
+                                      style: TextStyle(
+                                        fontSize: 13.sp,
+                                        color: Colors.green.shade600,
+                                        fontStyle: FontStyle.italic,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+
+                                    Divider(
+                                      color: Colors.grey.shade200,
+                                      thickness: .7.h,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 8.w,
+                                        vertical: 2.h,
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      IconButton(
-                                        icon: const Icon(Icons.favorite_border),
-                                        onPressed: () {},
+                                        children: [
+                                          Text(
+                                            '\$100',
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 18.sp,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Image.asset(
+                                            'assets/icons/cart.png',
+                                            color: Colors.red,
+                                            height: 24.h,
+                                            width: 24.h,
+                                          ),
+                                        ],
                                       ),
-                                      IconButton(
-                                        icon: const Icon(Icons.shopping_cart),
-                                        onPressed: () {},
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                    ),
+                                  ],
+                                ),
                               ),
+                            );
+                          },
+                        ),
+                        // Reviews Tab
+                        ListView(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          children: const [
+                            SellerProfileRefresh(
+                              title: 'Floyd Miles',
+                              time: '2hr ago',
+                              avatarUrl: 'assets/icons/user_profile.png',
+                              message: 'Fast shipping! Thank you!!',
                             ),
-                          );
-                        },
-                      ),
+                            SellerProfileRefresh(
+                              title: 'Esther Howard',
+                              time: '5hr ago',
+                              avatarUrl: 'assets/icons/user_profile.png',
+                              message: 'Shipped very fast, great communication. Only wish the material was listed because I’m not sure I would have bought it',
+                            ),
+                            SellerProfileRefresh(
+                              title: 'Jacob Jones',
+                              time: '1 day ago',
+                              avatarUrl: 'assets/icons/user_profile.png',
+                              message: 'Shipped very fast, great communication. Only wish the material was listed because I’m not sure I would have bought it',
+                            ),
+                            SellerProfileRefresh(
+                              title: 'Kristin Watson',
+                              time: '2 days ago',
+                              avatarUrl: 'assets/icons/user_profile.png',
+                              message: 'Fast shipping! Thank you!!',
+                            ),
+                          ],
+                        ),
 
-                      // Reviews Tab → Use your SellerProfileRefresh widget
-                      ListView(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        children: const [
-                          SellerProfileRefresh(
-                            title: 'Floyd Miles',
-                            time: '2hr ago',
-                            avatarUrl: 'assets/icons/user_profile.png',
-                            message: 'Fast shipping! Thank you!!',
-                          ),
-                          SellerProfileRefresh(
-                            title: 'Esther Howard',
-                            time: '5hr ago',
-                            avatarUrl: 'assets/icons/user_profile.png',
-                            message: 'Shipped very fast, great communication. Only wish the material was listed because I’m not sure I would have bought it',
-                          ),
-                          SellerProfileRefresh(
-                            title: 'Jacob Jones',
-                            time: '1 day ago',
-                            avatarUrl: 'assets/icons/user_profile.png',
-                            message: 'Shipped very fast, great communication. Only wish the material was listed because I’m not sure I would have bought it',
-                          ),
-                          SellerProfileRefresh(
-                            title: 'Kristin Watson',
-                            time: '2 days ago',
-                            avatarUrl: 'assets/icons/user_profile.png',
-                            message: 'Fast shipping! Thank you!!',
-                          ),
-                        ],
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  SizedBox(height: 16.h,)
+                ],
+              ),
             ),
           ),
         ],
