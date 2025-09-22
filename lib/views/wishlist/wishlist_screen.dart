@@ -111,6 +111,7 @@ class WishlistScreen extends StatelessWidget {
                 separatorBuilder: (BuildContext context, int index) => SizedBox(height: 8.h),
               ),
             ),
+            SizedBox(height: 75.h,)
           ],
         ),
       ),

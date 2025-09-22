@@ -1,29 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get_it/get_it.dart';
 import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/views/profile/widgets/custom_dropdown_field.dart';
 import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
+import '../../../../view_model/profile/boost_product_service_provider/boost_product_service.dart';
 import '../../widgets/custom_text_field.dart';
 
-class BoostProductPage extends StatefulWidget {
+class BoostProductPage extends StatelessWidget {
   BoostProductPage({super.key});
 
-  @override
-  State<BoostProductPage> createState() => _BoostProductPageState();
-}
-
-class _BoostProductPageState extends State<BoostProductPage> {
-  final List<String> _conditions = [
-    "New",
-    "Used",
-    "Refurbished",
-  ];
-  String? _selectedCondition;
+  final List<String> _conditions = ["New", "Used", "Refurbished"];
 
   @override
   Widget build(BuildContext context) {
+    final service = GetIt.instance<BoostProductService>();
+
     return Scaffold(
-      appBar: SimpleApppbar(title: 'Boost Product'),
+      appBar: const SimpleApppbar(title: 'Boost Product'),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0.sp),
         child: Column(
@@ -73,7 +67,7 @@ class _BoostProductPageState extends State<BoostProductPage> {
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 15.sp,
-                            color: Color(0xff4A4C56),
+                            color: const Color(0xff4A4C56),
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -86,7 +80,7 @@ class _BoostProductPageState extends State<BoostProductPage> {
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w500,
-                                color: Color(0xff777980),
+                                color: const Color(0xff777980),
                               ),
                             ),
                             SizedBox(width: 5.w),
@@ -95,7 +89,7 @@ class _BoostProductPageState extends State<BoostProductPage> {
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w500,
-                                color: Color(0xff777980),
+                                color: const Color(0xff777980),
                               ),
                             ),
                           ],
@@ -108,7 +102,7 @@ class _BoostProductPageState extends State<BoostProductPage> {
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w400,
-                                color: Color(0xff777980),
+                                color: const Color(0xff777980),
                               ),
                             ),
                             SizedBox(width: 5.w),
@@ -117,25 +111,26 @@ class _BoostProductPageState extends State<BoostProductPage> {
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w500,
-                                color: Color(0xff1A9882),
+                                color: const Color(0xff1A9882),
                               ),
                             ),
                           ],
                         ),
                         SizedBox(height: 8.h),
-                        Divider(color: Color(0xffE9E9EA)),
+                        Divider(color: const Color(0xffE9E9EA)),
                         Row(
                           children: [
                             Text(
                               '💲',
                               style: TextStyle(
-                                color: Color(0xffDE3526),
+                                color: const Color(0xffDE3526),
                                 fontSize: 16.sp,
                               ),
-                            ), Text(
+                            ),
+                            Text(
                               '100.00',
                               style: TextStyle(
-                                color: Color(0xffDE3526),
+                                color: const Color(0xffDE3526),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16.sp,
                               ),
@@ -156,7 +151,7 @@ class _BoostProductPageState extends State<BoostProductPage> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.r),
                 side: BorderSide(
-                  color: Color(0xffE9E9EA),
+                  color: const Color(0xffE9E9EA),
                   width: 1.5.w,
                 ),
               ),
@@ -170,15 +165,18 @@ class _BoostProductPageState extends State<BoostProductPage> {
                       hintText: '3 Days',
                       icon: Icons.access_time,
                     ),
-                    CustomDropdownField(
-                      title: 'Boosting Type',
-                      hintText: 'Standard (+\$10)',
-                      items: _conditions,
-                      value: _selectedCondition,
-                      onChanged: (String? value) {
-                        setState(() {
-                          _selectedCondition = value;
-                        });
+                    AnimatedBuilder(
+                      animation: service,
+                      builder: (context, _) {
+                        return CustomDropdownField(
+                          title: 'Boosting Type',
+                          hintText: 'Standard (+\$10)',
+                          items: _conditions,
+                          value: service.selectedCondition,
+                          onChanged: (String? value) {
+                            service.setSelectedCondition(value);
+                          },
+                        );
                       },
                     ),
                   ],

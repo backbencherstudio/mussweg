@@ -44,7 +44,6 @@ class AppRoutes {
     RouteNames.productDetailScreens: (context) => const ProductDetailScreens(),
     RouteNames.chatScreen: (context) => const ChatScreen(),
     RouteNames.viewProfileScreen: (context) => const ViewProfileScreen(),
-    RouteNames.wishListScreen: (context) => const WishlistScreen(),
     RouteNames.boughtItemsScreen: (context) => BoughtItemsScreen(),
     RouteNames.sellingItemsScreen: (context) => SellingItemsScreen(),
     RouteNames.sellItemPage: (context) => const SellItemPage(),
@@ -55,7 +54,7 @@ class AppRoutes {
     RouteNames.inboxPage: (context) => const InboxPage(),
     RouteNames.accountSettingsPage: (context) => const AccountSettingsPage(),
     RouteNames.notificationsPage: (context) => const NotificationsPage(),
-    RouteNames.languagePage: (context) => const LanguagePage(),
+    RouteNames.languagePage: (context) =>  LanguagePage(),
     RouteNames.transactionsHistoryPage: (context) => const TransactionsHistoryPage(),
     //RouteNames.wishlistScreen: (context) => const WishlistScreen(),
 

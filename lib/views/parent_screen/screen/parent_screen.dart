@@ -66,51 +66,57 @@ class _ParentScreensState extends State<ParentScreen> {
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: Stack(
-          children: [
-            Consumer<ParentScreensProvider>(
-              builder: (context, parentScreenProvider, child) {
-                if (parentScreenProvider.screens.isEmpty ||
-                    parentScreenProvider.selectedIndex < 0 ||
-                    parentScreenProvider.selectedIndex >=
-                        parentScreenProvider.screens.length) {
-                  return const Center(child: Text('No screens available'));
-                }
-                final validScreens = parentScreenProvider.screens
-                    .asMap()
-                    .entries
-                    .where((entry) => entry.value != null)
-                    .map((entry) => entry.value!)
-                    .toList();
+        body: SafeArea(
+          left: false,
+          right: false,
+          bottom: true,
+          top: false,
+          child: Stack(
+            children: [
+              Consumer<ParentScreensProvider>(
+                builder: (context, parentScreenProvider, child) {
+                  if (parentScreenProvider.screens.isEmpty ||
+                      parentScreenProvider.selectedIndex < 0 ||
+                      parentScreenProvider.selectedIndex >=
+                          parentScreenProvider.screens.length) {
+                    return const Center(child: Text('No screens available'));
+                  }
+                  final validScreens = parentScreenProvider.screens
+                      .asMap()
+                      .entries
+                      .where((entry) => entry.value != null)
+                      .map((entry) => entry.value!)
+                      .toList();
 
-                if (validScreens.isEmpty) {
-                  return const Center(
-                    child: Text('No valid screens available'),
+                  if (validScreens.isEmpty) {
+                    return const Center(
+                      child: Text('No valid screens available'),
+                    );
+                  }
+
+                  final adjustedIndex = parentScreenProvider.selectedIndex.clamp(
+                    0,
+                    validScreens.length - 1,
                   );
-                }
 
-                final adjustedIndex = parentScreenProvider.selectedIndex.clamp(
-                  0,
-                  validScreens.length - 1,
-                );
-
-                return IndexedStack(
-                  index: adjustedIndex,
-                  children: validScreens,
-                );
-              },
-            ),
-            Transform.translate(
-              offset: const Offset(0, -15),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: const ParentScreenWidget(),
+                  return IndexedStack(
+                    index: adjustedIndex,
+                    children: validScreens,
+                  );
+                },
+              ),
+              Transform.translate(
+                offset: const Offset(0, -15),
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: const ParentScreenWidget(),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
