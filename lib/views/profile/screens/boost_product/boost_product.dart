@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/core/routes/route_names.dart';
+import 'package:mussweg/views/profile/widgets/custom_dropdown_field.dart';
 import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
+import '../../widgets/custom_text_field.dart';
 
+class BoostProductPage extends StatefulWidget {
+  BoostProductPage({super.key});
 
-class BoostProductPage extends StatelessWidget {
-  const BoostProductPage({super.key});
+  @override
+  State<BoostProductPage> createState() => _BoostProductPageState();
+}
+
+class _BoostProductPageState extends State<BoostProductPage> {
+  final List<String> _conditions = [
+    "New",
+    "Used",
+    "Refurbished",
+  ];
+  String? _selectedCondition;
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +127,13 @@ class BoostProductPage extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              ' 100.00',
+                              '💲',
+                              style: TextStyle(
+                                color: Color(0xffDE3526),
+                                fontSize: 16.sp,
+                              ),
+                            ), Text(
+                              '100.00',
                               style: TextStyle(
                                 color: Color(0xffDE3526),
                                 fontWeight: FontWeight.bold,
@@ -151,10 +170,16 @@ class BoostProductPage extends StatelessWidget {
                       hintText: '3 Days',
                       icon: Icons.access_time,
                     ),
-                    CustomTextField(
+                    CustomDropdownField(
                       title: 'Boosting Type',
                       hintText: 'Standard (+\$10)',
-                      icon: Icons.arrow_drop_down,
+                      items: _conditions,
+                      value: _selectedCondition,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _selectedCondition = value;
+                        });
+                      },
                     ),
                   ],
                 ),
@@ -202,47 +227,6 @@ class BoostProductPage extends StatelessWidget {
             SizedBox(height: 20.h),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class CustomTextField extends StatelessWidget {
-  final String title;
-  final String hintText;
-  final IconData icon;
-
-  const CustomTextField({
-    super.key,
-    required this.title,
-    required this.hintText,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 16.0.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold, fontSize: 14.sp)),
-          SizedBox(height: 8.h),
-          TextField(
-            decoration: InputDecoration(
-              hintText: hintText,
-              filled: true,
-              suffixIcon: Icon(icon),
-              fillColor: Colors.grey[200],
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.r),
-                borderSide: BorderSide.none,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

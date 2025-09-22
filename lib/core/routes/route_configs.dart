@@ -47,7 +47,7 @@ class AppRoutes {
     RouteNames.sellingItemsScreen: (context) => SellingItemsScreen(),
     RouteNames.sellItemPage: (context) => const SellItemPage(),
     RouteNames.editProductPage: (context) => const EditProductPage(),
-    RouteNames.boostProductPage: (context) => const BoostProductPage(),
+    RouteNames.boostProductPage: (context) =>  BoostProductPage(),
     RouteNames.boostSuccessPage: (context) => const BoostSuccessPage(),
     RouteNames.onboardingScreen: (context) => const OnboardingScreen(),
     RouteNames.inboxPage: (context) => const InboxPage(),

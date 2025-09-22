@@ -4,14 +4,11 @@ import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
 
 class TransactionsHistoryPage extends StatefulWidget {
   const TransactionsHistoryPage({super.key});
-
   @override
   State<TransactionsHistoryPage> createState() => _TransactionsHistoryPageState();
 }
-
 class _TransactionsHistoryPageState extends State<TransactionsHistoryPage> {
   String selectedFilter = 'All';
-
   final List<Map<String, dynamic>> transactions = [
     {'name': 'Jacob Jones', 'time': 'Today, 8:19 am', 'amount': '+20.00', 'color': Color(0xff116557), 'avatar': 'assets/icons/user_profile.png'},
     {'name': 'Darrell Steward', 'time': 'Today, 8:19 am', 'amount': '-20.00', 'color': Color(0xffB02E3A), 'avatar': 'assets/icons/user_profile.png'},
@@ -21,7 +18,6 @@ class _TransactionsHistoryPageState extends State<TransactionsHistoryPage> {
     {'name': 'Albert Flores', 'time': 'Today, 8:19 am', 'amount': '+20.00', 'color': Color(0xff116557), 'avatar': 'assets/icons/user_profile.png'},
     {'name': 'Cody Fisher', 'time': 'Today, 8:19 am', 'amount': '+20.00', 'color': Color(0xff116557), 'avatar': 'assets/icons/user_profile.png'},
   ];
-
   List<Map<String, dynamic>> get filteredTransactions {
     if (selectedFilter == 'Sent Money') {
       return transactions.where((tx) => tx['amount'].startsWith('-')).toList();
@@ -69,7 +65,6 @@ class _TransactionsHistoryPageState extends State<TransactionsHistoryPage> {
       ),
     );
   }
-
   Widget _buildFilterChip(String text) {
     bool isSelected = selectedFilter == text;
     return GestureDetector(
@@ -94,7 +89,6 @@ class _TransactionsHistoryPageState extends State<TransactionsHistoryPage> {
       ),
     );
   }
-
   Widget _buildTransactionItem(
       BuildContext context,
       String name,
