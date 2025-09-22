@@ -29,6 +29,7 @@ class RouteNames {
   static const String transactionsHistoryPage = '/transactionsHistoryPage';
 
   static const String checkoutScreen = '/checkoutScreen';
+  static const String stripeCheckoutScreen = '/stripeCheckoutScreen';
 
 
 
