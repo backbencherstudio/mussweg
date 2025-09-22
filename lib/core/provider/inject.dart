@@ -8,6 +8,7 @@ import '../../view_model/profile/boost_product_service_provider/boost_product_se
 import '../../view_model/profile/language_selected_provider/language_select.dart';
 import '../../view_model/profile/notification_service_provider/notification_service.dart';
 import '../../view_model/profile/sell_item_service_provider/sell_item_service.dart';
+import '../../view_model/search_history_provider/search_history.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -25,6 +26,7 @@ void setup() {
   getIt.registerSingleton<TransactionService>(TransactionService());
   getIt.registerSingleton<NotificationService>(NotificationService());
   getIt.registerSingleton<BoostProductService>(BoostProductService());
+  getIt.registerSingleton<SearchProvider>(SearchProvider());
 
   print('GetIt setup completed successfully'); // Optional: for debugging
 }

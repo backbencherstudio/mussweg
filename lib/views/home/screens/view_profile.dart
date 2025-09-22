@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mussweg/views/widgets/simple_apppbar.dart';
 
+import '../../widgets/seller_profile_refresh.dart';
+
 class ViewProfileScreen extends StatelessWidget {
   const ViewProfileScreen({super.key});
 
@@ -219,7 +221,7 @@ class ViewProfileScreen extends StatelessWidget {
                                       ),
                                       child: Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             '\$100',
@@ -245,7 +247,36 @@ class ViewProfileScreen extends StatelessWidget {
                           },
                         ),
                         // Reviews Tab
-                        Center(child: Text("Reviews Section (Coming Soon)")),
+                        ListView(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          children: const [
+                            SellerProfileRefresh(
+                              title: 'Floyd Miles',
+                              time: '2hr ago',
+                              avatarUrl: 'assets/icons/user_profile.png',
+                              message: 'Fast shipping! Thank you!!',
+                            ),
+                            SellerProfileRefresh(
+                              title: 'Esther Howard',
+                              time: '5hr ago',
+                              avatarUrl: 'assets/icons/user_profile.png',
+                              message: 'Shipped very fast, great communication. Only wish the material was listed because I’m not sure I would have bought it',
+                            ),
+                            SellerProfileRefresh(
+                              title: 'Jacob Jones',
+                              time: '1 day ago',
+                              avatarUrl: 'assets/icons/user_profile.png',
+                              message: 'Shipped very fast, great communication. Only wish the material was listed because I’m not sure I would have bought it',
+                            ),
+                            SellerProfileRefresh(
+                              title: 'Kristin Watson',
+                              time: '2 days ago',
+                              avatarUrl: 'assets/icons/user_profile.png',
+                              message: 'Fast shipping! Thank you!!',
+                            ),
+                          ],
+                        ),
+
                       ],
                     ),
                   ),

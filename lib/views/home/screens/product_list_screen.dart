@@ -32,24 +32,46 @@ class ProductListScreen extends StatelessWidget {
                     final data = _categoryFilter[index];
                     return Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 10,
+                      child: GestureDetector(
+                        onTap: (){},
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: Color(0xffF1F0EE),
+                          ),
+                          child: InkWell(
+                            onTap: () {
+                              if (data["title"] == "Filter") {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return const Dialog(
+                                      insetPadding: EdgeInsets.all(16),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(16)),
+                                      ),
+                                      child: FilterPage(),
+                                    );
+                                  },
+                                );
+                              }
+                            },
+                            child: Row(
+                              children: [
+                                data["title"] == "Filter"
+                                    ? Image.asset("assets/icons/filter.png")
+                                    : const SizedBox(),
+                                const SizedBox(width: 10),
+                                Text(data["title"]),
+                              ],
+                            ),
+                          ),
                         ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: Color(0xffF1F0EE),
-                        ),
-                        child: Row(
-                          children: [
-                            data["title"] == "Filter"
-                                ? Image.asset("assets/icons/filter.png")
-                                : SizedBox(),
-                            SizedBox(width: 10),
-                            Text(data["title"]),
-                          ],
-                        ),
+
                       ),
                     );
                   },
@@ -249,3 +271,240 @@ class ProductListScreen extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+
+class FilterPage extends StatefulWidget {
+  const FilterPage({super.key});
+
+  @override
+  State<FilterPage> createState() => _FilterPageState();
+}
+
+class _FilterPageState extends State<FilterPage> {
+  RangeValues _priceRange = const RangeValues(20, 40);
+  final List<String> _categories = [
+    'Dress',
+    'Shoes',
+    'Bag',
+    'Makeup',
+    'Sunglass',
+    'Men Clothes',
+    'Woman Clothes'
+  ];
+  final List<String> _times = [
+    '12hr',
+    '20hr',
+    '24hr',
+    '30hr',
+    '40hr',
+    '48hr'
+  ];
+
+  String? _selectedCategory;
+  String? _selectedTime;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: SingleChildScrollView(
+        child: Container(
+          color: Colors.white,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(),
+              const SizedBox(height: 10),
+              _buildSectionTitle('Price Range'),
+              _buildPriceSlider(),
+              _buildSectionTitle('Categories'),
+              _buildChipRow(_categories, _selectedCategory, (chip) {
+                setState(() {
+                  _selectedCategory = chip;
+                });
+              }),
+              _buildSectionTitle('Time'),
+              _buildChipRow(_times, _selectedTime, (chip) {
+                setState(() {
+                  _selectedTime = chip;
+                });
+              }),
+              _buildSectionTitle('Location'),
+              _buildLocationDropdown(),
+              _buildCustomLocation(),
+              const SizedBox(height: 32),
+              _buildButtons(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text(
+          'Filters',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () {
+            Navigator.pop(context); // close sheet
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSectionTitle(String title) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 16.0),
+    child: Text(
+      title,
+      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    ),
+  );
+
+  Widget _buildPriceSlider() {
+    return Column(
+      children: [
+        RangeSlider(
+          values: _priceRange,
+          min: 0,
+          max: 100,
+          divisions: 100,
+          labels: RangeLabels(
+            '\$${_priceRange.start.round()}',
+            '\$${_priceRange.end.round()}',
+          ),
+          activeColor: Colors.red,
+          onChanged: (RangeValues values) {
+            setState(() {
+              _priceRange = values;
+            });
+          },
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('\$${_priceRange.start.round()}'),
+            Text('\$${_priceRange.end.round()}'),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildChipRow(List<String> items, String? selected, Function(String) onSelected) {
+    return Wrap(
+      spacing: 8.0,
+      runSpacing: 8.0,
+      children: items.map((chip) {
+        return FilterChip(
+          label: Text(chip),
+          selected: selected == chip,
+          selectedColor: Colors.red[100],
+          checkmarkColor: Colors.red,
+          labelStyle: TextStyle(
+            color: selected == chip ? Colors.red : Colors.black,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(
+              color: selected == chip ? Colors.red : Colors.grey,
+            ),
+          ),
+          backgroundColor: Colors.transparent,
+          onSelected: (_) => onSelected(chip),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildLocationDropdown() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      margin: const EdgeInsets.only(top: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          isExpanded: true,
+          value: 'St.Gallen&Eastern Switzerland',
+          icon: const Icon(Icons.keyboard_arrow_down),
+          items: <String>['St.Gallen&Eastern Switzerland'].map((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+          onChanged: (_) {},
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCustomLocation() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0),
+      child: Row(
+        children: const [
+          Icon(Icons.add, color: Colors.red),
+          SizedBox(width: 8),
+          Text(
+            'Custom Location',
+            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildButtons() {
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton(
+            onPressed: () {
+              Navigator.pop(context); // Cancel
+            },
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              side: const BorderSide(color: Colors.grey),
+            ),
+            child: const Text('Cancel', style: TextStyle(color: Colors.black)),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context); // Apply
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: const Text('Apply', style: TextStyle(color: Colors.white)),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
