@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/views/widgets/simple_apppbar.dart';
-
 
 class InboxPage extends StatelessWidget {
   const InboxPage({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,70 +80,74 @@ class InboxPage extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildInboxItem(
       BuildContext context,
       String name,
       String message,
       String time,
       String avatarUrl,
-      List<String> productImages,
-      {bool showPlus = false, int plusCount = 0}) {
+      List<String> productImages, {
+        bool showPlus = false,
+        int plusCount = 0,
+      }) {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 🔹 Top row: avatar, name, time
               Row(
                 children: [
                   CircleAvatar(
-                    radius: 24,
+                    radius: 24.r,
                     backgroundImage: AssetImage(avatarUrl),
                   ),
-                  const SizedBox(width: 10),
+                  SizedBox(width: 10.w),
                   Text(
                     name,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Color(0xff4A4C56),
+                      color: const Color(0xff4A4C56),
+                      fontSize: 14.sp,
                     ),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   Text(
                     time,
-                    style: const TextStyle(fontSize: 12, color: Color(0xff4A4C56)),
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: const Color(0xff4A4C56),
+                    ),
                   ),
                 ],
               ),
-
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(width: 58,),
+                  SizedBox(width: 58.w),
                   Flexible(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start, // Align text & images to right
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           message,
                           textAlign: TextAlign.right,
+                          style: TextStyle(fontSize: 13.sp),
                         ),
-                        const SizedBox(height: 8),
+                        SizedBox(height: 8.h),
                         Row(
-                          mainAxisSize: MainAxisSize.min, // Wrap only around images
+                          mainAxisSize: MainAxisSize.min,
                           children: productImages.map((imageUrl) {
                             return Padding(
-                              padding: const EdgeInsets.only(left: 4.0),
+                              padding: EdgeInsets.only(left: 4.w),
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(5),
+                                borderRadius: BorderRadius.circular(5.r),
                                 child: Image.asset(
                                   imageUrl,
-                                  width: 40,
-                                  height: 40,
+                                  width: 40.w,
+                                  height: 40.h,
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -155,14 +158,12 @@ class InboxPage extends StatelessWidget {
                     ),
                   ),
                 ],
-              )
-
+              ),
             ],
           ),
         ),
-        const Divider(indent: 16, endIndent: 16),
+        Divider(indent: 16.w, endIndent: 16.w),
       ],
     );
-
   }
 }

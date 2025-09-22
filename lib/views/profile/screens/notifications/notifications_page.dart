@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../widgets/select_tab_chip.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
-
   @override
   State<NotificationsPage> createState() => _NotificationsPageState();
 }
-
 class _NotificationsPageState extends State<NotificationsPage> {
   int selectedIndex = 0;
   final List<String> options = ["All", "Recent", "Earlier"];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: SimpleApppbar(title: 'Notifications'),
       body: Column(
         children: [
-
           Padding(
             padding:  EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 8.0.h),
             child: Row(
@@ -39,8 +36,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
               }),
             ),
           ),
-
-
           Expanded(
             child: ListView(
               children: [
@@ -162,7 +157,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   Widget _actionButton(String text, VoidCallback onTap) {
     return SizedBox(
-      height: 30.h,
+      height: 20.h,
       child: ElevatedButton(
         onPressed: onTap,
         style: ElevatedButton.styleFrom(
@@ -174,39 +169,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
         ),
         child: Text(text, style: const TextStyle(color: Colors.black)),
       ),
-    );
-  }
-}
-
-class SelectableChip extends StatelessWidget {
-  final String text;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const SelectableChip({
-    super.key,
-    required this.text,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ChoiceChip(
-      label: Text(text),
-      selected: isSelected,
-      onSelected: (_) => onTap(),
-      showCheckmark: false,
-      labelStyle: TextStyle(
-        color: isSelected ? Colors.red : Colors.black,
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-      ),
-      selectedColor: Colors.red.withOpacity(0.2),
-      backgroundColor: Colors.grey[200],
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30.r),
-      ),
-      padding:  EdgeInsets.symmetric(horizontal: 30.w, vertical: 8.h),
     );
   }
 }

@@ -1,9 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
+import '../../widgets/custom_dropdown_field.dart';
+import '../../widgets/custom_text_field.dart';
+import '../../widgets/custom_time_text_field.dart';
 
-class EditProductPage extends StatelessWidget {
+class EditProductPage extends StatefulWidget {
   const EditProductPage({super.key});
+  @override
+  State<EditProductPage> createState() => _EditProductPageState();
+}
+class _EditProductPageState extends State<EditProductPage> {
+  final List<String> _conditions = [
+    "New",
+    "Used",
+    "Refurbished",
+  ];
+  String? _selectedCondition;
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +91,6 @@ class EditProductPage extends StatelessWidget {
               ],
             ),
             SizedBox(height: 24.h),
-
             Card(
               color: Colors.white,
               shape: RoundedRectangleBorder(
@@ -104,22 +116,57 @@ class EditProductPage extends StatelessWidget {
                     CustomDropdownField(
                       title: 'Location',
                       hintText: 'Select location',
+                      items: _conditions,
+                      value: _selectedCondition,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _selectedCondition = value;
+                        });
+                      },
                     ),
                     CustomDropdownField(
                       title: 'Category',
                       hintText: 'Select category',
+                      items: _conditions,
+                      value: _selectedCondition,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _selectedCondition = value;
+                        });
+                      },
                     ),
                     CustomDropdownField(
                       title: 'Size',
                       hintText: 'Select size',
+                      items: _conditions,
+                      value: _selectedCondition,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _selectedCondition = value;
+                        });
+                      },
                     ),
                     CustomDropdownField(
                       title: 'Color',
                       hintText: 'Select color',
+                      items: _conditions,
+                      value: _selectedCondition,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _selectedCondition = value;
+                        });
+                      },
                     ),
                     CustomDropdownField(
                       title: 'Conditions',
                       hintText: 'Select Condition',
+                      items: _conditions,
+                      value: _selectedCondition,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _selectedCondition = value;
+                        });
+                      },
                     ),
                     CustomTimeField(title: 'Time'),
                     CustomTimeField(title: 'Time'),
@@ -128,7 +175,6 @@ class EditProductPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 32.h),
-
             ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
@@ -144,130 +190,6 @@ class EditProductPage extends StatelessWidget {
             SizedBox(height: 32.h),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class CustomTextField extends StatelessWidget {
-  final String title;
-  final String hintText;
-
-  const CustomTextField({
-    super.key,
-    required this.title,
-    required this.hintText,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 16.0.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 14.sp,
-              )),
-          SizedBox(height: 8.h),
-          TextField(
-            decoration: InputDecoration(
-              hintText: hintText,
-              filled: true,
-              fillColor: Colors.grey[200],
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.r),
-                borderSide: BorderSide.none,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class CustomDropdownField extends StatelessWidget {
-  final String title;
-  final String hintText;
-
-  const CustomDropdownField({
-    super.key,
-    required this.title,
-    required this.hintText,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 16.0.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 14.sp,
-              )),
-          SizedBox(height: 8.h),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                isExpanded: true,
-                value: null,
-                hint: Text(hintText, style: TextStyle(fontSize: 14.sp)),
-                items: const [],
-                onChanged: (String? newValue) {},
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class CustomTimeField extends StatelessWidget {
-  final String title;
-
-  const CustomTimeField({
-    super.key,
-    required this.title,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 16.0.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 14.sp,
-              )),
-          SizedBox(height: 8.h),
-          TextField(
-            decoration: InputDecoration(
-              hintText: 'Set time',
-              suffixIcon: Icon(Icons.access_time, size: 20.w),
-              filled: true,
-              fillColor: Colors.grey[200],
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.r),
-                borderSide: BorderSide.none,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

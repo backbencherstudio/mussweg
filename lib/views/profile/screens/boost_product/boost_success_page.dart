@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mussweg/core/routes/route_names.dart';
 
 class BoostSuccessPage extends StatelessWidget {
   const BoostSuccessPage({super.key});
@@ -87,7 +88,7 @@ class BoostSuccessPage extends StatelessWidget {
                           SizedBox(height: 32.h),
                           ElevatedButton(
                             onPressed: () {
-                              // Handle "Back to profile" button press
+                           Navigator.pushNamed(context, RouteNames.sellerProfilePage);
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Color(0xffDE3526),

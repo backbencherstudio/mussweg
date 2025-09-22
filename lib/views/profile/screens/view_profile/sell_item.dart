@@ -1,9 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
+import '../../widgets/custom_dropdown_field.dart';
+import '../../widgets/custom_text_field.dart';
+import '../../widgets/custom_time_text_field.dart';
 
-class SellItemPage extends StatelessWidget {
+class SellItemPage extends StatefulWidget {
   const SellItemPage({super.key});
+  @override
+  State<SellItemPage> createState() => _SellItemPageState();
+}
+class _SellItemPageState extends State<SellItemPage> {
+  final List<String> _conditions = [
+    "New",
+    "Used",
+    "Refurbished",
+  ];
+  String? _selectedCondition;
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +36,15 @@ class SellItemPage extends StatelessWidget {
               child: Column(
                 children: [
                   OutlinedButton.icon(
-                    icon: Icon(Icons.add_a_photo, color: Colors.red, size: 20.w),
-                    label: Text('Upload photos',
-                        style: TextStyle(color: Colors.red, fontSize: 14.sp)),
+                    icon: Icon(
+                      Icons.add_a_photo,
+                      color: Colors.red,
+                      size: 20.w,
+                    ),
+                    label: Text(
+                      'Upload photos',
+                      style: TextStyle(color: Colors.red, fontSize: 14.sp),
+                    ),
                     onPressed: () {},
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(color: Colors.red, width: 1.w),
@@ -43,15 +62,11 @@ class SellItemPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 24.h),
-
             Card(
               color: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.r),
-                side: BorderSide(
-                  color: Color(0xffE9E9EA),
-                  width: 1.5.w,
-                ),
+                side: BorderSide(color: Color(0xffE9E9EA), width: 1.5.w),
               ),
               elevation: 0,
               child: Padding(
@@ -69,22 +84,57 @@ class SellItemPage extends StatelessWidget {
                     CustomDropdownField(
                       title: 'Location',
                       hintText: 'Select location',
+                      items: _conditions,
+                      value: _selectedCondition,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _selectedCondition = value;
+                        });
+                      },
                     ),
                     CustomDropdownField(
                       title: 'Category',
                       hintText: 'Select category',
+                      items: _conditions,
+                      value: _selectedCondition,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _selectedCondition = value;
+                        });
+                      },
                     ),
                     CustomDropdownField(
                       title: 'Size',
                       hintText: 'Select size',
+                      items: _conditions,
+                      value: _selectedCondition,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _selectedCondition = value;
+                        });
+                      },
                     ),
                     CustomDropdownField(
                       title: 'Color',
                       hintText: 'Select color',
+                      items: _conditions,
+                      value: _selectedCondition,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _selectedCondition = value;
+                        });
+                      },
                     ),
                     CustomDropdownField(
                       title: 'Conditions',
                       hintText: 'Select Condition',
+                      items: _conditions,
+                      value: _selectedCondition,
+                      onChanged: (String? value) {
+                        setState(() {
+                          _selectedCondition = value;
+                        });
+                      },
                     ),
                     CustomTimeField(title: 'Time'),
                   ],
@@ -92,7 +142,6 @@ class SellItemPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20.h),
-
             ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
@@ -102,131 +151,14 @@ class SellItemPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10.r),
                 ),
               ),
-              child: Text('Sell',
-                  style: TextStyle(color: Colors.white, fontSize: 18.sp)),
+              child: Text(
+                'Sell',
+                style: TextStyle(color: Colors.white, fontSize: 18.sp),
+              ),
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: 40.h),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class CustomTextField extends StatelessWidget {
-  final String title;
-  final String hintText;
-
-  const CustomTextField({
-    super.key,
-    required this.title,
-    required this.hintText,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 16.0.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp)),
-          SizedBox(height: 8.h),
-          TextField(
-            decoration: InputDecoration(
-              hintText: hintText,
-              hintStyle: TextStyle(color: Color(0xffA5A5AB), fontSize: 14.sp),
-              filled: true,
-              fillColor: Colors.grey[200],
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.r),
-                borderSide: BorderSide.none,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class CustomDropdownField extends StatelessWidget {
-  final String title;
-  final String hintText;
-
-  const CustomDropdownField({
-    super.key,
-    required this.title,
-    required this.hintText,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 16.0.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp)),
-          SizedBox(height: 8.h),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(10.r),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                isExpanded: true,
-                value: null,
-                hint: Text(hintText,
-                    style: TextStyle(color: Color(0xffA5A5AB), fontSize: 14.sp)),
-                items: const [],
-                onChanged: (String? newValue) {},
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class CustomTimeField extends StatelessWidget {
-  final String title;
-
-  const CustomTimeField({
-    super.key,
-    required this.title,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 16.0.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp)),
-          SizedBox(height: 8.h),
-          TextField(
-            decoration: InputDecoration(
-              hintText: 'Set time',
-              hintStyle: TextStyle(color: Color(0xffA5A5AB), fontSize: 14.sp),
-              suffixIcon: Icon(Icons.access_time,
-                  color: Color(0xff777980), size: 20.w),
-              filled: true,
-              fillColor: Colors.grey[200],
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.r),
-                borderSide: BorderSide.none,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
