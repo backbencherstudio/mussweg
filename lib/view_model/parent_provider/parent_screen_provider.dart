@@ -1,12 +1,36 @@
-import 'package:flutter/foundation.dart';
 
-class ParentScreenProvider extends ChangeNotifier {
-  int _index = 0;
-  int get index => _index;
-  void setIndex(int i) {
-    if (i != _index) {
-      _index = i;
-      notifyListeners();
-    }
+import 'package:flutter/material.dart';
+import 'package:mussweg/views/profile/screen.dart';
+
+import '../../views/home/screen/home_screen.dart';
+import '../../views/wishlist/wishlist_screen.dart';
+
+
+class ParentScreensProvider with ChangeNotifier {
+  List<Widget> screens = [
+    HomeScreen(),
+    HomeScreen(),
+    HomeScreen(),
+    WishlistScreen(),
+    ProfileScreen(),
+
+  ];
+  int _selectedIndex = 0;
+  int get selectedIndex => _selectedIndex;
+
+  void onSelectedIndex(int selectedIndex) {
+    _selectedIndex = selectedIndex;
+    notifyListeners();
+    debugPrint("Selected Index : $selectedIndex");
+  }
+
+  gotoFeedScreen() {
+    _selectedIndex = 3;
+    notifyListeners();
+  }
+
+  gotoHomeScreen() {
+    _selectedIndex = 0;
+    notifyListeners();
   }
 }

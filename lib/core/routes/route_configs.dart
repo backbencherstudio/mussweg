@@ -9,7 +9,13 @@ import 'package:mussweg/views/selling_items/selling_items_screen.dart';
 import 'package:mussweg/views/splash/splash_screen.dart';
 import 'package:mussweg/views/wishlist/wishlist_screen.dart';
 
+import '../../views/home/screens/chat_screen.dart';
+import '../../views/home/screens/product_detail_screens.dart';
+import '../../views/home/screens/product_list_screen.dart';
+import '../../views/home/screens/category_screen.dart';
+import '../../views/home/screens/view_profile.dart';
 import '../../views/auth/sign_up/screen/signup_screen.dart';
+import '../../views/onboarding/screen/onboarding_screen.dart';
 import '../../views/inbox/screen.dart';
 import '../../views/inbox/screens/account_settings.dart';
 import '../../views/profile/screen.dart';
@@ -31,6 +37,11 @@ class AppRoutes {
     RouteNames.signUpScreen: (context) => const SignupScreen(),
     RouteNames.profileScreen: (context) => const ProfileScreen(),
     RouteNames.sellerProfilePage: (context) => const SellerProfilePage(),
+    RouteNames.categoryScreen: (context) => const CategoryScreen(),
+    RouteNames.productListScreen: (context) => const ProductListScreen(),
+    RouteNames.productDetailScreens: (context) => const ProductDetailScreens(),
+    RouteNames.chatScreen: (context) => const ChatScreen(),
+    RouteNames.viewProfileScreen: (context) => const ViewProfileScreen(),
     RouteNames.wishListScreen: (context) => const WishlistScreen(),
     RouteNames.boughtItemsScreen: (context) => BoughtItemsScreen(),
     RouteNames.sellingItemsScreen: (context) => SellingItemsScreen(),
@@ -38,6 +49,7 @@ class AppRoutes {
     RouteNames.editProductPage: (context) => const EditProductPage(),
     RouteNames.boostProductPage: (context) =>  BoostProductPage(),
     RouteNames.boostSuccessPage: (context) => const BoostSuccessPage(),
+    RouteNames.onboardingScreen: (context) => const OnboardingScreen(),
     RouteNames.inboxPage: (context) => const InboxPage(),
     RouteNames.accountSettingsPage: (context) => const AccountSettingsPage(),
     RouteNames.notificationsPage: (context) => const NotificationsPage(),

@@ -55,7 +55,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             children: [
                               Image.asset(
                                 'assets/icons/location.png',
-                                scale: 2.8,
+                                scale: 1,
                               ),
                               Text(
                                 'Switzerland',

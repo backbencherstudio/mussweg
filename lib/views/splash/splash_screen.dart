@@ -11,13 +11,12 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 2), () async {
       if (mounted) {
-        Navigator.pushReplacementNamed(context, RouteNames.profileScreen);
+        Navigator.pushReplacementNamed(context, RouteNames.onboardingScreen);
       }
     });
   }

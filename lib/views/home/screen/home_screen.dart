@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/routes/route_names.dart';
 import '../../../view_model/home_provider/home_screen_provider.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -89,18 +90,32 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 16.h), // Space before categories section
-                // Categories title
-                Text(
-                  "Categories",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 20,
-                  ),
+                SizedBox(height: 16.h),
+
+                SizedBox(height: 10.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Categories",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, RouteNames.categoryScreen);
+                      },
+                      child: Text(
+                        "View All",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 10.h), // Space after categories title
-                // Categories list
+                SizedBox(height: 10.h), // Space before the grid
                 SizedBox(
                   height: 80.h,
                   child: ListView.builder(
