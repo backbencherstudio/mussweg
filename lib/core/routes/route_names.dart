@@ -28,6 +28,8 @@ class RouteNames {
   static const String languagePage = '/languagePage';
   static const String transactionsHistoryPage = '/transactionsHistoryPage';
 
+  static const String checkoutScreen = '/checkoutScreen';
+
 
 
 }
