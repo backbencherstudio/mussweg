@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/views/widgets/custom_button.dart';
-import 'package:mussweg/views/widgets/custom_primary_button.dart';
+
 
 
 import '../../profile/widgets/simple_apppbar.dart';
@@ -54,7 +55,9 @@ class _StripeCheckoutScreenState extends State<StripeCheckoutScreen> {
                       SizedBox(height: 6.h,),
                       CustomTextFormField(hintText: 'CVC',),
                       SizedBox(height: 10.h,),
-                      CustomButton(text: 'Pay Now : \$60.00', textColor: Colors.white, buttonColor: Colors.red, onPressed: (){}),
+                      CustomButton(text: 'Pay Now : \$60.00', textColor: Colors.white, buttonColor: Colors.red, onPressed: (){
+                        Navigator.pushNamed(context, RouteNames.orderPlacedScreen);
+                      }),
                       SizedBox(height: 6.h,),
                     ],
                   ),

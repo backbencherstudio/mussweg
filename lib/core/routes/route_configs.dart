@@ -20,6 +20,7 @@ import '../../views/auth/sign_up/screen/signup_screen.dart';
 import '../../views/onboarding/screen/onboarding_screen.dart';
 import '../../views/inbox/screen.dart';
 import '../../views/inbox/screens/account_settings.dart';
+import '../../views/order_placed/screen/order_placed_screen.dart';
 import '../../views/profile/screen.dart';
 import '../../views/profile/screens/boost_product/boost_product.dart';
 import '../../views/profile/screens/boost_product/boost_success_page.dart';
@@ -61,5 +62,6 @@ class AppRoutes {
 
     RouteNames.checkoutScreen:(context) => const CheckoutScreen(),
     RouteNames.stripeCheckoutScreen:(context) => const StripeCheckoutScreen(),
+    RouteNames.orderPlacedScreen:(context) => const OrderPlacedScreen(),
   };
 }
