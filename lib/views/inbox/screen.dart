@@ -8,74 +8,81 @@ class InboxPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: SimpleApppbar(title: 'Inbox'),
-      body: ListView(
+      body: Column(
         children: [
-          _buildInboxItem(
-            context,
-            'Kathryn Murphy',
-            'Hi! Would you sell this for \$25.00?',
-            'an hour ago',
-            'assets/icons/user_profile.png',
-            [
-              'assets/images/dress.png',
-              'assets/images/dress.png',
-              'assets/images/dress.png',
-            ],
+          Expanded(
+            child: ListView(
+              children: [
+                _buildInboxItem(
+                  context,
+                  'Kathryn Murphy',
+                  'Hi! Would you sell this for \$25.00?',
+                  'an hour ago',
+                  'assets/icons/user_profile.png',
+                  [
+                    'assets/images/dress.png',
+                    'assets/images/dress.png',
+                    'assets/images/dress.png',
+                  ],
+                ),
+                _buildInboxItem(
+                  context,
+                  'Devon Lane',
+                  'Hi! Would you sell this for \$25.00?',
+                  '10 hours ago',
+                  'assets/icons/user_profile.png',
+                  [
+                    'assets/images/dress.png',
+                    'assets/images/dress.png',
+                    'assets/images/dress.png',
+                  ],
+                ),
+                _buildInboxItem(
+                  context,
+                  'Annette Black',
+                  'Hi! Would you sell this for \$25.00?',
+                  '23 hours ago',
+                  'assets/icons/user_profile.png',
+                  [
+                    'assets/images/dress.png',
+                    'assets/images/dress.png',
+                    'assets/images/dress.png',
+                  ],
+                  showPlus: true,
+                  plusCount: 2,
+                ),
+                _buildInboxItem(
+                  context,
+                  'Darlene Robertson',
+                  'Hi! Would you sell this for \$25.00?',
+                  '2 days ago',
+                  'assets/icons/user_profile.png',
+                  [
+                    'assets/images/dress.png',
+                    'assets/images/dress.png',
+                    'assets/images/dress.png',
+                  ],
+                  showPlus: true,
+                  plusCount: 2,
+                ),
+                _buildInboxItem(
+                  context,
+                  'Arlene McCoy',
+                  'Hi! Would you sell this for \$25.00?',
+                  '3 days ago',
+                  'assets/icons/user_profile.png',
+                  [
+                    'assets/images/dress.png',
+                    'assets/images/dress.png',
+                    'assets/images/dress.png',
+                  ],
+                  showPlus: true,
+                  plusCount: 2,
+                ),
+              ],
+            ),
           ),
-          _buildInboxItem(
-            context,
-            'Devon Lane',
-            'Hi! Would you sell this for \$25.00?',
-            '10 hours ago',
-            'assets/icons/user_profile.png',
-            [
-              'assets/images/dress.png',
-              'assets/images/dress.png',
-              'assets/images/dress.png',
-            ],
-          ),
-          _buildInboxItem(
-            context,
-            'Annette Black',
-            'Hi! Would you sell this for \$25.00?',
-            '23 hours ago',
-            'assets/icons/user_profile.png',
-            [
-              'assets/images/dress.png',
-              'assets/images/dress.png',
-              'assets/images/dress.png',
-            ],
-            showPlus: true,
-            plusCount: 2,
-          ),
-          _buildInboxItem(
-            context,
-            'Darlene Robertson',
-            'Hi! Would you sell this for \$25.00?',
-            '2 days ago',
-            'assets/icons/user_profile.png',
-            [
-              'assets/images/dress.png',
-              'assets/images/dress.png',
-              'assets/images/dress.png',
-            ],
-            showPlus: true,
-            plusCount: 2,
-          ),
-          _buildInboxItem(
-            context,
-            'Arlene McCoy',
-            'Hi! Would you sell this for \$25.00?',
-            '3 days ago',
-            'assets/icons/user_profile.png',
-            [
-              'assets/images/dress.png',
-              'assets/images/dress.png',
-              'assets/images/dress.png',
-            ],
-            showPlus: true,
-            plusCount: 2,
-          ),
+          SizedBox(height: 75.h,)
         ],
       ),
     );

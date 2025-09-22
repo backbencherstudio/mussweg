@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
+import 'package:get_it/get_it.dart';
+import '../../../../view_model/profile/sell_item_service_provider/sell_item_service.dart';
+import '../../../widgets/simple_apppbar.dart';
 import '../../widgets/custom_dropdown_field.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/custom_time_text_field.dart';
 
-class SellItemPage extends StatefulWidget {
+class SellItemPage extends StatelessWidget {
   const SellItemPage({super.key});
-  @override
-  State<SellItemPage> createState() => _SellItemPageState();
-}
-class _SellItemPageState extends State<SellItemPage> {
-  final List<String> _conditions = [
+
+  final List<String> _conditions = const [
     "New",
     "Used",
     "Refurbished",
   ];
-  String? _selectedCondition;
 
   @override
   Widget build(BuildContext context) {
+    final service = GetIt.instance<SellItemService>();
+
     return Scaffold(
-      appBar: SimpleApppbar(title: 'Sell an Item'),
+      appBar: const SimpleApppbar(title: 'Sell an Item'),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0.sp),
         child: Column(
@@ -56,7 +56,7 @@ class _SellItemPageState extends State<SellItemPage> {
                   SizedBox(height: 8.h),
                   Text(
                     'Add up to 20 photos.',
-                    style: TextStyle(color: Color(0xff929292), fontSize: 12.sp),
+                    style: TextStyle(color: const Color(0xff929292), fontSize: 12.sp),
                   ),
                 ],
               ),
@@ -66,7 +66,7 @@ class _SellItemPageState extends State<SellItemPage> {
               color: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.r),
-                side: BorderSide(color: Color(0xffE9E9EA), width: 1.5.w),
+                side: BorderSide(color: const Color(0xffE9E9EA), width: 1.5.w),
               ),
               elevation: 0,
               child: Padding(
@@ -81,61 +81,50 @@ class _SellItemPageState extends State<SellItemPage> {
                       title: 'Descriptions',
                       hintText: 'e.g. Blue Pottery Vase',
                     ),
-                    CustomDropdownField(
-                      title: 'Location',
-                      hintText: 'Select location',
-                      items: _conditions,
-                      value: _selectedCondition,
-                      onChanged: (String? value) {
-                        setState(() {
-                          _selectedCondition = value;
-                        });
-                      },
+
+                    AnimatedBuilder(
+                      animation: service,
+                      builder: (context, _) => Column(
+                        children: [
+                          CustomDropdownField(
+                            title: 'Location',
+                            hintText: 'Select location',
+                            items: _conditions,
+                            value: service.location,
+                            onChanged: service.setLocation,
+                          ),
+                          CustomDropdownField(
+                            title: 'Category',
+                            hintText: 'Select category',
+                            items: _conditions,
+                            value: service.category,
+                            onChanged: service.setCategory,
+                          ),
+                          CustomDropdownField(
+                            title: 'Size',
+                            hintText: 'Select size',
+                            items: _conditions,
+                            value: service.size,
+                            onChanged: service.setSize,
+                          ),
+                          CustomDropdownField(
+                            title: 'Color',
+                            hintText: 'Select color',
+                            items: _conditions,
+                            value: service.color,
+                            onChanged: service.setColor,
+                          ),
+                          CustomDropdownField(
+                            title: 'Condition',
+                            hintText: 'Select condition',
+                            items: _conditions,
+                            value: service.condition,
+                            onChanged: service.setCondition,
+                          ),
+                        ],
+                      ),
                     ),
-                    CustomDropdownField(
-                      title: 'Category',
-                      hintText: 'Select category',
-                      items: _conditions,
-                      value: _selectedCondition,
-                      onChanged: (String? value) {
-                        setState(() {
-                          _selectedCondition = value;
-                        });
-                      },
-                    ),
-                    CustomDropdownField(
-                      title: 'Size',
-                      hintText: 'Select size',
-                      items: _conditions,
-                      value: _selectedCondition,
-                      onChanged: (String? value) {
-                        setState(() {
-                          _selectedCondition = value;
-                        });
-                      },
-                    ),
-                    CustomDropdownField(
-                      title: 'Color',
-                      hintText: 'Select color',
-                      items: _conditions,
-                      value: _selectedCondition,
-                      onChanged: (String? value) {
-                        setState(() {
-                          _selectedCondition = value;
-                        });
-                      },
-                    ),
-                    CustomDropdownField(
-                      title: 'Conditions',
-                      hintText: 'Select Condition',
-                      items: _conditions,
-                      value: _selectedCondition,
-                      onChanged: (String? value) {
-                        setState(() {
-                          _selectedCondition = value;
-                        });
-                      },
-                    ),
+
                     CustomTimeField(title: 'Time'),
                   ],
                 ),

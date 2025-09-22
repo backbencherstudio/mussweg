@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get_it/get_it.dart';
 import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
+import '../../../../view_model/profile/transaction_service_provider/transaction_service.dart';
 
-class TransactionsHistoryPage extends StatefulWidget {
+class TransactionsHistoryPage extends StatelessWidget {
   const TransactionsHistoryPage({super.key});
-  @override
-  State<TransactionsHistoryPage> createState() => _TransactionsHistoryPageState();
-}
-class _TransactionsHistoryPageState extends State<TransactionsHistoryPage> {
-  String selectedFilter = 'All';
-  final List<Map<String, dynamic>> transactions = [
+
+  final List<Map<String, dynamic>> transactions = const [
     {'name': 'Jacob Jones', 'time': 'Today, 8:19 am', 'amount': '+20.00', 'color': Color(0xff116557), 'avatar': 'assets/icons/user_profile.png'},
     {'name': 'Darrell Steward', 'time': 'Today, 8:19 am', 'amount': '-20.00', 'color': Color(0xffB02E3A), 'avatar': 'assets/icons/user_profile.png'},
     {'name': 'Annette Black', 'time': 'Today, 8:19 am', 'amount': '-20.00', 'color': Color(0xffB02E3A), 'avatar': 'assets/icons/user_profile.png'},
@@ -18,10 +16,11 @@ class _TransactionsHistoryPageState extends State<TransactionsHistoryPage> {
     {'name': 'Albert Flores', 'time': 'Today, 8:19 am', 'amount': '+20.00', 'color': Color(0xff116557), 'avatar': 'assets/icons/user_profile.png'},
     {'name': 'Cody Fisher', 'time': 'Today, 8:19 am', 'amount': '+20.00', 'color': Color(0xff116557), 'avatar': 'assets/icons/user_profile.png'},
   ];
-  List<Map<String, dynamic>> get filteredTransactions {
-    if (selectedFilter == 'Sent Money') {
+
+  List<Map<String, dynamic>> _filteredTransactions(String filter) {
+    if (filter == 'Sent Money') {
       return transactions.where((tx) => tx['amount'].startsWith('-')).toList();
-    } else if (selectedFilter == 'Receive Money') {
+    } else if (filter == 'Receive Money') {
       return transactions.where((tx) => tx['amount'].startsWith('+')).toList();
     }
     return transactions;
@@ -29,50 +28,55 @@ class _TransactionsHistoryPageState extends State<TransactionsHistoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final service = GetIt.instance<TransactionService>();
+
     return Scaffold(
-      appBar: SimpleApppbar(title: 'Transactions History'),
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildFilterChip('All'),
-                _buildFilterChip('Sent Money'),
-                _buildFilterChip('Receive Money'),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView.separated(
-              itemCount: filteredTransactions.length,
-              separatorBuilder: (_, __) => Divider(color: Colors.grey.shade200),
-              itemBuilder: (context, index) {
-                final tx = filteredTransactions[index];
-                return _buildTransactionItem(
-                  context,
-                  tx['name'],
-                  tx['time'],
-                  tx['amount'],
-                  tx['color'],
-                  tx['avatar'],
-                );
-              },
-            ),
-          ),
-        ],
+      appBar: const SimpleApppbar(title: 'Transactions History'),
+      body: AnimatedBuilder(
+        animation: service,
+        builder: (context, _) {
+          final filteredTransactions = _filteredTransactions(service.selectedFilter);
+
+          return Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildFilterChip(service, 'All'),
+                    _buildFilterChip(service, 'Sent Money'),
+                    _buildFilterChip(service, 'Receive Money'),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ListView.separated(
+                  itemCount: filteredTransactions.length,
+                  separatorBuilder: (_, __) => Divider(color: Colors.grey.shade200),
+                  itemBuilder: (context, index) {
+                    final tx = filteredTransactions[index];
+                    return _buildTransactionItem(
+                      context,
+                      tx['name'],
+                      tx['time'],
+                      tx['amount'],
+                      tx['color'],
+                      tx['avatar'],
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
-  Widget _buildFilterChip(String text) {
-    bool isSelected = selectedFilter == text;
+  Widget _buildFilterChip(TransactionService service, String text) {
+    bool isSelected = service.selectedFilter == text;
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedFilter = text;
-        });
-      },
+      onTap: () => service.setFilter(text),
       child: Chip(
         label: Text(
           text,
@@ -89,6 +93,7 @@ class _TransactionsHistoryPageState extends State<TransactionsHistoryPage> {
       ),
     );
   }
+
   Widget _buildTransactionItem(
       BuildContext context,
       String name,

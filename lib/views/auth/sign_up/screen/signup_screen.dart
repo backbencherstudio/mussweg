@@ -94,11 +94,6 @@ class SignupScreen extends StatelessWidget {
           color: const Color(0xFFDE3526),
           textColor: Colors.white,
           onTap: () {
-            // TODO: Add validation and signup logic here
-            // Example:
-            // if (viewModel.validateForm()) {
-            //   viewModel.signUp();
-            // }
             Navigator.pushNamed(context, RouteNames.parentScreen);
           },
         );

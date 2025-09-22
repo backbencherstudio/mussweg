@@ -2,6 +2,12 @@ import 'package:get_it/get_it.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:mussweg/view_model/home_provider/home_screen_provider.dart';
 import 'package:mussweg/view_model/auth/signup/signup_viewmodel.dart';
+import 'package:mussweg/view_model/profile/transaction_service_provider/transaction_service.dart';
+
+import '../../view_model/profile/boost_product_service_provider/boost_product_service.dart';
+import '../../view_model/profile/language_selected_provider/language_select.dart';
+import '../../view_model/profile/notification_service_provider/notification_service.dart';
+import '../../view_model/profile/sell_item_service_provider/sell_item_service.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -12,6 +18,13 @@ void setup() {
 
   // Register factories
   getIt.registerFactory<SignUpViewModel>(() => SignUpViewModel());
+
+  //Register profiles language
+  getIt.registerSingleton<LanguageService>(LanguageService());
+  getIt.registerSingleton<SellItemService>(SellItemService());
+  getIt.registerSingleton<TransactionService>(TransactionService());
+  getIt.registerSingleton<NotificationService>(NotificationService());
+  getIt.registerSingleton<BoostProductService>(BoostProductService());
 
   print('GetIt setup completed successfully'); // Optional: for debugging
 }

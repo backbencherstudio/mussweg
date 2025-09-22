@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/core/routes/route_names.dart';
+import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:mussweg/views/profile/widgets/profile_menu_item.dart';
 import 'package:mussweg/views/widgets/simple_apppbar.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -70,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           const SizedBox(height: 8),
                           GestureDetector(
                             onTap: () {
-
+                                Navigator.pushNamed(context, RouteNames.sellerProfilePage);
                             },
                             child: const Text(
                               'Edit Profile',
@@ -109,7 +111,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ProfileMenuItem(
                     image: 'assets/icons/love.png',
                     title: 'Favorite items',
-                    onTap: () {},
+                    onTap: () {
+                      context.read<ParentScreensProvider>().onSelectedIndex(1);
+                    },
                   ),
                   Divider(color: Colors.grey[350]),
                   ProfileMenuItem(
@@ -156,6 +160,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Divider(color: Colors.grey[350]),
                 ],
               ),
+              SizedBox(height: 75.h,)
             ],
           ),
         ),
