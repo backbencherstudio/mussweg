@@ -3,11 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomPrimaryButton extends StatelessWidget {
   const CustomPrimaryButton({
-    super.key, required this.title, required this.onTap,
+    super.key, required this.title, required this.onTap, this.textStyleSize,
   });
 
   final String title;
   final VoidCallback onTap;
+  final double? textStyleSize;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +23,7 @@ class CustomPrimaryButton extends StatelessWidget {
         title,
         textAlign: TextAlign.center,
         style: TextStyle(
-          fontSize: 11.sp,
+          fontSize: textStyleSize ?? 11.sp,
           fontWeight: FontWeight.w500,
         ),
       ),

@@ -9,6 +9,7 @@ class CheckoutCartWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.white,
       margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -191,16 +192,16 @@ class CheckoutCartWidget extends StatelessWidget {
                 Text(
                   'Total',
                   style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16.sp,
                     color: Color(0xFF4A4C56),
                   ),
                 ),
                 Text(
                   '\$50.00',
                   style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16.sp,
                     color: Colors.red,
                   ),
                 ),

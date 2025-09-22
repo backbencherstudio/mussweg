@@ -1,89 +1,98 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/views/widgets/simple_apppbar.dart';
+import 'package:provider/provider.dart';
+
+import '../../view_model/parent_provider/parent_screen_provider.dart';
 
 class InboxPage extends StatelessWidget {
   const InboxPage({super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: SimpleApppbar(title: 'Inbox'),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              children: [
-                _buildInboxItem(
-                  context,
-                  'Kathryn Murphy',
-                  'Hi! Would you sell this for \$25.00?',
-                  'an hour ago',
-                  'assets/icons/user_profile.png',
-                  [
-                    'assets/images/dress.png',
-                    'assets/images/dress.png',
-                    'assets/images/dress.png',
-                  ],
-                ),
-                _buildInboxItem(
-                  context,
-                  'Devon Lane',
-                  'Hi! Would you sell this for \$25.00?',
-                  '10 hours ago',
-                  'assets/icons/user_profile.png',
-                  [
-                    'assets/images/dress.png',
-                    'assets/images/dress.png',
-                    'assets/images/dress.png',
-                  ],
-                ),
-                _buildInboxItem(
-                  context,
-                  'Annette Black',
-                  'Hi! Would you sell this for \$25.00?',
-                  '23 hours ago',
-                  'assets/icons/user_profile.png',
-                  [
-                    'assets/images/dress.png',
-                    'assets/images/dress.png',
-                    'assets/images/dress.png',
-                  ],
-                  showPlus: true,
-                  plusCount: 2,
-                ),
-                _buildInboxItem(
-                  context,
-                  'Darlene Robertson',
-                  'Hi! Would you sell this for \$25.00?',
-                  '2 days ago',
-                  'assets/icons/user_profile.png',
-                  [
-                    'assets/images/dress.png',
-                    'assets/images/dress.png',
-                    'assets/images/dress.png',
-                  ],
-                  showPlus: true,
-                  plusCount: 2,
-                ),
-                _buildInboxItem(
-                  context,
-                  'Arlene McCoy',
-                  'Hi! Would you sell this for \$25.00?',
-                  '3 days ago',
-                  'assets/icons/user_profile.png',
-                  [
-                    'assets/images/dress.png',
-                    'assets/images/dress.png',
-                    'assets/images/dress.png',
-                  ],
-                  showPlus: true,
-                  plusCount: 2,
-                ),
-              ],
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        context.read<ParentScreensProvider>().onSelectedIndex(0);
+      },
+      child: Scaffold(
+        appBar: SimpleApppbar(title: 'Inbox', onBack: () => context.read<ParentScreensProvider>().onSelectedIndex(0)),
+        body: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                children: [
+                  _buildInboxItem(
+                    context,
+                    'Kathryn Murphy',
+                    'Hi! Would you sell this for \$25.00?',
+                    'an hour ago',
+                    'assets/icons/user_profile.png',
+                    [
+                      'assets/images/dress.png',
+                      'assets/images/dress.png',
+                      'assets/images/dress.png',
+                    ],
+                  ),
+                  _buildInboxItem(
+                    context,
+                    'Devon Lane',
+                    'Hi! Would you sell this for \$25.00?',
+                    '10 hours ago',
+                    'assets/icons/user_profile.png',
+                    [
+                      'assets/images/dress.png',
+                      'assets/images/dress.png',
+                      'assets/images/dress.png',
+                    ],
+                  ),
+                  _buildInboxItem(
+                    context,
+                    'Annette Black',
+                    'Hi! Would you sell this for \$25.00?',
+                    '23 hours ago',
+                    'assets/icons/user_profile.png',
+                    [
+                      'assets/images/dress.png',
+                      'assets/images/dress.png',
+                      'assets/images/dress.png',
+                    ],
+                    showPlus: true,
+                    plusCount: 2,
+                  ),
+                  _buildInboxItem(
+                    context,
+                    'Darlene Robertson',
+                    'Hi! Would you sell this for \$25.00?',
+                    '2 days ago',
+                    'assets/icons/user_profile.png',
+                    [
+                      'assets/images/dress.png',
+                      'assets/images/dress.png',
+                      'assets/images/dress.png',
+                    ],
+                    showPlus: true,
+                    plusCount: 2,
+                  ),
+                  _buildInboxItem(
+                    context,
+                    'Arlene McCoy',
+                    'Hi! Would you sell this for \$25.00?',
+                    '3 days ago',
+                    'assets/icons/user_profile.png',
+                    [
+                      'assets/images/dress.png',
+                      'assets/images/dress.png',
+                      'assets/images/dress.png',
+                    ],
+                    showPlus: true,
+                    plusCount: 2,
+                  ),
+                ],
+              ),
             ),
-          ),
-          SizedBox(height: 75.h,)
-        ],
+            SizedBox(height: 75.h,)
+          ],
+        ),
       ),
     );
   }

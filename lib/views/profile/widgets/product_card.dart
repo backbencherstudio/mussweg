@@ -112,12 +112,7 @@ class ProductCard extends StatelessWidget {
                         Positioned(
                           top: 10.h,
                           left: 18.w,
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(context, RouteNames.boostProductPage);
-                            },
-                            child: Image.asset('assets/icons/boost.png', scale: 1.8),
-                          ),
+                          child: Image.asset('assets/icons/boost.png', scale: 1.8),
                         ),
                     ],
                   ),
@@ -191,11 +186,16 @@ class ProductCard extends StatelessWidget {
                                 fontSize: 16.sp,
                               ),
                             ),
-                            SizedBox(width: 15.w),
+                            Spacer(),
                             if (showBoostBottom)
-                              Image.asset(
-                                'assets/icons/boost_product.png',
-                                scale: 3.4,
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pushReplacementNamed(context, RouteNames.boostProductPage);
+          },
+                                child: Image.asset(
+                                  'assets/icons/boost_product.png',
+                                  scale: 3.4,
+                                ),
                               ),
                           ],
                         ),

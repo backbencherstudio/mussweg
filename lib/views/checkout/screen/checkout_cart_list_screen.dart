@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/core/routes/route_names.dart';
+import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:mussweg/views/checkout/widgets/checkout_form.dart';
+import 'package:provider/provider.dart';
 
 
 import '../../profile/widgets/simple_apppbar.dart';
@@ -25,7 +27,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleApppbar(title: 'Cart List'),
+      appBar: SimpleApppbar(title: 'Cart List',),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: 16.h),
@@ -160,6 +162,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   ),
                 ),
               ),
+              SizedBox(height: 75.h,)
             ],
           ),
         ),

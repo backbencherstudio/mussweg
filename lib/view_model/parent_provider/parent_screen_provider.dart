@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mussweg/views/cart/cart_screen.dart';
+import 'package:mussweg/views/checkout/screen/checkout_cart_list_screen.dart';
 import 'package:mussweg/views/inbox/screen.dart';
 import 'package:mussweg/views/profile/screen.dart';
 
@@ -10,7 +12,7 @@ class ParentScreensProvider with ChangeNotifier {
   List<Widget> screens = [
     HomeScreen(),
     WishlistScreen(),
-    HomeScreen(),
+    CartScreen(),
     InboxPage(),
     ProfileScreen(),
 

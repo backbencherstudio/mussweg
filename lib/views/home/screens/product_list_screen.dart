@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
 
 import '../../../core/routes/route_names.dart';
 
@@ -14,13 +15,7 @@ class ProductListScreen extends StatelessWidget {
       {"title": "Oldest Product"},
     ];
     return Scaffold(
-      appBar: AppBar(
-        surfaceTintColor: Colors.transparent,
-        backgroundColor: Colors.transparent,
-        leading: Icon(Icons.arrow_back_ios_new),
-        title: Text("Fashion Products"),
-        actions: [Icon(Icons.more_vert)],
-      ),
+      appBar: SimpleApppbar(title: 'Fashion Products'),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -89,6 +84,7 @@ class ProductListScreen extends StatelessWidget {
                         );
                       },
                       child: Container(
+
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
@@ -149,11 +145,7 @@ class ProductListScreen extends StatelessWidget {
                                 children: [
                                   Text(
                                     "Man Exclusive T-Shirt",
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
+                                    style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
                                   ),
                                   Text(
                                     "\$20.00",
@@ -173,21 +165,8 @@ class ProductListScreen extends StatelessWidget {
                               child: Text(
                                 "Size XL (New Condition)",
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 13.sp,
                                   color: Colors.grey,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8.0,
-                              ),
-                              child: Text(
-                                "\$12.99",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
                                 ),
                               ),
                             ),
@@ -199,22 +178,22 @@ class ProductListScreen extends StatelessWidget {
                                     TextSpan(
                                       text: "Aug 6, 13:55",
                                       style: TextStyle(
-                                        fontSize: 12,
+                                        fontSize: 12.sp,
                                         color: Colors.black,
                                       ),
                                     ),
                                     TextSpan(
                                       text: " (12h : 12m : 30s)",
                                       style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.black,
+                                        fontSize: 12.sp,
+                                        color: Colors.green,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
                             ),
-
+                            SizedBox(height: 4.h,),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
