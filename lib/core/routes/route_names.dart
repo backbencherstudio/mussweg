@@ -14,11 +14,19 @@ class RouteNames {
   static const String viewProfileScreen = '/viewProfileScreen';
 
   static const String wishlistScreen = '/wishlistScreen';
+  static const String wishListScreen = '/wishListScreen';
+  static const String boughtItemsScreen = '/boughtItemsScreen';
+  static const String sellingItemsScreen = '/sellingItemsScreen';
   static const String sellItemPage = '/sellItemPage';
   static const String editProductPage = '/editProductPage';
   static const String boostProductPage = '/boostProductPage';
   static const String boostSuccessPage = '/boostSuccessPage';
   static const String onboardingScreen = '/onboardingScreen';
+  static const String inboxPage = '/inboxPage';
+  static const String accountSettingsPage = '/accountSettingsPage';
+  static const String notificationsPage = '/notificationsPage';
+  static const String languagePage = '/languagePage';
+  static const String transactionsHistoryPage = '/transactionsHistoryPage';
 
 
 

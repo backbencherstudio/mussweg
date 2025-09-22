@@ -115,37 +115,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ProfileMenuItem(
                     image: 'assets/icons/sell.png',
                     title: 'Bought items',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(context, RouteNames.boughtItemsScreen);
+                    },
                   ),
                   Divider(color: Colors.grey[350]),
                   ProfileMenuItem(
                     image: 'assets/icons/sell.png',
                     title: 'Selling items',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(context, RouteNames.sellingItemsScreen);
+                    },
                   ),
                   Divider(color: Colors.grey[350]),
                   ProfileMenuItem(
                     image: 'assets/icons/notification.png',
                     title: 'Notifications',
-                    onTap: () {},
+                    onTap: () { Navigator.pushNamed(context, RouteNames.notificationsPage);},
                   ),
                   Divider(color: Colors.grey[350]),
                   ProfileMenuItem(
                     image: 'assets/icons/credit_card.png',
                     title: 'Transactions History',
-                    onTap: () {},
+                    onTap: () { Navigator.pushNamed(context, RouteNames.transactionsHistoryPage);},
                   ),
                   Divider(color: Colors.grey[350]),
                   ProfileMenuItem(
                     image: 'assets/icons/profile_user.png',
                     title: 'Account Settings',
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(context, RouteNames.accountSettingsPage);
+                    },
                   ),
                   Divider(color: Colors.grey[350]),
                   ProfileMenuItem(
                     image: 'assets/icons/language.png',
                     title: 'Language',
-                    onTap: () {},
+                    onTap: () { Navigator.pushNamed(context, RouteNames.languagePage);},
                   ),
                   Divider(color: Colors.grey[350]),
                 ],
