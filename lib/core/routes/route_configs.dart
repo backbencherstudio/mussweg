@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/views/bought_items/bought_items_screen.dart';
+import 'package:mussweg/views/cart/cart_screen.dart';
 import 'package:mussweg/views/checkout/screen/checkout_cart_list_screen.dart';
 
 import 'package:mussweg/views/onboarding/screen/onboarding_screen.dart';
@@ -62,5 +63,6 @@ class AppRoutes {
     RouteNames.checkoutScreen:(context) => const CheckoutScreen(),
     RouteNames.stripeCheckoutScreen:(context) => const StripeCheckoutScreen(),
     RouteNames.orderPlacedScreen:(context) => const OrderPlacedScreen(),
+    RouteNames.cartScreen:(context) => const CartScreen(),
   };
 }

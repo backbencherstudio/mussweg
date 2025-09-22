@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mussweg/views/widgets/simple_apppbar.dart';
 
 class ViewProfileScreen extends StatelessWidget {
   const ViewProfileScreen({super.key});
@@ -6,14 +9,7 @@ class ViewProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        surfaceTintColor: Colors.transparent,
-        centerTitle: true,
-        leading: Icon(Icons.arrow_back_ios_new, color: Colors.black),
-        title: Text("View Profile", style: TextStyle(color: Colors.black)),
-        actions: [Icon(Icons.more_horiz, color: Colors.black)],
-      ),
+      appBar: SimpleApppbar(title: 'View Profile'),
       body: Column(
         children: [
           Stack(
@@ -55,7 +51,7 @@ class ViewProfileScreen extends StatelessWidget {
                     SizedBox(height: 6),
                     Row(
                       children: [
-                        Icon(Icons.location_on, color: Colors.grey, size: 16),
+                        SvgPicture.asset('assets/icons/location-04.svg'),
                         SizedBox(width: 4),
                         Text(
                           "Switzerland",
@@ -88,114 +84,174 @@ class ViewProfileScreen extends StatelessWidget {
           ),
           SizedBox(height: 16),
 
-          DefaultTabController(
-            length: 2,
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: TabBar(
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    labelColor: Colors.black,
-                    unselectedLabelColor: Colors.grey,
-                    indicatorColor: Colors.red,
-                    tabs: [
-                      Tab(text: 'Closet'),
-                      Tab(text: 'Reviews'),
-                    ],
+          Expanded(
+            child: DefaultTabController(
+              length: 2,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: TabBar(
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      labelColor: Colors.black,
+                      unselectedLabelColor: Colors.grey,
+                      indicatorColor: Colors.red,
+                      tabs: [
+                        Tab(text: 'Closet'),
+                        Tab(text: 'Reviews'),
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(height: 10),
-                SizedBox(
-                  height: 350,
-                  child: TabBarView(
-                    children: [
-                      GridView.builder(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 10,
-                        ),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 16.0,
-                          mainAxisSpacing: 16.0,
-                          childAspectRatio: 0.56,
-                        ),
-                        itemCount: 4,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Colors.grey),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Image.asset(
-                                      "assets/images/shirt.png", // Replace with product image
-                                      width: double.infinity,
-                                      height:
-                                          120, // Adjust height to fit the grid
-                                      fit: BoxFit.cover,
+                  SizedBox(height: 10),
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        GridView.builder(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.0,
+                            vertical: 10,
+                          ),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 8.w,
+                            mainAxisSpacing: 8.w,
+                            childAspectRatio: 0.65,
+                          ),
+                          itemCount: 4,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Card(
+                              color: Colors.white,
+                              elevation: 1,
+                              child: Padding(
+                                padding: EdgeInsets.all(8.w),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  spacing: 4.h,
+                                  children: [
+                                    Stack(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            12.r,
+                                          ),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              border: Border.all(
+                                                color: Colors.grey,
+                                              ),
+                                              borderRadius: BorderRadius.circular(
+                                                12.r,
+                                              ),
+                                            ),
+                                            child: Image.asset(
+                                              'assets/images/post_card.png',
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: 8.w,
+                                          left: 8.w,
+                                          child: Container(
+                                            height: 36.h,
+                                            width: 36.w,
+                                            padding: EdgeInsets.all(4.w),
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Color(0xffC7C8C8),
+                                            ),
+                                            child: Center(
+                                              child: Icon(
+                                                Icons.favorite,
+                                                color: Colors.red,
+                                                size: 20.h,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  SizedBox(height: 8),
-                                  Text(
-                                    "Men Exclusive T-Shirt",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    "Size XL (New Condition)",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    "\$20.00",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  Spacer(),
-                                  // Favorite Icon and Cart Icon
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      IconButton(
-                                        icon: Icon(Icons.favorite_border),
-                                        onPressed: () {},
+                                    Text(
+                                      'Men Exclusive T-Shirt',
+                                      style: TextStyle(
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.w600,
                                       ),
-                                      IconButton(
-                                        icon: Icon(Icons.shopping_cart),
-                                        onPressed: () {},
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    Text(
+                                      'Size Xl (New condition)',
+                                      style: TextStyle(
+                                        fontSize: 13.sp,
+                                        color: Colors.grey,
                                       ),
-                                    ],
-                                  ),
-                                ],
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+
+                                    Text(
+                                      'Aug 6, 13:55 ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 13.sp,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    Text(
+                                      '(12h: 12m :12s)',
+                                      style: TextStyle(
+                                        fontSize: 13.sp,
+                                        color: Colors.green.shade600,
+                                        fontStyle: FontStyle.italic,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+
+                                    Divider(
+                                      color: Colors.grey.shade200,
+                                      thickness: .7.h,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 8.w,
+                                        vertical: 2.h,
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            '\$100',
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 18.sp,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Image.asset(
+                                            'assets/icons/cart.png',
+                                            color: Colors.red,
+                                            height: 24.h,
+                                            width: 24.h,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                      // Reviews Tab
-                      Center(child: Text("Reviews Section (Coming Soon)")),
-                    ],
+                            );
+                          },
+                        ),
+                        // Reviews Tab
+                        Center(child: Text("Reviews Section (Coming Soon)")),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  SizedBox(height: 16.h,)
+                ],
+              ),
             ),
           ),
         ],

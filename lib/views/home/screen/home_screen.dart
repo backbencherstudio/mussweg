@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/routes/route_names.dart';
 import '../../../view_model/home_provider/home_screen_provider.dart';
+import '../../widgets/custom_product_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -53,7 +56,9 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
                     Spacer(),
-                    Image.asset("assets/icons/cart.png", scale: 1.5),
+                    GestureDetector(onTap: () {
+                      context.read<ParentScreensProvider>().onSelectedIndex(2);
+                    }, child: Image.asset("assets/icons/cart.png", scale: 1.5)),
                     SizedBox(width: 12.w), // Adjusted spacing
                     Container(
                       padding: EdgeInsets.all(12),
@@ -133,7 +138,7 @@ class HomeScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(5),
                                 color: Color(0xffF2F1EF),
                               ),
-                              child: Image.asset(
+                              child: SvgPicture.asset(
                                 feature["image"],
                                 height: 30.h,
                                 width: 30.w, // Ensure images are responsive
@@ -180,86 +185,7 @@ class HomeScreen extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     itemCount: 6,
                     itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.grey),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(8),
-                                child: Stack(
-                                  alignment: Alignment.topRight,
-                                  children: [
-                                    // Image widget
-                                    Image.asset(
-                                      "assets/images/shirt.png",
-                                      fit: BoxFit.cover,
-                                    ),
-                                    // Favorite Icon
-                                    Positioned(
-                                      left: 8,
-                                      top: 8,
-                                      child: Container(
-                                        padding: EdgeInsets.all(4),
-                                        decoration: BoxDecoration(
-                                          color: Color(0xffC7C7C7),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Icon(
-                                          Icons
-                                              .favorite_border, // Use Icons.favorite for filled
-                                          color: Colors.white,
-                                          size: 24,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: 8.h,
-                              ), // Added space between the image and text
-                              // Text for the product title, size, and price
-                              Text(
-                                "Max Exclusive T-Shirt",
-                                style: TextStyle(fontSize: 14.sp),
-                              ),
-                              Text(
-                                "Size XL (New Condition)",
-                                style: TextStyle(fontSize: 12.sp),
-                              ),
-                              Text(
-                                "\$12.99",
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: "Aug 6 ,13:55",
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                    TextSpan(
-                                      text: "(12h :12m :30s)",
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Text("\$20.00"),
-                            ],
-                          ),
-                        ),
-                      );
+                      return CustomProductCard();
                     },
                   ),
                 ),
@@ -287,86 +213,7 @@ class HomeScreen extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     itemCount: 6,
                     itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.grey),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(8),
-                                child: Stack(
-                                  alignment: Alignment.topRight,
-                                  children: [
-                                    // Image widget
-                                    Image.asset(
-                                      "assets/images/shirt.png",
-                                      fit: BoxFit.cover,
-                                    ),
-                                    // Favorite Icon
-                                    Positioned(
-                                      left: 8,
-                                      top: 8,
-                                      child: Container(
-                                        padding: EdgeInsets.all(4),
-                                        decoration: BoxDecoration(
-                                          color: Color(0xffC7C7C7),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Icon(
-                                          Icons
-                                              .favorite_border, // Use Icons.favorite for filled
-                                          color: Colors.white,
-                                          size: 24,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: 8.h,
-                              ), // Added space between the image and text
-                              // Text for the product title, size, and price
-                              Text(
-                                "Max Exclusive T-Shirt",
-                                style: TextStyle(fontSize: 14.sp),
-                              ),
-                              Text(
-                                "Size XL (New Condition)",
-                                style: TextStyle(fontSize: 12.sp),
-                              ),
-                              Text(
-                                "\$12.99",
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: "Aug 6 ,13:55",
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                    TextSpan(
-                                      text: "(12h :12m :30s)",
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Text("\$20.00"),
-                            ],
-                          ),
-                        ),
-                      );
+                      return CustomProductCard();
                     },
                   ),
                 ),
@@ -394,86 +241,7 @@ class HomeScreen extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     itemCount: 6,
                     itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.grey),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(8),
-                                child: Stack(
-                                  alignment: Alignment.topRight,
-                                  children: [
-                                    // Image widget
-                                    Image.asset(
-                                      "assets/images/shirt.png",
-                                      fit: BoxFit.cover,
-                                    ),
-                                    // Favorite Icon
-                                    Positioned(
-                                      left: 8,
-                                      top: 8,
-                                      child: Container(
-                                        padding: EdgeInsets.all(4),
-                                        decoration: BoxDecoration(
-                                          color: Color(0xffC7C7C7),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Icon(
-                                          Icons
-                                              .favorite_border, // Use Icons.favorite for filled
-                                          color: Colors.white,
-                                          size: 24,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: 8.h,
-                              ), // Added space between the image and text
-                              // Text for the product title, size, and price
-                              Text(
-                                "Max Exclusive T-Shirt",
-                                style: TextStyle(fontSize: 14.sp),
-                              ),
-                              Text(
-                                "Size XL (New Condition)",
-                                style: TextStyle(fontSize: 12.sp),
-                              ),
-                              Text(
-                                "\$12.99",
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: "Aug 6 ,13:55",
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                    TextSpan(
-                                      text: "(12h :12m :30s)",
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Text("\$20.00"),
-                            ],
-                          ),
-                        ),
-                      );
+                      return CustomProductCard();
                     },
                   ),
                 ),

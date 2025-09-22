@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
+import 'package:mussweg/views/widgets/simple_apppbar.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/routes/route_names.dart';
 
@@ -8,18 +11,7 @@ class ProductDetailScreens extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        surfaceTintColor: Colors.transparent,
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: Icon(Icons.arrow_back_ios_new, color: Colors.black),
-        ),
-        title: Text("Product Details", style: TextStyle(color: Colors.black)),
-        actions: [Icon(Icons.more_horiz, color: Colors.black)],
-      ),
+      appBar: SimpleApppbar(title: 'Product Details'),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -165,7 +157,7 @@ class ProductDetailScreens extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     decoration: BoxDecoration(
-                      color: Color(0xffFDF3F2),
+                      color: Colors.grey.shade50,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
@@ -263,7 +255,10 @@ class ProductDetailScreens extends StatelessWidget {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        context.read<ParentScreensProvider>().onSelectedIndex(2);
+                        Navigator.pushNamed(context, RouteNames.parentScreen);
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         shape: RoundedRectangleBorder(

@@ -2,12 +2,16 @@ import 'package:flutter/cupertino.dart';
 
 class HomeScreenProvider extends ChangeNotifier {
   final List<Map<String, dynamic>> _featureList = [
-    {"image": "assets/images/fashion.png", "title": "Fashion"},
-    {"image": "assets/images/home.png", "title": "Home"},
-    {"image": "assets/images/electro.png", "title": "Electronics"},
-    {"image": "assets/images/sports.png", "title": "Sports"},
-    {"image": "assets/images/jewellery.png", "title": "Jewellery"},
-    {"image": "assets/images/vehicles.png", "title": "Vehicles"},
+    {"image": "assets/icons/fasion.svg", "title": "Fashion"},
+    {"image": "assets/icons/applience.svg", "title": "Home"},
+    {"image": "assets/icons/electronics.svg", "title": "Electronics"},
+    {"image": "assets/icons/sports.svg", "title": "Sports"},
+    {"image": "assets/icons/jewellery.svg", "title": "Jewellery"},
+    {"image": "assets/icons/vehicle.svg", "title": "Vehicles"},
+    {"image": "assets/icons/food.svg", "title": "Vehicles"},
+    {"image": "assets/icons/gadgets.svg", "title": "Vehicles"},
+    {"image": "assets/icons/book.svg", "title": "Vehicles"},
+    {"image": "assets/icons/library.svg", "title": "Vehicles"},
   ];
 
   List<Map<String, dynamic>> get featureList => _featureList;
