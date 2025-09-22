@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../../view_model/auth/signup/signup_viewmodel.dart';
+import '../../../parent_screen/screen/parent_screen.dart';
 import '../widgets/buttons.dart';
 import '../widgets/signup_email_text_form_field_widget.dart';
 import '../widgets/signup_password_text_form_field_widget.dart';
@@ -17,7 +18,7 @@ class SignupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => GetIt.instance<SignUpViewModel>(),
+      create: (_) => GetIt.instance<SignUpViewModel>(), // This will work now
       child: Scaffold(
         body: SingleChildScrollView(
           child: Padding(
@@ -40,7 +41,6 @@ class SignupScreen extends StatelessWidget {
                   title: 'Sign In With Google',
                   image: 'assets/icons/google-icon.png',
                 ),
-
                 SizedBox(height: 10.h),
                 const SignUpFormButton(
                   title: 'Sign In With Apple',
@@ -91,14 +91,15 @@ class SignupScreen extends StatelessWidget {
       builder: (context, viewModel, child) {
         return PrimaryButton(
           title: 'Sign Up',
-          color: Color(0xFFDE3526),
+          color: const Color(0xFFDE3526),
           textColor: Colors.white,
           onTap: () {
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              RouteNames.parentScreen,
-              (route) => false,
-            );
+            // TODO: Add validation and signup logic here
+            // Example:
+            // if (viewModel.validateForm()) {
+            //   viewModel.signUp();
+            // }
+            Navigator.pushNamed(context, RouteNames.parentScreen);
           },
         );
       },
@@ -116,12 +117,17 @@ class SignupScreen extends StatelessWidget {
             endIndent: 7.0,
           ),
         ),
-        Text(
-          'Or Join With',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Color(0xFF777980)),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
+          child: Text(
+            'Or Join With',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: const Color(0xFF777980),
+              fontSize: 14.sp,
+            ),
+          ),
         ),
-
         const Expanded(
           child: Divider(
             color: Color(0xFFE9E9E9),
@@ -140,19 +146,26 @@ class SignupScreen extends StatelessWidget {
         text: TextSpan(
           children: [
             TextSpan(
-              text: "Don't have an account? ",
+              text: "Already have an account? ",
               style: TextStyle(
                 fontSize: 12.sp,
-                  color: Color(0xFF4A4C56)),
+                color: const Color(0xFF4A4C56),
+              ),
             ),
             TextSpan(
-              text: 'Sign Up',
+              text: 'Sign In',
               style: TextStyle(
-                  fontSize: 12.sp,
-                  color: Colors.red),
+                fontSize: 12.sp,
+                color: Colors.red,
+                fontWeight: FontWeight.w600,
+              ),
               recognizer: TapGestureRecognizer()
-                ..onTap = () =>
-                    Navigator.pushNamed(context, RouteNames.parentScreen),
+                ..onTap = () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ParentScreen()),
+                  );
+                },
             ),
           ],
         ),

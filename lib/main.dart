@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mussweg/core/provider/inject.dart'; // Import inject.dart
+import 'package:mussweg/view_model/app_providers.dart';
 import 'package:provider/provider.dart';
+
 import 'core/provider/app_provider.dart';
-import 'core/provider/inject.dart';
 import 'core/routes/route_configs.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize dependency injection BEFORE runApp
+  setup();
+
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await ScreenUtil.ensureScreenSize();
 
-  setup();
-
-  // Run the app
   runApp(const MyApp());
 }
 
