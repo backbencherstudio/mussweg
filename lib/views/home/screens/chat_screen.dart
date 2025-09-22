@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mussweg/core/routes/route_names.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
@@ -195,6 +196,7 @@ class ChatScreen extends StatelessWidget {
               ],
             ),
           ),
+          SizedBox(height: 25.h,)
         ],
       ),
     );

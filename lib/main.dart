@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get_it/get_it.dart';
 import 'package:mussweg/core/provider/inject.dart'; // Import inject.dart
-import 'package:mussweg/view_model/app_providers.dart';
-import 'package:mussweg/view_model/profile/language_selected_provider/language_select.dart';
 import 'package:provider/provider.dart';
-
 import 'core/provider/app_provider.dart';
 import 'core/routes/route_configs.dart';
 
