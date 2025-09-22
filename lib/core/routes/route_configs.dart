@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/views/bought_items/bought_items_screen.dart';
+import 'package:mussweg/views/checkout/screen/checkout_cart_list_screen.dart';
 
 import 'package:mussweg/views/onboarding/screen/onboarding_screen.dart';
 
@@ -9,6 +10,7 @@ import 'package:mussweg/views/selling_items/selling_items_screen.dart';
 import 'package:mussweg/views/splash/splash_screen.dart';
 import 'package:mussweg/views/wishlist/wishlist_screen.dart';
 
+import '../../views/checkout/screen/stripe_checkout_screen.dart';
 import '../../views/home/screens/chat_screen.dart';
 import '../../views/home/screens/product_detail_screens.dart';
 import '../../views/home/screens/product_list_screen.dart';
@@ -55,5 +57,8 @@ class AppRoutes {
     RouteNames.languagePage: (context) =>  LanguagePage(),
     RouteNames.transactionsHistoryPage: (context) => const TransactionsHistoryPage(),
     //RouteNames.wishlistScreen: (context) => const WishlistScreen(),
+
+    RouteNames.checkoutScreen:(context) => const CheckoutScreen(),
+    RouteNames.stripeCheckoutScreen:(context) => const StripeCheckoutScreen(),
   };
 }
