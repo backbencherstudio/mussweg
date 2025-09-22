@@ -11,6 +11,7 @@ class ProfileScreen extends StatefulWidget {
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
+
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
@@ -20,7 +21,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         context.read<ParentScreensProvider>().onSelectedIndex(0);
       },
       child: Scaffold(
-        appBar: SimpleApppbar(title: 'Profile', onBack: () => context.read<ParentScreensProvider>().onSelectedIndex(0),),
+        appBar: SimpleApppbar(
+          title: 'Profile',
+          onBack: () =>
+              context.read<ParentScreensProvider>().onSelectedIndex(0),
+        ),
         body: Padding(
           padding: EdgeInsets.all(8.0.sp),
           child: SingleChildScrollView(
@@ -65,7 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   scale: 1,
                                 ),
                                 Text(
-                                  'Switzerland',
+                                  '',
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: Colors.grey,
@@ -77,7 +82,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             const SizedBox(height: 8),
                             GestureDetector(
                               onTap: () {
-                                  Navigator.pushNamed(context, RouteNames.sellerProfilePage);
+                                Navigator.pushNamed(
+                                  context,
+                                  RouteNames.sellerProfilePage,
+                                );
                               },
                               child: const Text(
                                 'Edit Profile',
@@ -102,14 +110,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   thickness: 1,
                   color: Color.fromARGB(255, 235, 235, 235),
                 ),
-                SizedBox(height: 10.h,),
+                SizedBox(height: 10.h),
                 Column(
                   children: [
                     ProfileMenuItem(
                       image: 'assets/icons/user.png',
                       title: 'My Profile',
                       onTap: () {
-                        Navigator.pushNamed(context, RouteNames.sellerProfilePage);
+                        Navigator.pushNamed(
+                          context,
+                          RouteNames.sellerProfilePage,
+                        );
                       },
                     ),
                     Divider(color: Colors.grey[350]),
@@ -117,7 +128,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       image: 'assets/icons/love.png',
                       title: 'Favorite items',
                       onTap: () {
-                        context.read<ParentScreensProvider>().onSelectedIndex(1);
+                        context.read<ParentScreensProvider>().onSelectedIndex(
+                          1,
+                        );
                       },
                     ),
                     Divider(color: Colors.grey[350]),
@@ -125,7 +138,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       image: 'assets/icons/sell.png',
                       title: 'Bought items',
                       onTap: () {
-                        Navigator.pushNamed(context, RouteNames.boughtItemsScreen);
+                        Navigator.pushNamed(
+                          context,
+                          RouteNames.boughtItemsScreen,
+                        );
                       },
                     ),
                     Divider(color: Colors.grey[350]),
@@ -133,39 +149,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       image: 'assets/icons/sell.png',
                       title: 'Selling items',
                       onTap: () {
-                        Navigator.pushNamed(context, RouteNames.sellingItemsScreen);
+                        Navigator.pushNamed(
+                          context,
+                          RouteNames.sellingItemsScreen,
+                        );
                       },
                     ),
                     Divider(color: Colors.grey[350]),
                     ProfileMenuItem(
                       image: 'assets/icons/notification.png',
                       title: 'Notifications',
-                      onTap: () { Navigator.pushNamed(context, RouteNames.notificationsPage);},
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          RouteNames.notificationsPage,
+                        );
+                      },
                     ),
                     Divider(color: Colors.grey[350]),
                     ProfileMenuItem(
                       image: 'assets/icons/credit_card.png',
                       title: 'Transactions History',
-                      onTap: () { Navigator.pushNamed(context, RouteNames.transactionsHistoryPage);},
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          RouteNames.transactionsHistoryPage,
+                        );
+                      },
                     ),
                     Divider(color: Colors.grey[350]),
                     ProfileMenuItem(
                       image: 'assets/icons/profile_user.png',
                       title: 'Account Settings',
                       onTap: () {
-                        Navigator.pushNamed(context, RouteNames.accountSettingsPage);
+                        Navigator.pushNamed(
+                          context,
+                          RouteNames.accountSettingsPage,
+                        );
                       },
                     ),
                     Divider(color: Colors.grey[350]),
                     ProfileMenuItem(
                       image: 'assets/icons/language.png',
                       title: 'Language',
-                      onTap: () { Navigator.pushNamed(context, RouteNames.languagePage);},
+                      onTap: () {
+                        Navigator.pushNamed(context, RouteNames.languagePage);
+                      },
                     ),
                     Divider(color: Colors.grey[350]),
                   ],
                 ),
-                SizedBox(height: 75.h,)
+                SizedBox(height: 75.h),
               ],
             ),
           ),

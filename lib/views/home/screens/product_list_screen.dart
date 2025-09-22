@@ -33,7 +33,7 @@ class ProductListScreen extends StatelessWidget {
                     return Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                       child: GestureDetector(
-                        onTap: (){},
+                        onTap: () {},
                         child: Container(
                           padding: EdgeInsets.symmetric(
                             horizontal: 15,
@@ -50,9 +50,12 @@ class ProductListScreen extends StatelessWidget {
                                   context: context,
                                   builder: (context) {
                                     return const Dialog(
+                                      backgroundColor: Colors.white,
                                       insetPadding: EdgeInsets.all(16),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(16)),
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(16),
+                                        ),
                                       ),
                                       child: FilterPage(),
                                     );
@@ -71,7 +74,6 @@ class ProductListScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-
                       ),
                     );
                   },
@@ -99,14 +101,13 @@ class ProductListScreen extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         Navigator.pushNamed(
                           context,
                           RouteNames.productDetailScreens,
                         );
                       },
                       child: Container(
-
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
@@ -163,11 +164,15 @@ class ProductListScreen extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "Man Exclusive T-Shirt",
-                                    style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                   Text(
                                     "\$20.00",
@@ -215,12 +220,13 @@ class ProductListScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 4.h,),
+                            SizedBox(height: 4.h),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 SizedBox(
-                                  width: MediaQuery.of(context).size.width * 0.4,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.4,
                                   child: OutlinedButton(
                                     style: OutlinedButton.styleFrom(
                                       side: BorderSide(color: Colors.red),
@@ -238,7 +244,8 @@ class ProductListScreen extends StatelessWidget {
                                 ),
                                 SizedBox(width: 13.w),
                                 SizedBox(
-                                  width: MediaQuery.of(context).size.width * 0.4,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.4,
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.red,
@@ -272,11 +279,6 @@ class ProductListScreen extends StatelessWidget {
   }
 }
 
-
-
-
-
-
 class FilterPage extends StatefulWidget {
   const FilterPage({super.key});
 
@@ -293,16 +295,9 @@ class _FilterPageState extends State<FilterPage> {
     'Makeup',
     'Sunglass',
     'Men Clothes',
-    'Woman Clothes'
+    'Woman Clothes',
   ];
-  final List<String> _times = [
-    '12hr',
-    '20hr',
-    '24hr',
-    '30hr',
-    '40hr',
-    '48hr'
-  ];
+  final List<String> _times = ['12hr', '20hr', '24hr', '30hr', '40hr', '48hr'];
 
   String? _selectedCategory;
   String? _selectedTime;
@@ -312,35 +307,32 @@ class _FilterPageState extends State<FilterPage> {
     return Padding(
       padding: const EdgeInsets.all(24),
       child: SingleChildScrollView(
-        child: Container(
-          color: Colors.white,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 10),
-              _buildSectionTitle('Price Range'),
-              _buildPriceSlider(),
-              _buildSectionTitle('Categories'),
-              _buildChipRow(_categories, _selectedCategory, (chip) {
-                setState(() {
-                  _selectedCategory = chip;
-                });
-              }),
-              _buildSectionTitle('Time'),
-              _buildChipRow(_times, _selectedTime, (chip) {
-                setState(() {
-                  _selectedTime = chip;
-                });
-              }),
-              _buildSectionTitle('Location'),
-              _buildLocationDropdown(),
-              _buildCustomLocation(),
-              const SizedBox(height: 32),
-              _buildButtons(),
-            ],
-          ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeader(),
+            const SizedBox(height: 10),
+            _buildSectionTitle('Price Range'),
+            _buildPriceSlider(),
+            _buildSectionTitle('Categories'),
+            _buildChipRow(_categories, _selectedCategory, (chip) {
+              setState(() {
+                _selectedCategory = chip;
+              });
+            }),
+            _buildSectionTitle('Time'),
+            _buildChipRow(_times, _selectedTime, (chip) {
+              setState(() {
+                _selectedTime = chip;
+              });
+            }),
+            _buildSectionTitle('Location'),
+            _buildLocationDropdown(),
+            _buildCustomLocation(),
+            const SizedBox(height: 32),
+            _buildButtons(),
+          ],
         ),
       ),
     );
@@ -402,7 +394,11 @@ class _FilterPageState extends State<FilterPage> {
     );
   }
 
-  Widget _buildChipRow(List<String> items, String? selected, Function(String) onSelected) {
+  Widget _buildChipRow(
+    List<String> items,
+    String? selected,
+    Function(String) onSelected,
+  ) {
     return Wrap(
       spacing: 8.0,
       runSpacing: 8.0,
@@ -413,7 +409,7 @@ class _FilterPageState extends State<FilterPage> {
           selectedColor: Colors.red[100],
           checkmarkColor: Colors.red,
           labelStyle: TextStyle(
-            color: selected == chip ? Colors.red : Colors.black,
+            color: selected == chip ? Colors.red : Colors.grey,
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -433,19 +429,18 @@ class _FilterPageState extends State<FilterPage> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       margin: const EdgeInsets.only(top: 8),
       decoration: BoxDecoration(
+        color: Color(0xffF6F6F7),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey),
+        border: Border.all(color: Colors.transparent),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           isExpanded: true,
+          style: TextStyle(color: Color(0xffA5A5AB)),
           value: 'St.Gallen&Eastern Switzerland',
           icon: const Icon(Icons.keyboard_arrow_down),
           items: <String>['St.Gallen&Eastern Switzerland'].map((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
+            return DropdownMenuItem<String>(value: value, child: Text(value));
           }).toList(),
           onChanged: (_) {},
         ),
@@ -474,10 +469,12 @@ class _FilterPageState extends State<FilterPage> {
       children: [
         Expanded(
           child: OutlinedButton(
+
             onPressed: () {
               Navigator.pop(context); // Cancel
             },
             style: OutlinedButton.styleFrom(
+              backgroundColor: Color(0xffF5F5F5),
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -507,4 +504,3 @@ class _FilterPageState extends State<FilterPage> {
     );
   }
 }
-
