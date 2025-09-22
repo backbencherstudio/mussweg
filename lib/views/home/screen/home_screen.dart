@@ -75,6 +75,8 @@ class HomeScreen extends StatelessWidget {
                 ), // Space between top section and search bar
                 // Search bar section
                 TextFormField(
+                  onTap: () => Navigator.pushNamed(context, RouteNames.searchPage),
+                  readOnly: true,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Color(0xffF1F0EE),

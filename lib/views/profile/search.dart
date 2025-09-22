@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mussweg/views/widgets/simple_apppbar.dart';
 import 'package:provider/provider.dart';
 import '../../view_model/search_history_provider/search_history.dart';
 
@@ -10,20 +11,7 @@ class SearchPage extends StatelessWidget {
     final provider = context.watch<SearchProvider>();
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () {},
-        ),
-        title: const Text('Search', style: TextStyle(color: Colors.black)),
-        centerTitle: true,
-        actions: const [
-          Icon(Icons.more_horiz, color: Colors.black),
-          SizedBox(width: 16),
-        ],
-      ),
+      appBar: SimpleApppbar(title: 'Search'),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
