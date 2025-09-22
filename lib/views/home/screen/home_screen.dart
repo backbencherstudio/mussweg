@@ -56,9 +56,14 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
                     Spacer(),
-                    GestureDetector(onTap: () {
-                      context.read<ParentScreensProvider>().onSelectedIndex(2);
-                    }, child: Image.asset("assets/icons/cart.png", scale: 1.5)),
+                    GestureDetector(
+                      onTap: () {
+                        context.read<ParentScreensProvider>().onSelectedIndex(
+                          2,
+                        );
+                      },
+                      child: Image.asset("assets/icons/cart.png", scale: 1.5),
+                    ),
                     SizedBox(width: 12.w), // Adjusted spacing
                     Container(
                       padding: EdgeInsets.all(12),
@@ -180,7 +185,7 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(height: 10.h), // Space before the grid
                 // Fashion products grid with `Expanded` to avoid overflow
                 SizedBox(
-                  height: 300.h,
+                  height: 320.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: 6,
@@ -208,7 +213,7 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(height: 10.h), // Space before the grid
                 // Fashion products grid with `Expanded` to avoid overflow
                 SizedBox(
-                  height: 300,
+                  height: 320.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: 6,
@@ -236,7 +241,7 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(height: 10.h), // Space before the grid
                 // Fashion products grid with `Expanded` to avoid overflow
                 SizedBox(
-                  height: 300,
+                  height: 320.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: 6,
@@ -245,7 +250,7 @@ class HomeScreen extends StatelessWidget {
                     },
                   ),
                 ),
-                SizedBox(height: 75.h,)
+                SizedBox(height: 75.h),
               ],
             ),
           ),
