@@ -45,17 +45,40 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                 Positioned(
                   top: 120.h,
                   left: 16.w,
-                  child: SizedBox(
-                    width: 120.w,
-                    height: 120.h,
-                    child: ClipOval(
-                      child: Image.asset(
-                        'assets/icons/user_profile.png',
-                        fit: BoxFit.cover,
+                  child: Stack(
+                    children: [
+                      SizedBox(
                         width: 120.w,
                         height: 120.h,
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/icons/user_profile.png',
+                            fit: BoxFit.cover,
+                            width: 120.w,
+                            height: 120.h,
+                          ),
+                        ),
                       ),
-                    ),
+                      Positioned(
+                        right: 4.w,
+                        bottom: 4.w,
+                        child: GestureDetector(
+                          onTap: (){},
+                          child: SizedBox(
+                            width: 30.w,
+                            height: 30.h,
+                            child: ClipOval(
+                              child: Image.asset(
+                                'assets/icons/add_image.png',
+                                fit: BoxFit.cover,
+                                width: 120.w,
+                                height: 120.h,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Positioned(
@@ -63,8 +86,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                   right: 16.w,
                   child: GestureDetector(
                     onTap: () {
-                      // 👉 Do something here
-                      debugPrint("Change Cover tapped!");
+
                     },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20.r),

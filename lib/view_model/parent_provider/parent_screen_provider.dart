@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:mussweg/views/inbox/screen.dart';
 import 'package:mussweg/views/profile/screen.dart';
 
 import '../../views/home/screen/home_screen.dart';
@@ -9,9 +9,9 @@ import '../../views/wishlist/wishlist_screen.dart';
 class ParentScreensProvider with ChangeNotifier {
   List<Widget> screens = [
     HomeScreen(),
-    HomeScreen(),
-    HomeScreen(),
     WishlistScreen(),
+    HomeScreen(),
+    InboxPage(),
     ProfileScreen(),
 
   ];

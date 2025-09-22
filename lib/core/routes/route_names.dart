@@ -12,9 +12,6 @@ class RouteNames {
   static const String productDetailScreens = '/productDetailScreens';
   static const String chatScreen = '/chatScreen';
   static const String viewProfileScreen = '/viewProfileScreen';
-
-  static const String wishlistScreen = '/wishlistScreen';
-  static const String wishListScreen = '/wishListScreen';
   static const String boughtItemsScreen = '/boughtItemsScreen';
   static const String sellingItemsScreen = '/sellingItemsScreen';
   static const String sellItemPage = '/sellItemPage';
