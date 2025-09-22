@@ -8,6 +8,7 @@ import '../../view_model/profile/language_selected_provider/language_select.dart
 import '../../view_model/profile/notification_service_provider/notification_service.dart';
 import '../../view_model/profile/sell_item_service_provider/sell_item_service.dart';
 import '../../view_model/profile/transaction_service_provider/transaction_service.dart';
+import '../../view_model/search_history_provider/search_history.dart';
 import 'inject.dart';
 
 class AppProviders {
@@ -19,6 +20,7 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => getIt<TransactionService>()),
     ChangeNotifierProvider(create: (_) => getIt<NotificationService>()),
     ChangeNotifierProvider(create: (_) => getIt<BoostProductService>()),
+    ChangeNotifierProvider(create: (_) => getIt<SearchProvider>()),
     // Remove SignUpViewModel from here - it will be created locally in the widget
   ];
 }

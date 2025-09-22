@@ -31,6 +31,7 @@ import '../../views/profile/screens/view_profile/edit_product_page.dart';
 import '../../views/profile/screens/notifications/notifications_page.dart';
 import '../../views/profile/screens/view_profile/sell_item.dart';
 import '../../views/profile/screens/view_profile/view_seller_product.dart';
+import '../../views/profile/search.dart';
 
 
 class AppRoutes {
@@ -62,6 +63,7 @@ class AppRoutes {
 
     RouteNames.checkoutScreen:(context) => const CheckoutScreen(),
     RouteNames.stripeCheckoutScreen:(context) => const StripeCheckoutScreen(),
+    RouteNames.searchPage:(context) => const SearchPage(),
     RouteNames.orderPlacedScreen:(context) => const OrderPlacedScreen(),
     RouteNames.cartScreen:(context) => const CartScreen(),
   };
