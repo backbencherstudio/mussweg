@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/views/checkout/widgets/checkout_form.dart';
 
 
@@ -145,7 +146,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       SizedBox(height: 10.h,),
                       const CheckoutFormButton(image: 'assets/icons/paypal-icon.png', outColor: Color(0xFF0070BA),),
                       SizedBox(height: 6.h,),
-                      const CheckoutFormButton(image: 'assets/icons/stripe-icon.png', outColor: Color(0xFF635BFF),),
+                       CheckoutFormButton(
+
+                        image: 'assets/icons/stripe-icon.png', outColor: Color(0xFF635BFF),
+                        onTap: (){
+                          Navigator.pushNamed(context, RouteNames.stripeCheckoutScreen);
+                        },
+
+                      ),
 
 
                     ],
