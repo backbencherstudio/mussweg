@@ -8,12 +8,20 @@ class OrderPlacedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        backgroundColor: Colors.white,
+      ),
       body: Padding(
         padding: EdgeInsets.symmetric(vertical: 16.h),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            SizedBox(height: 50.h),
             Card(
               color: Colors.white,
               margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
@@ -37,7 +45,6 @@ class OrderPlacedScreen extends StatelessWidget {
                     Text(
                       textAlign: TextAlign.center,
                       'Your order would be delivered in \n the 30 mins almost',
-
 
                       style: TextStyle(
                         fontSize: 14.sp,
