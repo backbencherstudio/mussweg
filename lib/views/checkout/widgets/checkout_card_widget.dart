@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CheckoutCartWidget extends StatelessWidget {
-  const CheckoutCartWidget({
-    super.key,
-  });
+  const CheckoutCartWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,121 +23,78 @@ class CheckoutCartWidget extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16.h),
-            Row(
-              children: [
-                Image.asset(
-                  'assets/images/card-image-1.png',
-                  height: 80.h,
-                  width: 80.w,
-                  fit: BoxFit.contain,
-                ),
-                SizedBox(width: 10.w),
-                Expanded( // Add Expanded here
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Man Exclusive T-Shirt',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14.sp,
-                          color: Color(0xFF4A4C56),
-                        ),
-                      ),
-                      SizedBox(height: 6.h),
-                      Text(
-                        'Size XL (New Condition)',
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color: Color(0xFF777980),
-                        ),
-                      ),
-                      SizedBox(height: 6.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+            ListView.separated(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: 2,
+              itemBuilder: (context, index) {
+                return Row(
+                  children: [
+                    Image.asset(
+                      'assets/images/card-image-1.png',
+                      height: 80.h,
+                      width: 80.w,
+                      fit: BoxFit.contain,
+                    ),
+                    SizedBox(width: 10.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Quantity: 1',
+                            'Man Exclusive T-Shirt',
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 14.sp,
                               color: Color(0xFF4A4C56),
                             ),
                           ),
+                          SizedBox(height: 6.h),
                           Text(
-                            '\$ 20.00',
+                            'Size XL (New Condition)',
                             style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14.sp,
-                              color: Color(0xFF4A4C56),
+                              fontSize: 12.sp,
+                              color: Color(0xFF777980),
                             ),
+                          ),
+                          SizedBox(height: 6.h),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Quantity: 1',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14.sp,
+                                  color: Color(0xFF4A4C56),
+                                ),
+                              ),
+                              Text(
+                                '\$ 20.00',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14.sp,
+                                  color: Color(0xFF4A4C56),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-              ],
+                    ),
+                  ],
+                );
+              },
+              separatorBuilder: (context, index) {
+                return Divider(height: 10.h,color: Color(0xFFE9E9EA));
+              },
             ),
-            SizedBox(height: 10.h),
-            Row(
-              children: [
-                Image.asset(
-                  'assets/images/card-image-2.png',
-                  height: 80.h,
-                  width: 80.w,
-                  fit: BoxFit.contain,
-                ),
-                SizedBox(width: 10.w),
-                Expanded( // Add Expanded here
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Man Exclusive T-Shirt',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14.sp,
-                          color: Color(0xFF4A4C56),
-                        ),
-                      ),
-                      SizedBox(height: 6.h),
-                      Text(
-                        'Size XL (New Condition)',
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color: Color(0xFF777980),
-                        ),
-                      ),
-                      SizedBox(height: 6.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Quantity: 1',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14.sp,
-                              color: Color(0xFF4A4C56),
-                            ),
-                          ),
-                          Text(
-                            '\$ 20.00',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14.sp,
-                              color: Color(0xFF4A4C56),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+
             SizedBox(height: 10.h),
             Divider(color: Color(0xFFE9E9EA)),
+
+            // Subtotal
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -162,6 +117,8 @@ class CheckoutCartWidget extends StatelessWidget {
               ],
             ),
             SizedBox(height: 10.h),
+
+            // Shipping
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -186,6 +143,8 @@ class CheckoutCartWidget extends StatelessWidget {
             SizedBox(height: 10.h),
             Divider(color: Color(0xFFE9E9EA)),
             SizedBox(height: 10.h),
+
+            // Total
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
