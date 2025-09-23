@@ -31,7 +31,7 @@ import '../../views/profile/screens/view_profile/edit_product_page.dart';
 import '../../views/profile/screens/notifications/notifications_page.dart';
 import '../../views/profile/screens/view_profile/sell_item.dart';
 import '../../views/profile/screens/view_profile/view_seller_product.dart';
-import '../../views/profile/search.dart';
+import '../../views/home/screens/search.dart';
 
 
 class AppRoutes {
