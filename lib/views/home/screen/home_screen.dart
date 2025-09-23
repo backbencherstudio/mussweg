@@ -79,27 +79,31 @@ class HomeScreen extends StatelessWidget {
                   height: 16.h,
                 ), // Space between top section and search bar
                 // Search bar section
-                TextFormField(
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Color(0xffF1F0EE),
-                    suffixIcon: Icon(Icons.search),
-                    hintText: "Search Product Name & Suppliers",
-                    hintStyle: TextStyle(color: Color(0xffA5A5AB)),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
+                GestureDetector(
+                  onTap: (){Navigator.pushNamed(context, RouteNames.searchPage);},
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 14,
+                    ),
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xffF1F0EE),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(10),
+                    child: Row(
+                      children: const [
+                        Text(
+                          "Search Product Name & Suppliers",
+                          style: TextStyle(color: Color(0xffA5A5AB)),
+                        ),
+                        Spacer(),
+                        Icon(Icons.search, color: Color(0xffA5A5AB)),
+                      ],
                     ),
                   ),
                 ),
+
                 SizedBox(height: 16.h),
 
                 SizedBox(height: 10.h),

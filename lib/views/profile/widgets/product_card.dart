@@ -58,7 +58,7 @@ class ProductCard extends StatelessWidget {
                         right: 10.w,
                         child: PopupMenuButton<String>(
                           icon: Image.asset(
-                            'assets/icons/more_option.png',
+                            'assets/icons/more_options.png',
                             scale: 1.8,
                           ),
                           onSelected: (value) {
