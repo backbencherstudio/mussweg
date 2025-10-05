@@ -18,7 +18,7 @@ void setup() {
   getIt.registerLazySingleton<HomeScreenProvider>(() => HomeScreenProvider());
 
   // Register factories
-  getIt.registerFactory<SignUpViewModel>(() => SignUpViewModel());
+  getIt.registerFactory<RegisterProvider>(() => RegisterProvider());
 
   //Register profiles language
   getIt.registerSingleton<LanguageService>(LanguageService());

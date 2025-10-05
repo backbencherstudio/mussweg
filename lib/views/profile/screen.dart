@@ -43,7 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         height: 90,
                         child: CircleAvatar(
                           backgroundImage: AssetImage(
-                            'assets/icons/user_profile.png',
+                            'assets/icons/myyyy.jpeg',
                           ),
                         ),
                       ),
@@ -135,7 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     Divider(color: Colors.grey[350]),
                     ProfileMenuItem(
-                      image: 'assets/icons/sell.png',
+                      image: 'assets/icons/border-all-01.png',
                       title: 'Bought items',
                       onTap: () {
                         Navigator.pushNamed(
@@ -146,7 +146,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     Divider(color: Colors.grey[350]),
                     ProfileMenuItem(
-                      image: 'assets/icons/sell.png',
+                      image: 'assets/icons/border-all-01.png',
                       title: 'Selling items',
                       onTap: () {
                         Navigator.pushNamed(
@@ -168,7 +168,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     Divider(color: Colors.grey[350]),
                     ProfileMenuItem(
-                      image: 'assets/icons/credit_card.png',
+                      image: 'assets/icons/credit-card-pos (1).png',
                       title: 'Transactions History',
                       onTap: () {
                         Navigator.pushNamed(

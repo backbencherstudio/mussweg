@@ -13,14 +13,14 @@ import 'inject.dart';
 
 class AppProviders {
   static final List<SingleChildWidget> providers = [
-    ChangeNotifierProvider(create: (_) => getIt<ParentScreensProvider>()),
-    ChangeNotifierProvider(create: (_) => getIt<HomeScreenProvider>()),
-    ChangeNotifierProvider(create: (_) => getIt<LanguageService>()),
-    ChangeNotifierProvider(create: (_) => getIt<SellItemService>()),
-    ChangeNotifierProvider(create: (_) => getIt<TransactionService>()),
-    ChangeNotifierProvider(create: (_) => getIt<NotificationService>()),
-    ChangeNotifierProvider(create: (_) => getIt<BoostProductService>()),
-    ChangeNotifierProvider(create: (_) => getIt<SearchProvider>()),
-    // Remove SignUpViewModel from here - it will be created locally in the widget
+    ChangeNotifierProvider(create: (_) => ParentScreensProvider()),
+    ChangeNotifierProvider(create: (_) => HomeScreenProvider()),
+    ChangeNotifierProvider(create: (_) => LanguageService()),
+    ChangeNotifierProvider(create: (_) =>SellItemService()),
+    ChangeNotifierProvider(create: (_) => TransactionService()),
+    ChangeNotifierProvider(create: (_) => NotificationService()),
+    ChangeNotifierProvider(create: (_) => BoostProductService()),
+    ChangeNotifierProvider(create: (_) => SearchProvider()),
+    ChangeNotifierProvider(create: (_) => RegisterProvider()),
   ];
 }
