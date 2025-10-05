@@ -11,13 +11,15 @@ import 'package:mussweg/views/selling_items/selling_items_screen.dart';
 import 'package:mussweg/views/splash/splash_screen.dart';
 import 'package:mussweg/views/wishlist/wishlist_screen.dart';
 
+import '../../views/auth/sign_up/screen/sign_up_screen.dart';
+import '../../views/auth/sign_up/widgets/otp_screen.dart';
 import '../../views/checkout/screen/stripe_checkout_screen.dart';
 import '../../views/home/screens/chat_screen.dart';
 import '../../views/home/screens/product_detail_screens.dart';
 import '../../views/home/screens/product_list_screen.dart';
 import '../../views/home/screens/category_screen.dart';
 import '../../views/home/screens/view_profile.dart';
-import '../../views/auth/sign_up/screen/signup_screen.dart';
+import '../../views/auth/login/login_screen.dart';
 import '../../views/onboarding/screen/onboarding_screen.dart';
 import '../../views/inbox/screen.dart';
 import '../../views/inbox/screens/account_settings.dart';
@@ -39,7 +41,8 @@ class AppRoutes {
 
     RouteNames.splashScreen: (context) => const SplashScreen(),
     RouteNames.parentScreen: (context) => const ParentScreen(),
-    RouteNames.signUpScreen: (context) => const SignupScreen(),
+    RouteNames.signUpScreen: (context) => const SignUpScreen(),
+    RouteNames.otpScreen: (context) => const OtpScreen(),
     RouteNames.profileScreen: (context) => const ProfileScreen(),
     RouteNames.sellerProfilePage: (context) => const SellerProfilePage(),
     RouteNames.categoryScreen: (context) => const CategoryScreen(),
@@ -66,5 +69,6 @@ class AppRoutes {
     RouteNames.searchPage:(context) => const SearchPage(),
     RouteNames.orderPlacedScreen:(context) => const OrderPlacedScreen(),
     RouteNames.cartScreen:(context) => const CartScreen(),
+    RouteNames.loginScreen:(context) => const LoginScreen(),
   };
 }

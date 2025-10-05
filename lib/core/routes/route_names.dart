@@ -4,6 +4,7 @@ class RouteNames {
   static const String chooseAccount = '/chooseAccount';
   static const String loginScreen = '/loginScreen';
   static const String signUpScreen = '/signUpScreen';
+  static const String otpScreen = '/otpScreen';
 
   static const String profileScreen = '/profileScreen';
   static const String sellerProfilePage = '/sellerProfilePage';
@@ -30,7 +31,6 @@ class RouteNames {
   static const String searchPage = '/searchPage';
   static const String orderPlacedScreen = '/orderPlacedScreen';
   static const String cartScreen = '/cartScreen';
-
 
 
 }

@@ -26,7 +26,14 @@ class HomeScreen extends StatelessWidget {
                 // Top section with user info, location, cart, and notifications
                 Row(
                   children: [
-                    ClipRect(child: Image.asset("assets/images/user_1.png")),
+                    ClipOval(
+                      child: Image.asset(
+                        'assets/icons/myyyy.jpeg',
+                        fit: BoxFit.cover,
+                        width: 50.w,
+                        height: 50.h,
+                      ),
+                    ),
                     SizedBox(width: 12.w), // Adjusted spacing
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,38 +1,44 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import '../../../core/constants/api_end_points.dart';
+import '../../../core/services/api_service.dart';
 
-class SignUpViewModel extends ChangeNotifier {
-  // Form fields
-  String _email = '';
-  String _password = '';
-
-  // UI state
-  bool _passwordVisible = false;
+class RegisterProvider extends ChangeNotifier {
   bool _isLoading = false;
-  bool _hasErrors = false;
-
-  // Form validation
-  String? _emailError;
-  String? _passwordError;
-
-  // Getters
-  String get email => _email;
-  String get password => _password;
-  bool get passwordVisible => _passwordVisible;
   bool get isLoading => _isLoading;
-  bool get hasErrors => _hasErrors;
-  String? get emailError => _emailError;
-  String? get passwordError => _passwordError;
 
-  // Setters
+  bool _isOVLoading = false;
+  bool get isOVLoading => _isOVLoading;
+
+  String _email = '';
+  String get email => _email;
+
   void setEmail(String email) {
     _email = email;
-    _validateEmail();
+    debugPrint("Email: $email");
     notifyListeners();
   }
 
-  void setPassword(String password) {
-    _password = password;
-    _validatePassword();
+  String _errorMessage = '';
+  String get errorMessage => _errorMessage;
+
+  bool _isPassObscured = true;
+  bool get isPassObscured => _isPassObscured;
+
+  bool _isConfirmPassObscured = true;
+  bool get isConfirmPassObscured => _isConfirmPassObscured;
+
+  bool _passwordVisible = false;
+  bool get passwordVisible => _passwordVisible;
+
+  void togglePassObscured() {
+    _isPassObscured = !_isPassObscured;
+    notifyListeners();
+  }
+
+  void toggleConfirmPassObscured() {
+    _isConfirmPassObscured = !_isConfirmPassObscured;
     notifyListeners();
   }
 
@@ -41,109 +47,85 @@ class SignUpViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setLoading(bool loading) {
-    _isLoading = loading;
+  String _selectedRole = "admin";
+  String get selectedRole => _selectedRole;
+
+  void setSelectedRole(String role) {
+    _selectedRole = role;
+    debugPrint("Selected role: $role");
     notifyListeners();
   }
 
-  // Validation methods
-  void _validateEmail() {
-    if (_email.isEmpty) {
-      _emailError = 'Please enter your email';
-    } else if (!_isValidEmail(_email)) {
-      _emailError = 'Please enter a valid email address';
-    } else {
-      _emailError = null;
-    }
-    _hasErrors = _emailError != null || _passwordError != null;
-  }
+  final ApiService _apiService = ApiService();
 
-  void _validatePassword() {
-    if (_password.isEmpty) {
-      _passwordError = 'Please enter your password';
-    } else if (_password.length < 6) {
-      _passwordError = 'Password must be at least 6 characters';
-    } else {
-      _passwordError = null;
-    }
-    _hasErrors = _emailError != null || _passwordError != null;
-  }
-
-  bool validateForm() {
-    _validateEmail();
-    _validatePassword();
-    _hasErrors = _emailError != null || _passwordError != null;
+  Future<bool> registerUser({
+    required String first_name,
+    required String last_name,
+    required String email,
+    required String password,
+  }) async {
+    _isLoading = true;
     notifyListeners();
-    return !_hasErrors;
-  }
 
-  bool _isValidEmail(String email) {
-    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
-  }
-
-  // Signup method
-  Future<bool> signUp() async {
-    if (!validateForm()) {
-      return false;
-    }
-
-    setLoading(true);
+    final data = {
+      "first_name": first_name,
+      "last_name": last_name,
+      "email": email,
+      "password": password,
+    };
 
     try {
-      // TODO: Implement actual signup logic here
-      // Example:
-      // await _authService.signUp(email: _email, password: _password);
+      final response = await _apiService.post(
+        ApiEndpoints.register,
+        data: data,
+      );
 
-      // Simulate network delay
-      await Future.delayed(const Duration(seconds: 2));
+      debugPrint("register response: ${response.data}");
 
-      setLoading(false);
-      return true;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        setEmail(email);
+        _isLoading = false;
+        notifyListeners();
+        _errorMessage = 'Registration successfully';
+        debugPrint("register response: ${response.data['success']}");
+        return response.data['success'];
+      } else {
+        _errorMessage = response.data['message'];
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
     } catch (e) {
-      // Handle error
-      _hasErrors = true;
+      _errorMessage = e.toString();
+      _isLoading = false;
       notifyListeners();
-      setLoading(false);
       return false;
     }
   }
 
-  // Social login methods
-  Future<bool> signUpWithGoogle() async {
-    setLoading(true);
-    try {
-      // TODO: Implement Google sign in
-      await Future.delayed(const Duration(seconds: 2));
-      setLoading(false);
-      return true;
-    } catch (e) {
-      setLoading(false);
-      return false;
-    }
-  }
+  Future<bool> getOtpVerification(String otp) async {
+    _isOVLoading = true;
+    notifyListeners();
 
-  Future<bool> signUpWithApple() async {
-    setLoading(true);
     try {
-      // TODO: Implement Apple sign in
-      await Future.delayed(const Duration(seconds: 2));
-      setLoading(false);
-      return true;
-    } catch (e) {
-      setLoading(false);
-      return false;
-    }
-  }
+      final response = await _apiService.post(ApiEndpoints.verifyEmail, data: {"token": otp, "email": _email});
+      print("Response status: ${response.statusCode}");
 
-  Future<bool> signUpWithFacebook() async {
-    setLoading(true);
-    try {
-      // TODO: Implement Facebook sign in
-      await Future.delayed(const Duration(seconds: 2));
-      setLoading(false);
-      return true;
-    } catch (e) {
-      setLoading(false);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _isOVLoading = false;
+        _errorMessage = response.data['message'];
+        notifyListeners();
+        return response.data['success'];
+      } else {
+        _isOVLoading = false;
+        _errorMessage = response.data['message'];
+        notifyListeners();
+        return false;
+      }
+    } catch (error) {
+      print('Error during OTP verification: $error');
+      _isOVLoading = false;
+      notifyListeners();
       return false;
     }
   }
