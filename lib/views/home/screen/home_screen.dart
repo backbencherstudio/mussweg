@@ -26,12 +26,15 @@ class HomeScreen extends StatelessWidget {
                 // Top section with user info, location, cart, and notifications
                 Row(
                   children: [
-                    ClipOval(
-                      child: Image.asset(
-                        'assets/icons/myyyy.jpeg',
-                        fit: BoxFit.cover,
-                        width: 50.w,
-                        height: 50.h,
+                    GestureDetector(
+                      onTap: (){Navigator.pushNamed(context, RouteNames.viewProfileScreen);},
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/icons/myyyy.jpeg',
+                          fit: BoxFit.cover,
+                          width: 50.w,
+                          height: 50.h,
+                        ),
                       ),
                     ),
                     SizedBox(width: 12.w), // Adjusted spacing
@@ -193,7 +196,7 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(height: 10.h), // Space before the grid
                 // Fashion products grid with `Expanded` to avoid overflow
                 SizedBox(
-                  height: 250.h,
+                  height: 235.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: 6,
@@ -221,7 +224,7 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(height: 10.h), // Space before the grid
                 // Fashion products grid with `Expanded` to avoid overflow
                 SizedBox(
-                  height: 250.h,
+                  height: 235.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: 6,
@@ -249,7 +252,7 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(height: 10.h), // Space before the grid
                 // Fashion products grid with `Expanded` to avoid overflow
                 SizedBox(
-                  height: 250.h,
+                  height: 235.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: 6,
@@ -258,7 +261,7 @@ class HomeScreen extends StatelessWidget {
                     },
                   ),
                 ),
-                SizedBox(height: 75.h),
+                SizedBox(height: 90.h),
               ],
             ),
           ),
