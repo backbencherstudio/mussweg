@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
     final homScreenProvider = context.watch<HomeScreenProvider>();
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Color(0xffFFFFFF),
+        backgroundColor: Color(0xffFDFDFD),
         body: Padding(
           padding: EdgeInsets.all(16.0), // General padding for the whole screen
           child: SingleChildScrollView(
@@ -83,7 +83,7 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  height: 16.h,
+                  height: 5.h,
                 ), // Space between top section and search bar
                 // Search bar section
                 GestureDetector(
@@ -111,9 +111,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
 
-                SizedBox(height: 16.h),
-
-                SizedBox(height: 10.h),
+                SizedBox(height: 5.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -138,7 +136,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 10.h), // Space before the grid
                 SizedBox(
-                  height: 80.h,
+                  height: 75.h,
                   child: ListView.builder(
                     itemCount: homScreenProvider.featureList.length,
                     scrollDirection: Axis.horizontal,
@@ -177,7 +175,6 @@ class HomeScreen extends StatelessWidget {
                     },
                   ),
                 ),
-                SizedBox(height: 16.h), // Space before Fashion Products section
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -196,7 +193,7 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(height: 10.h), // Space before the grid
                 // Fashion products grid with `Expanded` to avoid overflow
                 SizedBox(
-                  height: 320.h,
+                  height: 250.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: 6,
@@ -224,7 +221,7 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(height: 10.h), // Space before the grid
                 // Fashion products grid with `Expanded` to avoid overflow
                 SizedBox(
-                  height: 320.h,
+                  height: 250.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: 6,
@@ -252,7 +249,7 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(height: 10.h), // Space before the grid
                 // Fashion products grid with `Expanded` to avoid overflow
                 SizedBox(
-                  height: 320.h,
+                  height: 250.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: 6,
