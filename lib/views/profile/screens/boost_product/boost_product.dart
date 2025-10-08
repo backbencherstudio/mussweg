@@ -183,7 +183,7 @@ class BoostProductPage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 80.h),
+            SizedBox(height: 40.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -222,7 +222,6 @@ class BoostProductPage extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 20.h),
           ],
         ),
       ),

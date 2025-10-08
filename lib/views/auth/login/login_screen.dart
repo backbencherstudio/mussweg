@@ -35,6 +35,7 @@ class LoginScreen extends StatelessWidget {
                 _buildPasswordField(context),
                 SizedBox(height: 20.h),
                 _buildLoginButton(context),
+                SizedBox(height: 10.h),
                 Align(
                   alignment: Alignment.topRight,
                   child: Text(
@@ -46,7 +47,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 60.h),
+                SizedBox(height: 20.h),
                 _buildOrJoinWithDivider(),
                 SizedBox(height: 20.h),
                 const SignUpFormButton(

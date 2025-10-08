@@ -15,7 +15,8 @@ import '../../views/auth/sign_up/screen/sign_up_screen.dart';
 import '../../views/auth/sign_up/widgets/otp_screen.dart';
 import '../../views/checkout/screen/stripe_checkout_screen.dart';
 import '../../views/home/screens/chat_screen.dart';
-import '../../views/home/screens/product_detail_screens.dart';
+import '../../views/home/screens/product_details_bid_screens.dart';
+import '../../views/home/screens/product_details_buy_screens.dart';
 import '../../views/home/screens/product_list_screen.dart';
 import '../../views/home/screens/category_screen.dart';
 import '../../views/home/screens/view_profile.dart';
@@ -47,7 +48,7 @@ class AppRoutes {
     RouteNames.sellerProfilePage: (context) => const SellerProfilePage(),
     RouteNames.categoryScreen: (context) => const CategoryScreen(),
     RouteNames.productListScreen: (context) => const ProductListScreen(),
-    RouteNames.productDetailScreens: (context) => const ProductDetailScreens(),
+    RouteNames.productDetailsBidScreens: (context) => const ProductDetailsBidScreens(),
     RouteNames.chatScreen: (context) => const ChatScreen(),
     RouteNames.viewProfileScreen: (context) => const ViewProfileScreen(),
     RouteNames.boughtItemsScreen: (context) => BoughtItemsScreen(),
@@ -70,5 +71,6 @@ class AppRoutes {
     RouteNames.orderPlacedScreen:(context) => const OrderPlacedScreen(),
     RouteNames.cartScreen:(context) => const CartScreen(),
     RouteNames.loginScreen:(context) => const LoginScreen(),
+    RouteNames.productDetailsBuyScreens:(context) => const ProductDetailsBuyScreens(),
   };
 }

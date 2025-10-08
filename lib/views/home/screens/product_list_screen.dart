@@ -105,131 +105,124 @@ class ProductListScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          RouteNames.productDetailScreens,
-                        );
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Colors.black12),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Stack(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.black12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Stack(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Image.asset(
+                                  "assets/images/shirt.png",
+                                  width: double.infinity,
+                                  height: 200,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              Positioned(
+                                top: 10,
+                                right: 10,
+                                child: Container(
+                                  padding: EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: Color(0xffADA8A5),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.shopping_cart,
+                                    color: Colors.white,
+                                    size: 24,
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                top: 10,
+                                left: 10,
+                                child: Container(
+                                  padding: EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: Color(0xffADA8A5),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.favorite_border,
+                                    color: Colors.white,
+                                    size: 24,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
                               children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image.asset(
-                                    "assets/images/shirt.png",
-                                    width: double.infinity,
-                                    height: 200,
-                                    fit: BoxFit.cover,
+                                Text(
+                                  "Man Exclusive T-Shirt",
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                Positioned(
-                                  top: 10,
-                                  right: 10,
-                                  child: Container(
-                                    padding: EdgeInsets.all(6),
-                                    decoration: BoxDecoration(
-                                      color: Color(0xffADA8A5),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      Icons.shopping_cart,
-                                      color: Colors.white,
-                                      size: 24,
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  top: 10,
-                                  left: 10,
-                                  child: Container(
-                                    padding: EdgeInsets.all(6),
-                                    decoration: BoxDecoration(
-                                      color: Color(0xffADA8A5),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      Icons.favorite_border,
-                                      color: Colors.white,
-                                      size: 24,
-                                    ),
+                                Text(
+                                  "\$20.00",
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
                                   ),
                                 ),
                               ],
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0,
+                            ),
+                            child: Text(
+                              "Size XL (New Condition)",
+                              style: TextStyle(
+                                fontSize: 13.sp,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: RichText(
+                              text: TextSpan(
                                 children: [
-                                  Text(
-                                    "Man Exclusive T-Shirt",
+                                  TextSpan(
+                                    text: "Aug 6, 13:55",
                                     style: TextStyle(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12.sp,
+                                      color: Colors.black,
                                     ),
                                   ),
-                                  Text(
-                                    "\$20.00",
+                                  TextSpan(
+                                    text: " (12h : 12m : 30s)",
                                     style: TextStyle(
-                                      color: Colors.red,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
+                                      fontSize: 12.sp,
+                                      color: Colors.green,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8.0,
-                              ),
-                              child: Text(
-                                "Size XL (New Condition)",
-                                style: TextStyle(
-                                  fontSize: 13.sp,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: RichText(
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: "Aug 6, 13:55",
-                                      style: TextStyle(
-                                        fontSize: 12.sp,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: " (12h : 12m : 30s)",
-                                      style: TextStyle(
-                                        fontSize: 12.sp,
-                                        color: Colors.green,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 4.h),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
+                          ),
+                          SizedBox(height: 4.h),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * 0.4,
                                   child: OutlinedButton(
@@ -240,15 +233,19 @@ class ProductListScreen extends StatelessWidget {
                                       ),
                                     ),
 
-                                    onPressed: () {},
+                                    onPressed: () {Navigator.pushNamed(
+                                      context,
+                                      RouteNames.productDetailsBidScreens,
+                                    );},
                                     child: Text(
                                       "Bid Now",
                                       style: TextStyle(color: Colors.red),
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 13.w),
-                                SizedBox(
+
+                              SizedBox(width: 13.w),
+                              SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * 0.4,
                                   child: ElevatedButton(
@@ -259,18 +256,21 @@ class ProductListScreen extends StatelessWidget {
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                     ),
-                                    onPressed: () {},
+                                    onPressed: () {Navigator.pushNamed(
+                                      context,
+                                      RouteNames.productDetailsBuyScreens,
+                                    );},
                                     child: Text(
                                       "Buy Now",
                                       style: TextStyle(color: Colors.white),
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                            SizedBox(height: 20),
-                          ],
-                        ),
+
+                            ],
+                          ),
+                          SizedBox(height: 20),
+                        ],
                       ),
                     ),
                   );
