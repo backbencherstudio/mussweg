@@ -54,7 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              'Cameron Williamson',
+                              'Protiva Induri Powered by Rawnak',
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w600,
@@ -163,6 +163,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Navigator.pushNamed(
                           context,
                           RouteNames.notificationsPage,
+                        );
+                      },
+                    ), Divider(color: Colors.grey[350]),
+                    ProfileMenuItem(
+                      image: 'assets/icons/border-all-01.png',
+                      title: 'Bid List',
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          RouteNames.bidList,
                         );
                       },
                     ),

@@ -26,6 +26,7 @@ import '../../views/inbox/screen.dart';
 import '../../views/inbox/screens/account_settings.dart';
 import '../../views/order_placed/screen/order_placed_screen.dart';
 import '../../views/profile/screen.dart';
+import '../../views/profile/screens/bid_list/bid_list.dart';
 import '../../views/profile/screens/boost_product/boost_product.dart';
 import '../../views/profile/screens/boost_product/boost_success_page.dart';
 import '../../views/profile/screens/languages/language_page.dart';
@@ -72,5 +73,6 @@ class AppRoutes {
     RouteNames.cartScreen:(context) => const CartScreen(),
     RouteNames.loginScreen:(context) => const LoginScreen(),
     RouteNames.productDetailsBuyScreens:(context) => const ProductDetailsBuyScreens(),
+    RouteNames.bidList:(context) => const BidList(),
   };
 }

@@ -32,6 +32,7 @@ class RouteNames {
   static const String orderPlacedScreen = '/orderPlacedScreen';
   static const String cartScreen = '/cartScreen';
   static const String productDetailsBuyScreens = '/productDetailsBuyScreens';
+  static const String bidList = '/bidList';
 
 
 }
