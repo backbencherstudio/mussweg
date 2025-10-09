@@ -6,15 +6,30 @@ import 'package:mussweg/views/auth/sign_up/screen/sign_up_screen.dart';
 import 'package:mussweg/views/auth/sign_up/widgets/signup_form.dart';
 import 'package:provider/provider.dart';
 import 'package:get_it/get_it.dart';
-
+import '../../../view_model/auth/login/login_viewmodel.dart';
 import '../../../view_model/auth/signup/signup_viewmodel.dart';
-import '../../parent_screen/screen/parent_screen.dart';
 import '../sign_up/widgets/buttons.dart';
 import '../sign_up/widgets/signup_email_text_form_field_widget.dart';
 import '../sign_up/widgets/signup_password_text_form_field_widget.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +98,7 @@ class LoginScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 6.h),
-        const SignUpEmailTextFormFieldWidget(),
+         textFormField(hintText: 'Your Email', icon: Icons.email_outlined, controller: _emailController),
       ],
     );
   }
@@ -93,22 +108,39 @@ class LoginScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 8.h),
-        const SignUpPasswordTextFormFieldWidget(),
+        textFormField(hintText: 'Your Password', icon: Icons.lock, controller: _passwordController),
         SizedBox(height: 6.h),
       ],
     );
   }
 
   Widget _buildLoginButton(BuildContext context) {
-    return Consumer<RegisterProvider>(
+    return Consumer<LoginScreenProvider>(
       builder: (context, viewModel, child) {
-        return PrimaryButton(
-          title: 'Login',
-          color: const Color(0xFFDE3526),
-          textColor: Colors.white,
-          onTap: () {
-            Navigator.pushNamed(context, RouteNames.parentScreen);
-          },
+        return Visibility(
+          visible: !viewModel.isLoading,
+          replacement: const Center(child: CircularProgressIndicator()),
+          child: PrimaryButton(
+            title: 'Login',
+            color: const Color(0xFFDE3526),
+            textColor: Colors.white,
+            onTap: () async {
+              final result = await viewModel.login(
+                email: _emailController.text,
+                password: _passwordController.text,
+              );
+              if(result){
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(viewModel.errorMessage ?? "Login Successful")),
+                );
+                Navigator.pushNamed(context, RouteNames.parentScreen);
+              }else{
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(viewModel.errorMessage ?? "Something went wrong")),
+                );
+              }
+            },
+          ),
         );
       },
     );
@@ -130,10 +162,7 @@ class LoginScreen extends StatelessWidget {
           child: Text(
             'Or Join With',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: const Color(0xFF777980),
-              fontSize: 14.sp,
-            ),
+            style: TextStyle(color: const Color(0xFF777980), fontSize: 14.sp),
           ),
         ),
         const Expanded(
@@ -155,10 +184,7 @@ class LoginScreen extends StatelessWidget {
           children: [
             TextSpan(
               text: "Already have an account? ",
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: const Color(0xFF4A4C56),
-              ),
+              style: TextStyle(fontSize: 12.sp, color: const Color(0xFF4A4C56)),
             ),
             TextSpan(
               text: 'Sign Up',
@@ -171,11 +197,34 @@ class LoginScreen extends StatelessWidget {
                 ..onTap = () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const SignUpScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => const SignUpScreen(),
+                    ),
                   );
                 },
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget textFormField({
+    required String hintText,
+    required IconData icon,
+    required TextEditingController controller,
+  }) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Color(0xFFF6F6F7),
+        hintText: hintText,
+        hintStyle: TextStyle(fontSize: 16, color: Color(0xFF777980)),
+        prefixIcon: Icon(icon, color: Color(0xFF777980)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.r), // Add border radius
+          borderSide: BorderSide.none, // Remove border line
         ),
       ),
     );
