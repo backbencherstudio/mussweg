@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
     final homScreenProvider = context.watch<HomeScreenProvider>();
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Color(0xffFFFFFF),
+        backgroundColor: Color(0xffFDFDFD),
         body: Padding(
           padding: EdgeInsets.all(16.0), // General padding for the whole screen
           child: SingleChildScrollView(
@@ -26,7 +26,17 @@ class HomeScreen extends StatelessWidget {
                 // Top section with user info, location, cart, and notifications
                 Row(
                   children: [
-                    ClipRect(child: Image.asset("assets/images/user_1.png")),
+                    GestureDetector(
+                      onTap: (){Navigator.pushNamed(context, RouteNames.viewProfileScreen);},
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/icons/myyyy.jpeg',
+                          fit: BoxFit.cover,
+                          width: 50.w,
+                          height: 50.h,
+                        ),
+                      ),
+                    ),
                     SizedBox(width: 12.w), // Adjusted spacing
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,35 +86,35 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  height: 16.h,
+                  height: 5.h,
                 ), // Space between top section and search bar
                 // Search bar section
-                TextFormField(
-                  onTap: () => Navigator.pushNamed(context, RouteNames.searchPage),
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Color(0xffF1F0EE),
-                    suffixIcon: Icon(Icons.search),
-                    hintText: "Search Product Name & Suppliers",
-                    hintStyle: TextStyle(color: Color(0xffA5A5AB)),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
+                GestureDetector(
+                  onTap: (){Navigator.pushNamed(context, RouteNames.searchPage);},
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 14,
+                    ),
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xffF1F0EE),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(10),
+                    child: Row(
+                      children: const [
+                        Text(
+                          "Search Product Name & Suppliers",
+                          style: TextStyle(color: Color(0xffA5A5AB)),
+                        ),
+                        Spacer(),
+                        Icon(Icons.search, color: Color(0xffA5A5AB)),
+                      ],
                     ),
                   ),
                 ),
-                SizedBox(height: 16.h),
 
-                SizedBox(height: 10.h),
+                SizedBox(height: 5.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -129,7 +139,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 10.h), // Space before the grid
                 SizedBox(
-                  height: 80.h,
+                  height: 75.h,
                   child: ListView.builder(
                     itemCount: homScreenProvider.featureList.length,
                     scrollDirection: Axis.horizontal,
@@ -168,7 +178,6 @@ class HomeScreen extends StatelessWidget {
                     },
                   ),
                 ),
-                SizedBox(height: 16.h), // Space before Fashion Products section
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -187,7 +196,7 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(height: 10.h), // Space before the grid
                 // Fashion products grid with `Expanded` to avoid overflow
                 SizedBox(
-                  height: 320.h,
+                  height: 235.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: 6,
@@ -215,7 +224,7 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(height: 10.h), // Space before the grid
                 // Fashion products grid with `Expanded` to avoid overflow
                 SizedBox(
-                  height: 320.h,
+                  height: 235.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: 6,
@@ -243,7 +252,7 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(height: 10.h), // Space before the grid
                 // Fashion products grid with `Expanded` to avoid overflow
                 SizedBox(
-                  height: 320.h,
+                  height: 235.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: 6,
@@ -252,7 +261,7 @@ class HomeScreen extends StatelessWidget {
                     },
                   ),
                 ),
-                SizedBox(height: 75.h),
+                SizedBox(height: 90.h),
               ],
             ),
           ),

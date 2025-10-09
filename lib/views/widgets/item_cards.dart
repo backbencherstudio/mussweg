@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ItemCards extends StatelessWidget {
   const ItemCards({
-    super.key,
+    super.key, required title, required int quantity, required double price, required status,
   });
 
   @override

@@ -54,7 +54,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                         height: 120.h,
                         child: ClipOval(
                           child: Image.asset(
-                            'assets/icons/user_profile.png',
+                            'assets/icons/myyyy.jpeg',
                             fit: BoxFit.cover,
                             width: 120.w,
                             height: 120.h,

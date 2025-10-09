@@ -2,23 +2,24 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/core/routes/route_names.dart';
+import 'package:mussweg/views/auth/sign_up/screen/sign_up_screen.dart';
 import 'package:mussweg/views/auth/sign_up/widgets/signup_form.dart';
 import 'package:provider/provider.dart';
 import 'package:get_it/get_it.dart';
 
-import '../../../../view_model/auth/signup/signup_viewmodel.dart';
-import '../../../parent_screen/screen/parent_screen.dart';
-import '../widgets/buttons.dart';
-import '../widgets/signup_email_text_form_field_widget.dart';
-import '../widgets/signup_password_text_form_field_widget.dart';
+import '../../../view_model/auth/signup/signup_viewmodel.dart';
+import '../../parent_screen/screen/parent_screen.dart';
+import '../sign_up/widgets/buttons.dart';
+import '../sign_up/widgets/signup_email_text_form_field_widget.dart';
+import '../sign_up/widgets/signup_password_text_form_field_widget.dart';
 
-class SignupScreen extends StatelessWidget {
-  const SignupScreen({super.key});
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => GetIt.instance<SignUpViewModel>(), // This will work now
+      create: (_) => GetIt.instance<RegisterProvider>(), // This will work now
       child: Scaffold(
         body: SingleChildScrollView(
           child: Padding(
@@ -34,7 +35,19 @@ class SignupScreen extends StatelessWidget {
                 _buildPasswordField(context),
                 SizedBox(height: 20.h),
                 _buildLoginButton(context),
-                SizedBox(height: 60.h),
+                SizedBox(height: 10.h),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Text(
+                    'Forgot Password?',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20.h),
                 _buildOrJoinWithDivider(),
                 SizedBox(height: 20.h),
                 const SignUpFormButton(
@@ -87,10 +100,10 @@ class SignupScreen extends StatelessWidget {
   }
 
   Widget _buildLoginButton(BuildContext context) {
-    return Consumer<SignUpViewModel>(
+    return Consumer<RegisterProvider>(
       builder: (context, viewModel, child) {
         return PrimaryButton(
-          title: 'Sign Up',
+          title: 'Login',
           color: const Color(0xFFDE3526),
           textColor: Colors.white,
           onTap: () {
@@ -148,7 +161,7 @@ class SignupScreen extends StatelessWidget {
               ),
             ),
             TextSpan(
-              text: 'Sign In',
+              text: 'Sign Up',
               style: TextStyle(
                 fontSize: 12.sp,
                 color: Colors.red,
@@ -158,7 +171,7 @@ class SignupScreen extends StatelessWidget {
                 ..onTap = () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const ParentScreen()),
+                    MaterialPageRoute(builder: (context) => const SignUpScreen()),
                   );
                 },
             ),

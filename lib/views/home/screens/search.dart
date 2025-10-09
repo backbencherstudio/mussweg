@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:mussweg/views/widgets/simple_apppbar.dart';
+import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
 import 'package:provider/provider.dart';
-import '../../view_model/search_history_provider/search_history.dart';
+import '../../../view_model/search_history_provider/search_history.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
-
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<SearchProvider>();
-
     return Scaffold(
-      appBar: SimpleApppbar(title: 'Search'),
+      appBar:SimpleApppbar(title: 'Search'),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(

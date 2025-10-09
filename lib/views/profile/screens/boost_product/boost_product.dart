@@ -9,13 +9,10 @@ import '../../widgets/custom_text_field.dart';
 
 class BoostProductPage extends StatelessWidget {
   BoostProductPage({super.key});
-
   final List<String> _conditions = ["New", "Used", "Refurbished"];
-
   @override
   Widget build(BuildContext context) {
     final service = GetIt.instance<BoostProductService>();
-
     return Scaffold(
       appBar: const SimpleApppbar(title: 'Boost Product'),
       body: SingleChildScrollView(
@@ -23,14 +20,16 @@ class BoostProductPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Product Info',
-                style: TextStyle(
-                    fontSize: 18.sp, fontWeight: FontWeight.bold)),
+            Text(
+              'Product Info',
+              style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+            ),
             Card(
               color: Colors.white,
               elevation: 2,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.r)),
+                borderRadius: BorderRadius.circular(12.r),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -150,10 +149,7 @@ class BoostProductPage extends StatelessWidget {
               color: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.r),
-                side: BorderSide(
-                  color: const Color(0xffE9E9EA),
-                  width: 1.5.w,
-                ),
+                side: BorderSide(color: const Color(0xffE9E9EA), width: 1.5.w),
               ),
               elevation: 0,
               child: Padding(
@@ -183,7 +179,7 @@ class BoostProductPage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 80.h),
+            SizedBox(height: 40.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -206,7 +202,9 @@ class BoostProductPage extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.pushReplacementNamed(
-                          context, RouteNames.boostSuccessPage);
+                        context,
+                        RouteNames.boostSuccessPage,
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
@@ -215,14 +213,14 @@ class BoostProductPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10.r),
                       ),
                     ),
-                    child: Text('Boost',
-                        style:
-                        TextStyle(color: Colors.white, fontSize: 18.sp)),
+                    child: Text(
+                      'Boost',
+                      style: TextStyle(color: Colors.white, fontSize: 18.sp),
+                    ),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 20.h),
           ],
         ),
       ),

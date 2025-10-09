@@ -161,13 +161,13 @@ class ChatScreen extends StatelessWidget {
                 ),
               ],
             ),
+
           ),
-          // Message Input
+
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: Row(
               children: [
-                // Text Input Field
                 Expanded(
                   child: TextField(
                     decoration: InputDecoration(
@@ -190,14 +190,13 @@ class ChatScreen extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 16.h,)
+          SizedBox(height: 50.h,)
         ],
       ),
     );
   }
 }
 
-// Message Bubble Widget
 class MessageBubble extends StatelessWidget {
   final String message;
   final String timestamp;

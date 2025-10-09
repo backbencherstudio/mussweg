@@ -17,7 +17,7 @@ class CustomPrimaryButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.red,
         foregroundColor: Colors.white,
-        fixedSize: Size(80.w, 40.h),
+        fixedSize: Size(90.w, 25.h),
       ),
       child: Text(
         title,

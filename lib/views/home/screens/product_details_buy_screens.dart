@@ -6,8 +6,8 @@ import 'package:provider/provider.dart';
 
 import '../../../core/routes/route_names.dart';
 
-class ProductDetailScreens extends StatelessWidget {
-  const ProductDetailScreens({super.key});
+class ProductDetailsBuyScreens extends StatelessWidget {
+  const ProductDetailsBuyScreens({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,8 +20,8 @@ class ProductDetailScreens extends StatelessWidget {
                 ClipRRect(
                   child: Image.asset(
                     "assets/images/shirt.png", // Replace with your product image path
-                    height: 200,
-                    width: MediaQuery.of(context).size.width * 1,
+                    height: 200.h,
+                    width: 500.w,
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -117,6 +117,23 @@ class ProductDetailScreens extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16),
+            Align(
+              alignment: Alignment.topLeft,
+              child: Row(
+                children: [
+                  SizedBox(width: 15.w,),
+                  Container(
+                    width: 48.w,
+                    height: 22.h,
+                    decoration: BoxDecoration(
+                      color: Color(0xffEEFAF6),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Center(child: Text('Men',style: TextStyle(color: Color(0xff3A9B7A),fontWeight: FontWeight.w700),)),
+                  ),
+                ],
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
@@ -130,16 +147,31 @@ class ProductDetailScreens extends StatelessWidget {
                       color: Colors.black,
                     ),
                   ),
-                  SizedBox(height: 8),
+
+                  Row(spacing: 2,
+                    children: [
+                      Icon(Icons.location_on_outlined,color: Color(0xffA5A5AB),size: 20,),
+                      Text(
+                        "Switzerland",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                          color: Color(0xffA5A5AB),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 4.h,),
                   Text(
-                    "\$20.00",
+                    '\$25.00',
                     style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      color: Colors.black,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  Divider(),
+                  SizedBox(height: 4.h,),
                   Text(
                     "Description Product",
                     style: TextStyle(
@@ -155,14 +187,14 @@ class ProductDetailScreens extends StatelessWidget {
                   ),
                   SizedBox(height: 16),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade50,
+                      color: Color(0xffFDF3F2),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
                       children: [
-                        Column(
+                        Column(spacing: 4,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
@@ -197,7 +229,7 @@ class ProductDetailScreens extends StatelessWidget {
                           ],
                         ),
                         Spacer(),
-                        Column(
+                        Column(spacing: 4,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
@@ -236,43 +268,49 @@ class ProductDetailScreens extends StatelessWidget {
                   ),
                   SizedBox(height: 20,),
 
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Color(0xffF4FCF8),
-                      borderRadius: BorderRadius.circular(50),
-                    ),child: Row(
-                    children: [
-                      SizedBox(width: 16,),
-                      Icon(Icons.check_circle_outline,color: Color(0Xff1DBF73),),
-                      SizedBox(width: 12.w,),
-                      Text("If a scam occurs, their money is protected.",style: TextStyle(
-                        color: Color(0xff1DBF73)
-                      ),)
-                    ],
-                  ),
-                  ),
-                  SizedBox(height: 16),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        context.read<ParentScreensProvider>().onSelectedIndex(2);
-                        Navigator.pushNamed(context, RouteNames.parentScreen);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      child: Text(
-                        "Buy Now",
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
+                  Center(
+                    child: Container(
+                      width: 320.w,
+                      height: 25.h,
+                      decoration: BoxDecoration(
+                        color: Color(0xffF4FCF8),
+                        borderRadius: BorderRadius.circular(50),
+                      ),child: Row(
+                      children: [
+                        SizedBox(width: 12,),
+                        Icon(Icons.check_circle_outline,color: Color(0Xff1DBF73),),
+                        SizedBox(width: 12.w,),
+                        Text("If a scam occurs, their money is protected.",style: TextStyle(
+                            color: Color(0xff1DBF73)
+                        ),)
+                      ],
+                    ),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  SizedBox(height: 25),
+
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            context.read<ParentScreensProvider>().onSelectedIndex(2);
+                            Navigator.pushNamed(context, RouteNames.parentScreen);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          child: Text(
+                            "Place a Bid",
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                        ),
+                      ),
+
+                  SizedBox(height: 70.h),
                 ],
               ),
             ),

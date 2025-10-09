@@ -10,7 +10,7 @@ class SignUpPasswordTextFormFieldWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<SignUpViewModel>(
+    return Consumer<RegisterProvider>(
       builder: (context, viewModel, child) {
         return TextField(
           obscureText: !viewModel.passwordVisible,

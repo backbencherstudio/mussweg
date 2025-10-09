@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/views/widgets/simple_apppbar.dart';
 
 import '../../widgets/seller_profile_refresh.dart';
@@ -25,7 +26,14 @@ class ViewProfileScreen extends StatelessWidget {
               children: [
                 Transform.translate(
                   offset: Offset(0, -40),
-                  child: Image.asset("assets/images/user_2.png", scale: 0.5),
+                  child:  ClipOval(
+                    child: Image.asset(
+                      'assets/icons/myyyy.jpeg',
+                      fit: BoxFit.cover,
+                      width: 85.w,
+                      height: 85.h,
+                    ),
+                  ),
                 ),
                 SizedBox(width: 10),
                 Column(
@@ -67,7 +75,7 @@ class ViewProfileScreen extends StatelessWidget {
                 // Message Button
                 GestureDetector(
                   onTap: () {
-                    // Navigate to the message screen
+                    Navigator.pushNamed(context, RouteNames.chatScreen);
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),

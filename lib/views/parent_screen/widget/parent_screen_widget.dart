@@ -8,42 +8,63 @@ class ParentScreenWidget extends StatelessWidget {
   const ParentScreenWidget({super.key});
 
   static const _tabs = [
-    {'iconPath': 'assets/icons/home.png'},
-    {'iconPath': 'assets/icons/favorite.png'},
-    {'iconPath': 'assets/icons/foller.png'},
-    {'iconPath': 'assets/icons/chat.png'},
-    {'iconPath': 'assets/icons/profile.png'},
+    {'iconPath': 'assets/icons/home.png', 'label': 'Home'},
+    {'iconPath': 'assets/icons/favorite.png', 'label': 'Wishlist'},
+    {'iconPath': 'assets/icons/dollar.png', 'label': ''},
+    {'iconPath': 'assets/icons/chat.png', 'label': 'Inbox'},
+    {'iconPath': 'assets/icons/profile.png', 'label': 'Profile'},
   ];
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Container(
-      height: 70.h,
+    return SizedBox(
+      height: 100.h,
       width: double.infinity,
-      // padding: EdgeInsets.only(bottom: 20.h),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(50.r),
-        color: Color(0xffDE3526),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: List.generate(
-          _tabs.length,
-          (index) => Expanded(
-            child: _TabButton(
-              index: index,
-              iconPath: _tabs[index]['iconPath']!,
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          // Bottom navigation container
+          Container(
+            height: 70.h,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16.r),
+              color: const Color(0xffDE3526),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, -2),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: List.generate(
+                _tabs.length,
+                    (index) => index == 2
+                    ? const SizedBox(width: 60) // space for center button
+                    : Expanded(
+                  child: _TabButton(
+                    index: index,
+                    iconPath: _tabs[index]['iconPath']!,
+                    text: _tabs[index]['label']!,
+                  ),
+                ),
+              ),
             ),
           ),
-        ),
+
+          // Center floating tab
+          Positioned(
+            bottom: 24.h,
+            child: _CenterTabButton(
+              index: 2,
+              iconPath: _tabs[2]['iconPath']!,
+              text: _tabs[2]['label']!,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -51,9 +72,61 @@ class ParentScreenWidget extends StatelessWidget {
 
 class _TabButton extends StatelessWidget {
   final int index;
+  final String text;
   final String iconPath;
 
-  const _TabButton({required this.index, required this.iconPath});
+  const _TabButton({
+    required this.index,
+    required this.iconPath,
+    required this.text,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<ParentScreensProvider>(
+      builder: (_, provider, __) {
+        final isSelected = provider.selectedIndex == index;
+
+        return GestureDetector(
+          onTap: () =>
+              context.read<ParentScreensProvider>().onSelectedIndex(index),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                iconPath,
+                width: 24.w,
+                height: 24.h,
+                color:
+                isSelected ? const Color(0xffFFFFFF) : const Color(0xffF5C0BC),
+              ),
+              SizedBox(height: 4.h),
+              Text(
+                text,
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  color: isSelected ? Colors.white : const Color(0xffF5C0BC),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _CenterTabButton extends StatelessWidget {
+  final int index;
+  final String iconPath;
+  final String text;
+
+  const _CenterTabButton({
+    required this.index,
+    required this.iconPath,
+    required this.text,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -65,27 +138,14 @@ class _TabButton extends StatelessWidget {
           onTap: () =>
               context.read<ParentScreensProvider>().onSelectedIndex(index),
           child: Container(
-            height: 56.h,
+            height: 70.w,
+            width: 70.w,
             decoration: BoxDecoration(
-              color: Colors.transparent,
               shape: BoxShape.circle,
-              border: Border.all(color: index == 2 ? Colors.white : Colors.transparent, width: 5.w)
+              color: const Color(0xffDE3526),
+              border: Border.all(color: Colors.white, width: 5.w),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  iconPath,
-                  width: (index == 2) ? 32.w : 24.w,
-                  height: (index == 2) ? 32.h : 24.h,
-                  color: (index == 2)
-                      ? null
-                      : isSelected
-                      ? Color(0xffFFFFFF)
-                      : Color(0xffF5C0BC),
-                ),
-              ],
-            ),
+            child: Image.asset('assets/icons/Frame.png',scale: 3,),
           ),
         );
       },
