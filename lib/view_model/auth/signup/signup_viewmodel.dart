@@ -11,6 +11,9 @@ class RegisterProvider extends ChangeNotifier {
   bool _isOVLoading = false;
   bool get isOVLoading => _isOVLoading;
 
+  bool _isRCLoading = false;
+  bool get isRCLoading => _isRCLoading;
+
   String _email = '';
   String get email => _email;
 
@@ -86,9 +89,14 @@ class RegisterProvider extends ChangeNotifier {
         setEmail(email);
         _isLoading = false;
         notifyListeners();
-        _errorMessage = 'Registration successfully';
-        debugPrint("register response: ${response.data['success']}");
-        return response.data['success'];
+        _errorMessage = response.data['message'];
+        debugPrint("register response: ${response.data['message']}");
+        notifyListeners();
+        if (_errorMessage.contains('Email already exist')) {
+          return false;
+        } else {
+          return true;
+        }
       } else {
         _errorMessage = response.data['message'];
         _isLoading = false;
@@ -125,6 +133,33 @@ class RegisterProvider extends ChangeNotifier {
     } catch (error) {
       print('Error during OTP verification: $error');
       _isOVLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> resendCode() async {
+    _isRCLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _apiService.post(ApiEndpoints.resendCode, data: {"email": _email});
+      print("Response status: ${response.statusCode}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _isRCLoading = false;
+        _errorMessage = response.data['message'];
+        notifyListeners();
+        return response.data['success'];
+      } else {
+        _isRCLoading = false;
+        _errorMessage = response.data['message'];
+        notifyListeners();
+        return false;
+      }
+    } catch (error) {
+      print('Error during Resend code: $error');
+      _isRCLoading = false;
       notifyListeners();
       return false;
     }

@@ -3,8 +3,8 @@ import 'package:mussweg/view_model/auth/signup/signup_viewmodel.dart';
 import 'package:mussweg/views/auth/sign_up/widgets/buttons.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../core/routes/route_names.dart';
-import 'custom_pincode_field.dart';
+import '../../../core/routes/route_names.dart';
+import '../sign_up/widgets/custom_pincode_field.dart';
 
 class OtpScreen extends StatefulWidget {
   const OtpScreen({super.key});
@@ -81,7 +81,7 @@ class _OtpScreenState extends State<OtpScreen> {
                                   content: Text(provider.errorMessage),
                                 ),
                               );
-                              Navigator.pushReplacementNamed(context, RouteNames.parentScreen,);
+                              Navigator.pushReplacementNamed(context, RouteNames.loginScreen,);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -94,6 +94,47 @@ class _OtpScreenState extends State<OtpScreen> {
                       ),
                     );
                   },
+                ),
+              ),
+              SizedBox(height: 32),
+
+              Align(
+                alignment: Alignment.center,
+                child: Consumer<RegisterProvider>(
+                  builder: (_, pro, __) {
+                    return Visibility(
+                      visible: !pro.isRCLoading,
+                      replacement: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      child: GestureDetector(
+                        onTap: () async {
+                          final res = await pro.resendCode();
+                          if (res) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(pro.errorMessage),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(pro.errorMessage),
+                              ),
+                            );
+                          }
+                        },
+                        child: Text(
+                          "Resend code",
+                          style: TextStyle(
+                            color: Colors.redAccent,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    );
+                  }
                 ),
               ),
               SizedBox(height: 32),
