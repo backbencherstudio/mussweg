@@ -70,7 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   scale: 1,
                                 ),
                                 Text(
-                                  '',
+                                  'America',
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: Colors.grey,
