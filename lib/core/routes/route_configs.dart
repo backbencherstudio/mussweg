@@ -12,7 +12,7 @@ import 'package:mussweg/views/splash/splash_screen.dart';
 import 'package:mussweg/views/wishlist/wishlist_screen.dart';
 
 import '../../views/auth/sign_up/screen/sign_up_screen.dart';
-import '../../views/auth/sign_up/widgets/otp_screen.dart';
+import '../../views/auth/otp_verify/otp_screen.dart';
 import '../../views/checkout/screen/stripe_checkout_screen.dart';
 import '../../views/home/screens/chat_screen.dart';
 import '../../views/home/screens/product_details_bid_screens.dart';
