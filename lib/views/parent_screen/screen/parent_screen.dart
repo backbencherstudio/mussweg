@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mussweg/view_model/auth/login/get_me_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 import '../../../view_model/parent_provider/parent_screen_provider.dart';
@@ -16,7 +17,9 @@ class ParentScreen extends StatefulWidget {
 class _ParentScreensState extends State<ParentScreen> {
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {});
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      context.read<GetMeViewmodel>().fetchUserData();
+    });
     super.initState();
   }
 

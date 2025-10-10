@@ -5,6 +5,7 @@ import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/routes/route_names.dart';
+import '../../../view_model/auth/login/get_me_viewmodel.dart';
 import '../../../view_model/home_provider/home_screen_provider.dart';
 import '../../widgets/custom_product_card.dart';
 
@@ -13,23 +14,35 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userVM = Provider.of<GetMeViewmodel>(context);
     final homScreenProvider = context.watch<HomeScreenProvider>();
+
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Color(0xffFDFDFD),
+        backgroundColor: const Color(0xffFDFDFD),
         body: Padding(
-          padding: EdgeInsets.all(16.0), // General padding for the whole screen
+          padding: EdgeInsets.all(16.0),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Top section with user info, location, cart, and notifications
+                // Top section with user info
                 Row(
                   children: [
                     GestureDetector(
-                      onTap: (){Navigator.pushNamed(context, RouteNames.viewProfileScreen);},
+                      onTap: () {
+                        Navigator.pushNamed(
+                            context, RouteNames.viewProfileScreen);
+                      },
                       child: ClipOval(
-                        child: Image.asset(
+                        child: userVM.user?.avatar != null
+                            ? Image.network(
+                          userVM.user!.avatar!,
+                          fit: BoxFit.cover,
+                          width: 50.w,
+                          height: 50.h,
+                        )
+                            : Image.asset(
                           'assets/icons/myyyy.jpeg',
                           fit: BoxFit.cover,
                           width: 50.w,
@@ -37,14 +50,14 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(width: 12.w), // Adjusted spacing
+                    SizedBox(width: 12.w),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Hello, Treesna",
+                          "Hello, ${userVM.user?.name ?? 'Guest'}",
                           style: TextStyle(
-                            color: Color(0xffDE3526),
+                            color: const Color(0xffDE3526),
                             fontWeight: FontWeight.w600,
                             fontSize: 18.sp,
                           ),
@@ -56,7 +69,7 @@ class HomeScreen extends StatelessWidget {
                             Text(
                               "Switzerland",
                               style: TextStyle(
-                                color: Color(0xff777980),
+                                color: const Color(0xff777980),
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w400,
                               ),
@@ -65,37 +78,36 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Spacer(),
+                    const Spacer(),
                     GestureDetector(
                       onTap: () {
-                        context.read<ParentScreensProvider>().onSelectedIndex(
-                          2,
-                        );
+                        context
+                            .read<ParentScreensProvider>()
+                            .onSelectedIndex(2);
                       },
                       child: Image.asset("assets/icons/cart.png", scale: 1.5),
                     ),
-                    SizedBox(width: 12.w), // Adjusted spacing
+                    SizedBox(width: 12.w),
                     Container(
-                      padding: EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         color: Colors.white,
                       ),
-                      child: Icon(Icons.notifications_active),
+                      child: const Icon(Icons.notifications_active),
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: 5.h,
-                ), // Space between top section and search bar
-                // Search bar section
+                SizedBox(height: 5.h),
+
+                // Search bar
                 GestureDetector(
-                  onTap: (){Navigator.pushNamed(context, RouteNames.searchPage);},
+                  onTap: () {
+                    Navigator.pushNamed(context, RouteNames.searchPage);
+                  },
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 14,
-                    ),
+                        horizontal: 12, vertical: 14),
                     margin: const EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
                       color: const Color(0xffF1F0EE),
@@ -113,12 +125,13 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 SizedBox(height: 5.h),
+
+                // Categories
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    const Text(
                       "Categories",
                       style: TextStyle(
                         color: Colors.black,
@@ -130,14 +143,15 @@ class HomeScreen extends StatelessWidget {
                       onTap: () {
                         Navigator.pushNamed(context, RouteNames.categoryScreen);
                       },
-                      child: Text(
+                      child: const Text(
                         "View All",
                         style: TextStyle(color: Colors.red),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 10.h), // Space before the grid
+                SizedBox(height: 10.h),
+
                 SizedBox(
                   height: 75.h,
                   child: ListView.builder(
@@ -150,24 +164,22 @@ class HomeScreen extends StatelessWidget {
                         child: Column(
                           children: [
                             Container(
-                              padding: EdgeInsets.all(5),
+                              padding: const EdgeInsets.all(5),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5),
-                                color: Color(0xffF2F1EF),
+                                color: const Color(0xffF2F1EF),
                               ),
                               child: SvgPicture.asset(
                                 feature["image"],
                                 height: 30.h,
-                                width: 30.w, // Ensure images are responsive
+                                width: 30.w,
                               ),
                             ),
-                            SizedBox(
-                              height: 4.h,
-                            ), // Added space between image and title
+                            SizedBox(height: 4.h),
                             Text(
                               feature["title"],
                               style: TextStyle(
-                                color: Color(0xff4A4C56),
+                                color: const Color(0xff4A4C56),
                                 fontWeight: FontWeight.w400,
                                 fontSize: 12.sp,
                               ),
@@ -179,94 +191,56 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Fashion Products",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text("View All", style: TextStyle(color: Colors.red)),
-                  ],
-                ),
-                SizedBox(height: 10.h), // Space before the grid
-                // Fashion products grid with `Expanded` to avoid overflow
-                SizedBox(
-                  height: 235.h,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 6,
-                    itemBuilder: (context, index) {
-                      return CustomProductCard();
-                    },
-                  ),
-                ),
-                SizedBox(height: 16.h), // Space before Fashion Products section
+                // Fashion Products Section
+                _buildProductSection("Fashion Products"),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Home Accessories",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text("View All", style: TextStyle(color: Colors.red)),
-                  ],
-                ),
-                SizedBox(height: 10.h), // Space before the grid
-                // Fashion products grid with `Expanded` to avoid overflow
-                SizedBox(
-                  height: 235.h,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 6,
-                    itemBuilder: (context, index) {
-                      return CustomProductCard();
-                    },
-                  ),
-                ),
-                SizedBox(height: 16.h),
+                // Home Accessories Section
+                _buildProductSection("Home Accessories"),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Electronics Products",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text("View All", style: TextStyle(color: Colors.red)),
-                  ],
-                ),
-                SizedBox(height: 10.h), // Space before the grid
-                // Fashion products grid with `Expanded` to avoid overflow
-                SizedBox(
-                  height: 235.h,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 6,
-                    itemBuilder: (context, index) {
-                      return CustomProductCard();
-                    },
-                  ),
-                ),
+                // Electronics Products Section
+                _buildProductSection("Electronics Products"),
+
                 SizedBox(height: 90.h),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  // Helper method to build product sections
+  Widget _buildProductSection(String title) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 16.h),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const Text("View All", style: TextStyle(color: Colors.red)),
+          ],
+        ),
+        SizedBox(height: 10.h),
+        SizedBox(
+          height: 235.h,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 6,
+            itemBuilder: (context, index) {
+              return CustomProductCard();
+            },
+          ),
+        ),
+      ],
     );
   }
 }
