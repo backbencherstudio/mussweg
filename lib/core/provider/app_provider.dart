@@ -1,3 +1,4 @@
+import 'package:mussweg/view_model/home_provider/all_category_provider.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -11,7 +12,6 @@ import '../../view_model/profile/notification_service_provider/notification_serv
 import '../../view_model/profile/sell_item_service_provider/sell_item_service.dart';
 import '../../view_model/profile/transaction_service_provider/transaction_service.dart';
 import '../../view_model/search_history_provider/search_history.dart';
-import 'inject.dart';
 
 class AppProviders {
   static final List<SingleChildWidget> providers = [
@@ -26,5 +26,6 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => RegisterProvider()),
     ChangeNotifierProvider(create: (_) => FavoriteProvider()),
     ChangeNotifierProvider(create: (_) => LoginScreenProvider()),
+    ChangeNotifierProvider(create: (_) => AllCategoryProvider()),
   ];
 }
