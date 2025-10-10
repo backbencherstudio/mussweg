@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:mussweg/view_model/auth/signup/signup_viewmodel.dart';
 import 'package:mussweg/view_model/home_provider/home_screen_provider.dart';
+import '../../view_model/auth/login/get_me_viewmodel.dart';
 import '../../view_model/auth/login/login_viewmodel.dart';
 import '../../view_model/home_provider/favorite_icon_provider.dart';
 import '../../view_model/profile/boost_product_service_provider/boost_product_service.dart';
@@ -27,5 +28,6 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => FavoriteProvider()),
     ChangeNotifierProvider(create: (_) => LoginScreenProvider()),
     ChangeNotifierProvider(create: (_) => AllCategoryProvider()),
+    ChangeNotifierProvider(create: (_) => GetMeViewmodel()),
   ];
 }

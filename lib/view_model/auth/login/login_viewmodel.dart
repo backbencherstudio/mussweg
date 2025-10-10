@@ -31,7 +31,7 @@ class LoginScreenProvider extends ChangeNotifier {
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data;
-        final token = data['authorization']['refresh_token'];
+        final token = data['authorization']['access_token'];
         await _tokenStorage.saveToken(token);
         debugPrint("The authorization token is $token");
         //another api call nested

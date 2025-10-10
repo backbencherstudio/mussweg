@@ -54,7 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              'Protiva Induri Powered by Rawnak',
+                              'Protiva',
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w600,
