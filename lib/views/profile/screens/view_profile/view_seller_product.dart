@@ -8,7 +8,7 @@ import '../../../../view_model/parent_provider/parent_screen_provider.dart';
 import '../../widgets/product_card.dart';
 
 class SellerProfilePage extends StatefulWidget {
-  const SellerProfilePage({Key? key}) : super(key: key);
+  const SellerProfilePage({super.key});
 
   @override
   State<SellerProfilePage> createState() => _SellerProfilePageState();
@@ -189,7 +189,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
             unselectedLabelColor: Colors.grey,
             indicatorSize: TabBarIndicatorSize.tab,
             tabs: const [
-              Tab(text: 'Closet'),
+              Tab(text: 'Offers'),
               Tab(text: 'Reviews'),
             ],
           ),
@@ -198,7 +198,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
               controller: _tabController,
               children: [
                 Padding(
-                  padding: EdgeInsets.all(8.0.sp),
+                  padding: EdgeInsets.all(8.w),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -218,9 +218,20 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                               Navigator.pushNamed(
                                   context, RouteNames.sellItemPage);
                             },
-                            child: Image.asset(
-                              'assets/icons/sell_items.png',
-                              scale: 3,
+                            child: Container(
+                              width: 80.w,
+                              height: 30.w,
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.add_box_outlined, color: Colors.white, size: 16.w),
+                                  Text('Sell', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14.sp),)
+                                ],
+                              ),
                             ),
                           )
                         ],
@@ -238,7 +249,6 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                             productName: 'Man Exclusive T-Shirt',
                             price: '\$20.00',
                             isBoosted: true,
-                            showBoostBottom: true,
                           );
                         }),
                       ),

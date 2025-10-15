@@ -30,9 +30,11 @@ class RouteNames {
   static const String stripeCheckoutScreen = '/stripeCheckoutScreen';
   static const String searchPage = '/searchPage';
   static const String orderPlacedScreen = '/orderPlacedScreen';
+  static const String wegSuccessScreen = '/wegSuccessScreen';
   static const String cartScreen = '/cartScreen';
   static const String productDetailsBuyScreens = '/productDetailsBuyScreens';
   static const String bidList = '/bidList';
+  static const String trackProgressScreen = '/trackProgressScreen';
 
 
 }

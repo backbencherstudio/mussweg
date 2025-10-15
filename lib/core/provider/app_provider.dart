@@ -1,5 +1,6 @@
 import 'package:mussweg/view_model/home_provider/all_category_provider.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
+import 'package:mussweg/view_model/pickup/pickup_option_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:mussweg/view_model/auth/signup/signup_viewmodel.dart';
@@ -7,6 +8,7 @@ import 'package:mussweg/view_model/home_provider/home_screen_provider.dart';
 import '../../view_model/auth/login/get_me_viewmodel.dart';
 import '../../view_model/auth/login/login_viewmodel.dart';
 import '../../view_model/home_provider/favorite_icon_provider.dart';
+import '../../view_model/pickup/pickup_timer_provider.dart';
 import '../../view_model/profile/boost_product_service_provider/boost_product_service.dart';
 import '../../view_model/profile/language_selected_provider/language_select.dart';
 import '../../view_model/profile/notification_service_provider/notification_service.dart';
@@ -29,5 +31,7 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => LoginScreenProvider()),
     ChangeNotifierProvider(create: (_) => AllCategoryProvider()),
     ChangeNotifierProvider(create: (_) => GetMeViewmodel()),
+    ChangeNotifierProvider(create: (_) => PickupTimerProvider()),
+    ChangeNotifierProvider(create: (_) => PickupOptionProvider()),
   ];
 }

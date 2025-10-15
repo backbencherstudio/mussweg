@@ -125,21 +125,20 @@ class _LoginScreenState extends State<LoginScreen> {
             color: const Color(0xFFDE3526),
             textColor: Colors.white,
             onTap: () async {
-              // final result = await viewModel.login(
-              //   email: _emailController.text,
-              //   password: _passwordController.text,
-              // );
-              // if(result){
-              //   ScaffoldMessenger.of(context).showSnackBar(
-              //     SnackBar(content: Text(viewModel.errorMessage ?? "Login Successful")),
-              //   );
-              //   Navigator.pushNamed(context, RouteNames.parentScreen);
-              // }else{
-              //   ScaffoldMessenger.of(context).showSnackBar(
-              //     SnackBar(content: Text(viewModel.errorMessage ?? "Something went wrong")),
-              //   );
-              // }
-              Navigator.pushNamed(context, RouteNames.parentScreen);
+              final result = await viewModel.login(
+                email: _emailController.text,
+                password: _passwordController.text,
+              );
+              if(result){
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(viewModel.errorMessage ?? "Login Successful")),
+                );
+                Navigator.pushNamed(context, RouteNames.parentScreen);
+              }else{
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(viewModel.errorMessage ?? "Something went wrong")),
+                );
+              }
             },
           ),
         );

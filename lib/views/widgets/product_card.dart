@@ -39,7 +39,7 @@ class ProductCard extends StatelessWidget {
                     children: [
                       Align(
                         alignment: Alignment.topCenter,
-                        child: Container(
+                        child: SizedBox(
                           width: 150.w,
                           child: ClipRRect(
                             borderRadius: BorderRadius.vertical(
