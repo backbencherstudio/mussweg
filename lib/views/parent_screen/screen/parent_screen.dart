@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mussweg/view_model/auth/login/get_me_viewmodel.dart';
+import 'package:mussweg/view_model/home_provider/all_category_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../view_model/parent_provider/parent_screen_provider.dart';
@@ -18,7 +19,7 @@ class _ParentScreensState extends State<ParentScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      context.read<GetMeViewmodel>().fetchUserData();
+      context.read<AllCategoryProvider>().getAllCategories();
     });
     super.initState();
   }

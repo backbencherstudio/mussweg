@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/views/widgets/custom_button.dart';
 
-class OrderPlacedScreen extends StatelessWidget {
-  const OrderPlacedScreen({super.key});
+class WegSuccessScreen extends StatelessWidget {
+  const WegSuccessScreen({super.key});
 
 
   @override
@@ -34,7 +35,7 @@ class OrderPlacedScreen extends StatelessWidget {
                     Image.asset('assets/icons/success-icon.png'),
                     SizedBox(height: 10.h),
                     Text(
-                      'Your order \n has been placed.',
+                      'Congratulations, your\nitem is weg!',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 24.sp,
@@ -43,21 +44,14 @@ class OrderPlacedScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 10.h),
-                    Text(
-                      textAlign: TextAlign.center,
-                      'Your order would be delivered in \n the 30 mins almost',
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: Color(0xFF4A4C56),
-                      ),
-                    ),
 
-                    SizedBox(height: 20.h),
                     CustomButton(
                       text: 'Track Your Order',
                       textColor: Colors.white,
                       buttonColor: Colors.red,
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, RouteNames.trackProgressScreen);
+                      },
                     ),
                     SizedBox(height: 10.h),
                   ],
