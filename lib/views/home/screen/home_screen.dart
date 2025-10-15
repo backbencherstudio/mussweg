@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mussweg/data/model/home/category_model.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/routes/route_names.dart';
 import '../../../view_model/auth/login/get_me_viewmodel.dart';
+import '../../../view_model/home_provider/all_category_provider.dart';
 import '../../../view_model/home_provider/home_screen_provider.dart';
 import '../../widgets/custom_product_card.dart';
 
@@ -152,43 +154,47 @@ class HomeScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 10.h),
 
-                SizedBox(
-                  height: 75.h,
-                  child: ListView.builder(
-                    itemCount: homScreenProvider.featureList.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (BuildContext context, int index) {
-                      final feature = homScreenProvider.featureList[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Column(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: const Color(0xffF2F1EF),
-                              ),
-                              child: SvgPicture.asset(
-                                feature["image"],
-                                height: 30.h,
-                                width: 30.w,
-                              ),
+                Consumer<AllCategoryProvider>(
+                  builder: (_, categoryProvider, __) {
+                    return SizedBox(
+                      height: 75.h,
+                      child: ListView.builder(
+                        itemCount: categoryProvider.categoryModel?.data.length ?? 0,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          final feature = categoryProvider.categoryModel?.data[index];
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Column(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: const Color(0xffF2F1EF),
+                                  ),
+                                  child: SvgPicture.asset(
+                                    homScreenProvider.featureList[index]["image"],
+                                    height: 30.h,
+                                    width: 30.w,
+                                  ),
+                                ),
+                                SizedBox(height: 4.h),
+                                Text(
+                                  feature?.categoryName ?? '',
+                                  style: TextStyle(
+                                    color: const Color(0xff4A4C56),
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12.sp,
+                                  ),
+                                ),
+                              ],
                             ),
-                            SizedBox(height: 4.h),
-                            Text(
-                              feature["title"],
-                              style: TextStyle(
-                                color: const Color(0xff4A4C56),
-                                fontWeight: FontWeight.w400,
-                                fontSize: 12.sp,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                          );
+                        },
+                      ),
+                    );
+                  }
                 ),
 
                 // Fashion Products Section

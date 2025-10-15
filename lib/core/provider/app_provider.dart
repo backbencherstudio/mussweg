@@ -19,7 +19,7 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => ParentScreensProvider()),
     ChangeNotifierProvider(create: (_) => HomeScreenProvider()),
     ChangeNotifierProvider(create: (_) => LanguageService()),
-    ChangeNotifierProvider(create: (_) =>SellItemService()),
+    ChangeNotifierProvider(create: (_) => SellItemService()),
     ChangeNotifierProvider(create: (_) => TransactionService()),
     ChangeNotifierProvider(create: (_) => NotificationService()),
     ChangeNotifierProvider(create: (_) => BoostProductService()),

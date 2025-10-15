@@ -91,7 +91,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
 
                     },
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20.r),
+                      borderRadius: BorderRadius.circular(8.r),
                       child: BackdropFilter(
                         filter: ImageFilter.blur(
                           sigmaX: 2,
@@ -102,7 +102,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           padding: EdgeInsets.symmetric(horizontal: 20.w),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(20.r),
+                            borderRadius: BorderRadius.circular(8.r),
                             border: Border.all(
                               color: Colors.grey.withOpacity(0.5),
                               width: 1.5.w,
@@ -187,6 +187,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
             indicatorColor: Colors.red,
             labelColor: Colors.red,
             unselectedLabelColor: Colors.grey,
+            indicatorSize: TabBarIndicatorSize.tab,
             tabs: const [
               Tab(text: 'Closet'),
               Tab(text: 'Reviews'),

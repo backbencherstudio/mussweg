@@ -1,6 +1,6 @@
 class ApiEndpoints {
   ApiEndpoints._();
-  static const String baseUrl = 'https://asked-promise-reactions-employ.trycloudflare.com';
+  static const String baseUrl = 'https://lately-pure-developments-fill.trycloudflare.com';
   static const String imageBaseurl = 'http://localhost:5005/api';
 
   /// Auth
@@ -12,6 +12,6 @@ class ApiEndpoints {
   static const String forgetPassword = '$baseUrl/api/auth/forgot-password';
 
   /// Home
-  static const String getAllCategory = '$baseUrl/api/category';
+  static const String getAllCategory = '$baseUrl/api/category/allCategories';
 
 }
