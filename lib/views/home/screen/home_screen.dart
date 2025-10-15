@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:provider/provider.dart';
-
 import '../../../core/routes/route_names.dart';
 import '../../../view_model/auth/login/get_me_viewmodel.dart';
 import '../../../view_model/home_provider/home_screen_provider.dart';
@@ -26,7 +25,6 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Top section with user info
                 Row(
                   children: [
                     GestureDetector(
@@ -67,7 +65,7 @@ class HomeScreen extends StatelessWidget {
                             Image.asset("assets/icons/location.png"),
                             SizedBox(width: 7.w),
                             Text(
-                              "Switzerland",
+                              userVM.user?.address ?? 'Switzerland',
                               style: TextStyle(
                                 color: const Color(0xff777980),
                                 fontSize: 14.sp,

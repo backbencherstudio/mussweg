@@ -51,7 +51,7 @@ class AppRoutes {
     RouteNames.productListScreen: (context) => const ProductListScreen(),
     RouteNames.productDetailsBidScreens: (context) => const ProductDetailsBidScreens(),
     RouteNames.chatScreen: (context) => const ChatScreen(),
-    RouteNames.viewProfileScreen: (context) => const ViewProfileScreen(),
+    RouteNames.viewProfileScreen: (context) =>  ViewProfileScreen(),
     RouteNames.boughtItemsScreen: (context) => BoughtItemsScreen(),
     RouteNames.sellingItemsScreen: (context) => SellingItemsScreen(),
     RouteNames.sellItemPage: (context) => const SellItemPage(),

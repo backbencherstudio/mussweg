@@ -3,14 +3,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/views/widgets/simple_apppbar.dart';
-
+import 'package:provider/provider.dart';
+import '../../../view_model/auth/login/get_me_viewmodel.dart';
 import '../../widgets/seller_profile_refresh.dart';
 
 class ViewProfileScreen extends StatelessWidget {
-  const ViewProfileScreen({super.key});
+   ViewProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final userVM = Provider.of<GetMeViewmodel>(context);
+
     return Scaffold(
       appBar: SimpleApppbar(title: 'View Profile'),
       body: Column(
@@ -40,7 +43,7 @@ class ViewProfileScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Cameron Williamson",
+                     "${userVM.user?.name ?? 'Guest'}",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,

@@ -4,6 +4,8 @@ import '../../../core/services/api_service.dart';
 import '../../../data/model/user/user_model.dart';
 
 class GetMeViewmodel extends ChangeNotifier {
+  final ApiService _apiService = ApiService();
+
   bool _loading = false;
   bool get loading => _loading;
 
@@ -13,33 +15,41 @@ class GetMeViewmodel extends ChangeNotifier {
   String? _error;
   String? get error => _error;
 
-  final ApiService _apiService = ApiService();
-
   Future<void> fetchUserData() async {
-    _loading = true;
-    _error = null;
-    notifyListeners();
+    _setLoading(true);
 
     try {
       final response = await _apiService.get(ApiEndpoints.getMe);
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonResponse = response.data;
+        final jsonResponse = response.data as Map<String, dynamic>;
         final userResponse = UserResponseModel.fromJson(jsonResponse);
 
         if (userResponse.success && userResponse.data != null) {
-          _user = userResponse.data;
+          _user = userResponse.data!;
+          _error = null;
         } else {
-          _error = "Failed to fetch user data";
+          _error = "Failed to load user data";
+          _user = null;
         }
       } else {
-        _error = "Server error: ${response.statusCode}";
+        _error = "Server error (${response.statusCode})";
+        _user = null;
       }
     } catch (e) {
       _error = "Something went wrong: $e";
+      _user = null;
     } finally {
-      _loading = false;
-      notifyListeners();
+      _setLoading(false);
     }
+  }
+
+  void _setLoading(bool value) {
+    _loading = value;
+    notifyListeners();
+  }
+
+  Future<void> refreshUser() async {
+    await fetchUserData();
   }
 }

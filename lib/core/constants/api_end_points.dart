@@ -1,6 +1,6 @@
 class ApiEndpoints {
   ApiEndpoints._();
-  static const String baseUrl = 'https://asked-promise-reactions-employ.trycloudflare.com';
+  static const String baseUrl = 'https://arranged-prior-annual-engineer.trycloudflare.com';
   static const String imageBaseurl = 'http://localhost:5005/api';
 
   static const String register = '$baseUrl/api/auth/register';
