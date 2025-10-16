@@ -20,6 +20,7 @@ import '../../view_model/profile/sell_item_service_provider/sell_item_service.da
 import '../../view_model/profile/transaction_service_provider/transaction_service.dart';
 import '../../view_model/search_history_provider/search_history.dart';
 import '../../view_model/whistlist/whistlist_provider_of_get_favourite_product.dart';
+import '../../view_model/whistlist/wishlist_create.dart';
 
 class AppProviders {
   static final List<SingleChildWidget> providers = [
@@ -43,5 +44,6 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => ElectronicCategoryBasedProvider()),
     ChangeNotifierProvider(create: (_) => CategoryBasedProductProvider()),
     ChangeNotifierProvider(create: (_) => WhistlistProviderOfGetFavouriteProduct()),
+    ChangeNotifierProvider(create: (_) => WishlistCreate()),
   ];
 }

@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import '../../../core/routes/route_names.dart';
 import '../../../view_model/home_provider/home_nav/fashion_category_based_product_provider.dart';
 import '../../../view_model/home_provider/home_nav/home_category_based_provider.dart';
+import '../../../view_model/whistlist/whistlist_provider_of_get_favourite_product.dart';
+import '../../../view_model/whistlist/wishlist_create.dart';
 import '../../profile/widgets/simple_apppbar.dart';
 import 'filter_dopdown.dart';
 
@@ -184,16 +186,31 @@ class ProductListScreen extends StatelessWidget {
                                     Positioned(
                                       top: 10,
                                       left: 10,
-                                      child: Container(
-                                        padding: const EdgeInsets.all(6),
-                                        decoration: const BoxDecoration(
-                                          color: Color(0xffADA8A5),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child:  Icon(
-                                         product.isInWishlist ? Icons.favorite : Icons.favorite_border,
-                                          color: Colors.white,
-                                          size: 24,
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          final result =await context.read<WishlistCreate>().createWishListProduct(product.id);
+                                          if (result) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(content: Text(context.read<WishlistCreate>().errorMessage)),
+                                            );
+                                            await context.read<WhistlistProviderOfGetFavouriteProduct>().getWishlistProduct();
+                                          } else {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(content: Text(context.read<WishlistCreate>().errorMessage)),
+                                            );
+                                          }
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.all(6),
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xffADA8A5),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child:  Icon(
+                                           product.isInWishlist ? Icons.favorite : Icons.favorite_border,
+                                            color: Colors.white,
+                                            size: 24,
+                                          ),
                                         ),
                                       ),
                                     ),
