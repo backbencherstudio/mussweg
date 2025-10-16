@@ -15,5 +15,6 @@ class ApiEndpoints {
   static const String getAllCategory = '$baseUrl/api/category/allCategories';
   static String getProductsByCategory(String id) => '$baseUrl/api/products/category/$id/latest-products';
   static String getWishList = '$baseUrl/api/wishlist/userwishlist';
+  static String createWishListProduct = '$baseUrl/api/wishlist/create';
 
 }
