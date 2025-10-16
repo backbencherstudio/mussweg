@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mussweg/view_model/auth/login/get_me_viewmodel.dart';
+import 'package:mussweg/view_model/home_provider/all_category_provider.dart';
+import 'package:mussweg/view_model/home_provider/home_nav/electronic_category_based_provider.dart';
+import 'package:mussweg/view_model/home_provider/home_nav/home_category_based_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../../../view_model/home_provider/home_nav/fashion_category_based_product_provider.dart';
 import '../../../view_model/parent_provider/parent_screen_provider.dart';
 
+import '../../../view_model/whistlist/whistlist_provider_of_get_favourite_product.dart';
 import '../widget/parent_screen_widget.dart';
 
 class ParentScreen extends StatefulWidget {
@@ -17,10 +22,15 @@ class ParentScreen extends StatefulWidget {
 class _ParentScreensState extends State<ParentScreen> {
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      context.read<GetMeViewmodel>().fetchUserData();
-    });
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await context.read<AllCategoryProvider>().getAllCategories();
+      final allCategoryProvider = context.read<AllCategoryProvider>();
+      context.read<FashionCategoryBasedProductProvider>().getCategoryBasedProduct(allCategoryProvider.fashionCategoryId);
+      context.read<HomeCategoryBasedProvider>().getCategoryBasedProduct(allCategoryProvider.homeCategoryId);
+      context.read<ElectronicCategoryBasedProvider>().getCategoryBasedProduct(allCategoryProvider.electronicsCategoryId);
+      context.read<WhistlistProviderOfGetFavouriteProduct>().getWishlistProduct();
+    });
   }
 
   @override

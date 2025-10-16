@@ -5,10 +5,12 @@ import 'package:mussweg/views/cart/cart_screen.dart';
 import 'package:mussweg/views/checkout/screen/checkout_cart_list_screen.dart';
 
 import 'package:mussweg/views/onboarding/screen/onboarding_screen.dart';
+import 'package:mussweg/views/order_placed/screen/weg_success_screen.dart';
 
 import 'package:mussweg/views/parent_screen/screen/parent_screen.dart';
 import 'package:mussweg/views/selling_items/selling_items_screen.dart';
 import 'package:mussweg/views/splash/splash_screen.dart';
+import 'package:mussweg/views/track_progress/track_progress_screen.dart';
 import 'package:mussweg/views/wishlist/wishlist_screen.dart';
 
 import '../../views/auth/sign_up/screen/sign_up_screen.dart';
@@ -70,9 +72,10 @@ class AppRoutes {
     RouteNames.stripeCheckoutScreen:(context) => const StripeCheckoutScreen(),
     RouteNames.searchPage:(context) => const SearchPage(),
     RouteNames.orderPlacedScreen:(context) => const OrderPlacedScreen(),
+    RouteNames.wegSuccessScreen:(context) => const WegSuccessScreen(),
     RouteNames.cartScreen:(context) => const CartScreen(),
     RouteNames.loginScreen:(context) => const LoginScreen(),
     RouteNames.productDetailsBuyScreens:(context) => const ProductDetailsBuyScreens(),
-    RouteNames.bidList:(context) => const BidList(),
+    RouteNames.trackProgressScreen:(context) => const TrackProgressScreen(),
   };
 }

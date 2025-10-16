@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/core/routes/route_names.dart';
+import 'package:mussweg/core/services/token_storage.dart';
+import 'package:mussweg/core/services/user_email_storage.dart';
+import 'package:mussweg/core/services/user_id_storage.dart';
+import 'package:mussweg/core/services/user_name_storage.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:mussweg/views/profile/widgets/profile_menu_item.dart';
 import 'package:mussweg/views/widgets/simple_apppbar.dart';
@@ -210,9 +214,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                     ),
                     Divider(color: Colors.grey[350]),
+                    ProfileMenuItem(
+                      image: 'assets/icons/language.png',
+                      title: 'Logout',
+                      onTap: () {
+                        showDialog(context: context, builder: (context) {
+                          return AlertDialog(
+                            backgroundColor: Colors.white,
+                            title: const Text('Logout'),
+                            content: const Text('Are you sure you want to logout?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Cancel', style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w600),),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  await TokenStorage().clearToken();
+                                  await UserEmailStorage().clearUserEmail();
+                                  await UserIdStorage().clearUserId();
+                                  await UserNameStorage().clearUserName();
+                                  Navigator.pushNamedAndRemoveUntil(context, RouteNames.loginScreen, (pre) => false);
+                                },
+                                child: const Text('Logout', style: TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold),),
+                              ),
+                            ],
+                          );
+                        });
+                      },
+                    ),
                   ],
                 ),
-                SizedBox(height: 75.h),
+                SizedBox(height: 100.h),
               ],
             ),
           ),

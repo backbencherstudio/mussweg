@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:mussweg/core/constants/api_end_points.dart';
 import 'package:provider/provider.dart';
-
+import '../../data/model/home/category_based_product_model.dart';
 import '../../view_model/home_provider/favorite_icon_provider.dart';
 
 class CustomProductCard extends StatelessWidget {
-  const CustomProductCard({super.key});
+  final Product product;
+
+  CustomProductCard({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
     final favoriteProvider = Provider.of<FavoriteProvider>(context);
+
     return SizedBox(
       width: 220.w,
       child: Card(
@@ -32,9 +35,24 @@ class CustomProductCard extends StatelessWidget {
                         border: Border.all(color: Colors.grey),
                         borderRadius: BorderRadius.circular(12.r),
                       ),
-                      child: Image.asset('assets/images/post_card.png'),
+                      child: (product.photo != null && product.photo!.isNotEmpty)
+                          ? Image.network(
+                        '${ApiEndpoints.imageBaseurl}${product.photo}',
+                        fit: BoxFit.cover,
+                        height: 105.h,
+                        width: double.infinity,
+                        errorBuilder: (_, __, ___) =>
+                            Image.asset('assets/images/post_card.png', fit: BoxFit.cover),
+                      )
+                          : Image.asset(
+                        'assets/images/post_card.png',
+                        fit: BoxFit.cover,
+                        height: 105.h,
+                        width: double.infinity,
+                      ),
                     ),
                   ),
+
                   Positioned(
                     top: 8.w,
                     left: 8.w,
@@ -69,20 +87,21 @@ class CustomProductCard extends StatelessWidget {
                 ],
               ),
               Text(
-                "Max Exclusive T-Shirt",
-                style:
-                TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700),
+                product.title ?? '',
+                style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700),
               ),
               Text(
-                "Size XL (New Condition)",
-                style:
-                TextStyle(fontSize: 12.sp, color: const Color(0xff777980)),
+                "Size ${product.size ?? ''} (${product.condition ?? ''} Condition)",
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: const Color(0xff777980),
+                ),
               ),
               RichText(
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: "Aug 6 ,13:55",
+                      text: "${product.createdTime ?? ''}",
                       style: TextStyle(
                         color: const Color(0xff777980),
                         fontSize: 13.sp,
@@ -90,7 +109,7 @@ class CustomProductCard extends StatelessWidget {
                       ),
                     ),
                     TextSpan(
-                      text: "  (12h :12m :30s)",
+                      text: " ${product.boostTimeLeft ?? '(12h :12m :30s)'}",
                       style: TextStyle(
                         color: const Color(0xff1A9882),
                         fontSize: 13.sp,
@@ -105,7 +124,7 @@ class CustomProductCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '\$25.00',
+                    '\$${product.price ?? ''}',
                     style: TextStyle(
                       color: Colors.red,
                       fontSize: 18.sp,

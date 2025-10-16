@@ -125,6 +125,12 @@ class _LoginScreenState extends State<LoginScreen> {
             color: const Color(0xFFDE3526),
             textColor: Colors.white,
             onTap: () async {
+              if(_emailController.text.isEmpty || _passwordController.text.isEmpty){
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Please fill all the fields")),
+                );
+                return;
+              }
               final result = await viewModel.login(
                 email: _emailController.text,
                 password: _passwordController.text,
