@@ -4,31 +4,44 @@ import 'package:mussweg/core/constants/api_end_points.dart';
 import 'package:mussweg/view_model/product_item_list_provider/category_based_product_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../core/routes/route_names.dart';
-import '../../../view_model/home_provider/home_nav/fashion_category_based_product_provider.dart';
-import '../../../view_model/home_provider/home_nav/home_category_based_provider.dart';
 import '../../../view_model/whistlist/whistlist_provider_of_get_favourite_product.dart';
 import '../../../view_model/whistlist/wishlist_create.dart';
 import '../../profile/widgets/simple_apppbar.dart';
 import 'filter_dopdown.dart';
 
-class ProductListScreen extends StatelessWidget {
+class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> _categoryFilter = [
-      {"title": "Filter"},
-      {"title": "Latest products"},
-      {"title": "Oldest Product"},
-    ];
+  State<ProductListScreen> createState() => _ProductListScreenState();
+}
 
+class _ProductListScreenState extends State<ProductListScreen> {
+  String selectedFilter = "Latest products";
+
+  final List<Map<String, dynamic>> _categoryFilter = [
+    {"title": "Filter"},
+    {"title": "Latest products"},
+    {"title": "Oldest Product"},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: SimpleApppbar(title: '${context.watch<CategoryBasedProductProvider>().categoryTitle} Products'),
+      appBar: SimpleApppbar(
+        title:
+        '${context.watch<CategoryBasedProductProvider>().categoryTitle} Products',
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Consumer<CategoryBasedProductProvider>(
           builder: (context, provider, _) {
-            final products = provider.categoryBasedProductModel?.data?.products ?? [];
+            final products =
+                provider.categoryBasedProductModel?.data?.products ?? [];
+
+            final displayedProducts = selectedFilter == "Oldest Product"
+                ? products.reversed.toList()
+                : products;
 
             return SingleChildScrollView(
               child: Column(
@@ -41,44 +54,57 @@ class ProductListScreen extends StatelessWidget {
                       itemCount: _categoryFilter.length,
                       itemBuilder: (context, index) {
                         final data = _categoryFilter[index];
+                        final isSelected = selectedFilter == data["title"];
                         return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              color: const Color(0xffF1F0EE),
-                            ),
-                            child: InkWell(
-                              onTap: () {
-                                if (data["title"] == "Filter") {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return const Dialog(
-                                        backgroundColor: Colors.white,
-                                        insetPadding: EdgeInsets.all(16),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.all(
-                                            Radius.circular(16),
-                                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 8),
+                          child: InkWell(
+                            onTap: () {
+                              if (data["title"] == "Filter") {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return const Dialog(
+                                      backgroundColor: Colors.white,
+                                      insetPadding: EdgeInsets.all(16),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(16),
                                         ),
-                                        child: FilterPage(),
-                                      );
-                                    },
-                                  );
-                                }
-                              },
+                                      ),
+                                      child: FilterPage(),
+                                    );
+                                  },
+                                );
+                              } else {
+                                setState(() {
+                                  selectedFilter = data["title"];
+                                });
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 10),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: isSelected
+                                    ? const Color(0xffDE3526)
+                                    : const Color(0xffF1F0EE),
+                              ),
                               child: Row(
                                 children: [
                                   if (data["title"] == "Filter")
-                                    Image.asset("assets/icons/filter.png", height: 20.h),
+                                    Image.asset("assets/icons/filter.png",
+                                        height: 20.h),
                                   const SizedBox(width: 10),
                                   Text(
                                     data["title"],
                                     style: TextStyle(
                                       fontSize: 14.sp,
                                       fontWeight: FontWeight.w500,
+                                      color: isSelected
+                                          ? Colors.white
+                                          : Colors.black,
                                     ),
                                   ),
                                 ],
@@ -93,7 +119,7 @@ class ProductListScreen extends StatelessWidget {
                   const SizedBox(height: 16),
 
                   Text(
-                    "Latest Products",
+                    selectedFilter,
                     style: TextStyle(
                       color: const Color(0xff4A4C56),
                       fontSize: 18.sp,
@@ -104,7 +130,7 @@ class ProductListScreen extends StatelessWidget {
 
                   if (provider.isLoading)
                     const Center(child: CircularProgressIndicator())
-                  else if (products.isEmpty)
+                  else if (displayedProducts.isEmpty)
                     Center(
                       child: Column(
                         children: [
@@ -121,15 +147,18 @@ class ProductListScreen extends StatelessWidget {
                         ],
                       ),
                     )
+
+
                   else
                     ListView.builder(
-                      itemCount: products.length,
+                      itemCount: displayedProducts.length,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
-                        final product = products[index];
-                        final imageUrl = (product.photo != null && product.photo!.isNotEmpty)
-                            ? "${ApiEndpoints.imageBaseurl}${product.photo}"
+                        final product = displayedProducts[index];
+                        final imageUrl = (product.photo != null &&
+                            product.photo!.isNotEmpty)
+                            ? "${ApiEndpoints.imageBaseurl}${product.photo?.replaceAll('http://localhost:5005', '')}"
                             : null;
 
                         return Padding(
@@ -153,19 +182,28 @@ class ProductListScreen extends StatelessWidget {
                                         width: double.infinity,
                                         height: 200,
                                         fit: BoxFit.cover,
-                                        errorBuilder: (_, __, ___) => Image.asset(
-                                          "assets/images/shirt.png",
-                                          width: double.infinity,
-                                          height: 200,
-                                          fit: BoxFit.cover,
-                                        ),
+                                        errorBuilder: (_, __, ___) =>
+                                            Container(
+                                              height: 200,
+                                              width: double.infinity,
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey.shade50,
+                                                borderRadius: BorderRadius.circular(20),
+                                                border: Border.all(color: Colors.black12),
+                                              ),
+                                              child: Icon(Icons.broken_image_outlined, color: Colors.red, size: 50.h)
+                                            )
                                       )
-                                          : Image.asset(
-                                        "assets/images/shirt.png",
-                                        width: double.infinity,
-                                        height: 200,
-                                        fit: BoxFit.cover,
-                                      ),
+                                          : Container(
+                                          height: 200,
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.shade50,
+                                            borderRadius: BorderRadius.circular(20),
+                                            border: Border.all(color: Colors.black12),
+                                          ),
+                                          child: Icon(Icons.broken_image_outlined, color: Colors.red, size: 50.h)
+                                      )
                                     ),
                                     Positioned(
                                       top: 10,
@@ -188,16 +226,23 @@ class ProductListScreen extends StatelessWidget {
                                       left: 10,
                                       child: GestureDetector(
                                         onTap: () async {
-                                          final result =await context.read<WishlistCreate>().createWishListProduct(product.id);
+                                          final result = await context
+                                              .read<WishlistCreate>()
+                                              .createWishListProduct(
+                                              product.id);
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(context
+                                                  .read<WishlistCreate>()
+                                                  .errorMessage),
+                                            ),
+                                          );
                                           if (result) {
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(content: Text(context.read<WishlistCreate>().errorMessage)),
-                                            );
-                                            await context.read<WhistlistProviderOfGetFavouriteProduct>().getWishlistProduct();
-                                          } else {
-                                            ScaffoldMessenger.of(context).showSnackBar(
-                                              SnackBar(content: Text(context.read<WishlistCreate>().errorMessage)),
-                                            );
+                                            await context
+                                                .read<
+                                                WhistlistProviderOfGetFavouriteProduct>()
+                                                .getWishlistProduct();
                                           }
                                         },
                                         child: Container(
@@ -206,8 +251,10 @@ class ProductListScreen extends StatelessWidget {
                                             color: Color(0xffADA8A5),
                                             shape: BoxShape.circle,
                                           ),
-                                          child:  Icon(
-                                           product.isInWishlist ? Icons.favorite : Icons.favorite_border,
+                                          child: Icon(
+                                            product.isInWishlist
+                                                ? Icons.favorite
+                                                : Icons.favorite_border,
                                             color: Colors.white,
                                             size: 24,
                                           ),
@@ -220,7 +267,8 @@ class ProductListScreen extends StatelessWidget {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
                                       Expanded(
                                         child: Text(
@@ -229,7 +277,7 @@ class ProductListScreen extends StatelessWidget {
                                           style: TextStyle(
                                             fontSize: 20.sp,
                                             fontWeight: FontWeight.w600,
-                                            color: Color(0xff4A4C56)
+                                            color: const Color(0xff4A4C56),
                                           ),
                                         ),
                                       ),
@@ -244,64 +292,72 @@ class ProductListScreen extends StatelessWidget {
                                     ],
                                   ),
                                 ),
+
                                 Padding(
-                                  padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
                                   child: Row(
                                     children: [
                                       Text(
-                                       "Size ${product.size ?? 'Size not specified'}",
+                                        "Size ${product.size ?? 'Not specified'}",
                                         style: TextStyle(
                                           fontSize: 16.sp,
                                           fontWeight: FontWeight.w400,
-                                          color: Color(0xff777980),
+                                          color: const Color(0xff777980),
                                         ),
-                                      ), Text(
-                                       " (${product.condition ?? 'Size not specified'} Condition)",
+                                      ),
+                                      Text(
+                                        " (${product.condition ?? 'Unknown'} Condition)",
                                         style: TextStyle(
                                           fontSize: 15.sp,
                                           fontWeight: FontWeight.w400,
-                                          color: Color(0xff777980),
+                                          color: const Color(0xff777980),
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
 
+
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Row(
                                     children: [
-                                      Icon(Icons.location_on_outlined,color: Color(0xff777980),),
-                                      SizedBox(width: 3.w,),
+                                      const Icon(
+                                        Icons.location_on_outlined,
+                                        color: Color(0xff777980),
+                                      ),
+                                      SizedBox(width: 3.w),
                                       Text(
-                                         "8 Km",
+                                        "8 Km",
                                         style: TextStyle(
                                           fontSize: 14.sp,
                                           fontWeight: FontWeight.w500,
-                                          color: Color(0xff777980),
+                                          color: const Color(0xff777980),
                                         ),
                                       ),
-                                      SizedBox(width: 8.w,),
-                                      Icon(Icons.access_time_rounded,color: Color(0xff777980),),
-                                      SizedBox(width: 3.w,),
+                                      SizedBox(width: 8.w),
+                                      const Icon(
+                                        Icons.access_time_rounded,
+                                        color: Color(0xff777980),
+                                      ),
+                                      SizedBox(width: 3.w),
                                       Text(
-                                        product.createdTime != null
-                                            ? product.createdTime!
-                                            : "Unknown Date",
+                                        product.createdTime ?? "Unknown Date",
                                         style: TextStyle(
                                           fontSize: 14.sp,
                                           fontWeight: FontWeight.w500,
-                                          color: Color(0xff777980),
+                                          color: const Color(0xff777980),
                                         ),
                                       ),
-                                      SizedBox(width: 25.w,),
+                                      SizedBox(width: 25.w),
                                       Text(
-                                        " ${product.boostTimeLeft ?? '(12h :12m :30s)'}",
+                                        product.boostTimeLeft ??
+                                            '(12h :12m :30s)',
                                         style: TextStyle(
                                           fontSize: 14.sp,
                                           fontWeight: FontWeight.w500,
-                                          color: Color(0xff1A9882),
+                                          color: const Color(0xff1A9882),
                                         ),
                                       ),
                                     ],
@@ -310,16 +366,20 @@ class ProductListScreen extends StatelessWidget {
 
                                 SizedBox(height: 4.h),
 
+                                // Buttons
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     SizedBox(
-                                      width: MediaQuery.of(context).size.width * 0.4,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.4,
                                       child: OutlinedButton(
                                         style: OutlinedButton.styleFrom(
-                                          side: const BorderSide(color: Colors.red),
+                                          side: const BorderSide(
+                                              color: Colors.red),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10),
+                                            borderRadius:
+                                            BorderRadius.circular(10),
                                           ),
                                         ),
                                         onPressed: () {
@@ -337,25 +397,30 @@ class ProductListScreen extends StatelessWidget {
                                     ),
                                     SizedBox(width: 13.w),
                                     SizedBox(
-                                      width: MediaQuery.of(context).size.width * 0.4,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.4,
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.red,
-                                          side: const BorderSide(color: Colors.red),
+                                          side: const BorderSide(
+                                              color: Colors.red),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10),
+                                            borderRadius:
+                                            BorderRadius.circular(10),
                                           ),
                                         ),
                                         onPressed: () {
                                           Navigator.pushNamed(
                                             context,
-                                            RouteNames.productDetailsBuyScreens,
+                                            RouteNames
+                                                .productDetailsBuyScreens,
                                             arguments: product,
                                           );
                                         },
                                         child: const Text(
                                           "Buy Now",
-                                          style: TextStyle(color: Colors.white),
+                                          style:
+                                          TextStyle(color: Colors.white),
                                         ),
                                       ),
                                     ),

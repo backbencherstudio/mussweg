@@ -46,7 +46,7 @@ class HomeScreen extends StatelessWidget {
                       child: ClipOval(
                         child: userVM.user?.avatar != null
                             ? Image.network(
-                                userVM.user!.avatar!,
+                          "${ApiEndpoints.imageBaseurl}/public/storage//avatar${userVM.user!.avatar!}",
                                 fit: BoxFit.cover,
                                 width: 50.w,
                                 height: 50.h,
@@ -76,7 +76,7 @@ class HomeScreen extends StatelessWidget {
                             Image.asset("assets/icons/location.png"),
                             SizedBox(width: 7.w),
                             Text(
-                              userVM.user?.address ?? 'Switzerland',
+                              userVM.user?.address ?? 'unknown',
                               style: TextStyle(
                                 color: const Color(0xff777980),
                                 fontSize: 14.sp,

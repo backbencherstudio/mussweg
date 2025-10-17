@@ -169,12 +169,15 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                       SizedBox(height: 4.h),
                       Row(
                         children: [
-                          Image.asset('assets/icons/location.png', scale: 1),
-                          SizedBox(width: 6.w),
+                          Image.asset("assets/icons/location.png"),
+                          SizedBox(width: 7.w),
                           Text(
-                            'Switzerland',
+                            userVM.user?.address ?? 'unknown',
                             style: TextStyle(
-                                color: Color(0xff777980), fontSize: 14.sp),
+                              color: const Color(0xff777980),
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
                         ],
                       ),

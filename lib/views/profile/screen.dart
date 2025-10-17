@@ -70,17 +70,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             const SizedBox(height: 4),
                             Row(
-                              spacing: 6,
                               children: [
-                                Image.asset(
-                                  'assets/icons/location.png',
-                                  scale: 1,
-                                ),
+                                Image.asset("assets/icons/location.png"),
+                                SizedBox(width: 7.w),
                                 Text(
-                                  'America',
+                                  userVM.user?.address ?? 'unknown',
                                   style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey,
+                                    color: const Color(0xff777980),
+                                    fontSize: 14.sp,
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),
