@@ -13,6 +13,30 @@ class AllCategoryProvider extends ChangeNotifier {
 
   CategoryModel? _categoryModel;
   CategoryModel? get categoryModel => _categoryModel;
+  
+  String _fashionCategoryId = '';
+  String get fashionCategoryId => _fashionCategoryId;
+  
+  void setFashionCategoryId(String id){
+    _fashionCategoryId = id;
+    notifyListeners();
+  }
+
+  String _homeCategoryId = '';
+  String get homeCategoryId => _homeCategoryId;
+
+  void setHomeCategoryId(String id){
+    _homeCategoryId = id;
+    notifyListeners();
+  }
+
+  String _electronicsCategoryId = '';
+  String get electronicsCategoryId => _electronicsCategoryId;
+
+  void setElectronicsCategoryId(String id){
+    _electronicsCategoryId = id;
+    notifyListeners();
+  }
 
   final ApiService _apiService = ApiService();
 
@@ -28,6 +52,9 @@ class AllCategoryProvider extends ChangeNotifier {
         notifyListeners();
         _errorMessage = response.data['message'];
         _categoryModel = CategoryModel.fromJson(response.data);
+        setFashionCategoryId(_categoryModel?.data.firstWhere((e) => e.categoryName == 'Fashion').categoryId ?? '');
+        setHomeCategoryId(_categoryModel?.data.firstWhere((e) => e.categoryName == 'Home').categoryId ?? '');
+        setElectronicsCategoryId(_categoryModel?.data.firstWhere((e) => e.categoryName == 'Electronices').categoryId ?? '');
         notifyListeners();
         return response.data['success'];
       } else {

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
 import 'package:provider/provider.dart';
+import '../../../../view_model/auth/login/get_me_viewmodel.dart';
 import '../../../../view_model/parent_provider/parent_screen_provider.dart';
 import '../../widgets/product_card.dart';
 
@@ -28,6 +29,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
   }
   @override
   Widget build(BuildContext context) {
+    final userVM = Provider.of<GetMeViewmodel>(context);
     return Scaffold(
       appBar: SimpleApppbar(title: 'View Profile'),
       body: Column(
@@ -132,7 +134,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Cameron Williamson',
+                        "${userVM.user?.name ?? 'Guest'}",
                         style: TextStyle(
                           fontSize: 20.sp,
                           fontWeight: FontWeight.w800,
