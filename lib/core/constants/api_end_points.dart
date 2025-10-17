@@ -1,6 +1,6 @@
 class ApiEndpoints {
   ApiEndpoints._();
-  static const String baseUrl = 'https://lately-pure-developments-fill.trycloudflare.com';
+  static const String baseUrl = 'https://montreal-wyoming-principles-about.trycloudflare.com';
   static const String imageBaseurl = 'http://localhost:5005/api';
 
   /// Auth
