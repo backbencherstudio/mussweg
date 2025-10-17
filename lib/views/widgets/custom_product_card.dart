@@ -37,21 +37,33 @@ class CustomProductCard extends StatelessWidget {
                       ),
                       child: (product.photo != null && product.photo!.isNotEmpty)
                           ? Image.network(
-                        '${ApiEndpoints.imageBaseurl}${product.photo}',
+                        '${ApiEndpoints.imageBaseurl}${product.photo?.replaceAll('http://localhost:5005', '')}',
                         fit: BoxFit.cover,
                         height: 105.h,
                         width: double.infinity,
-                        errorBuilder: (_, __, ___) =>
-                            Image.asset('assets/images/post_card.png', fit: BoxFit.cover),
+                          errorBuilder: (_, __, ___) =>
+                              Container(
+                                  height: 105,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade50,
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(color: Colors.black12),
+                                  ),
+                                  child: Icon(Icons.broken_image_outlined, color: Colors.red, size: 36.h)
+                              )
                       )
-                          : Image.asset(
-                        'assets/images/post_card.png',
-                        fit: BoxFit.cover,
-                        height: 105.h,
-                        width: double.infinity,
-                      ),
-                    ),
-                  ),
+                          : Container(
+                          height: 105,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade50,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: Colors.black12),
+                          ),
+                          child: Icon(Icons.broken_image_outlined, color: Colors.red, size: 36.h)
+                     ))
+            ),
 
                   Positioned(
                     top: 8.w,
