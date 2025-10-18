@@ -37,7 +37,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
         child: Consumer<CategoryBasedProductProvider>(
           builder: (context, provider, _) {
             final products =
-                provider.categoryBasedProductModel?.data?.products ?? [];
+                provider.categoryBasedProductModel?.data?? [];
 
             final displayedProducts = selectedFilter == "Oldest Product"
                 ? products.reversed.toList()

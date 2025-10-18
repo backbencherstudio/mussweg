@@ -21,194 +21,228 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      child: Card(
+    return Container(
+      decoration: BoxDecoration(
         color: Colors.white,
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        child: SizedBox(
-          height: 250.h,
-          child: SingleChildScrollView(
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 10.h),
+          Stack(
+            children: [
+              Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  width: 150.w,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(12.r),
+                    ),
+                    child: Image.asset(
+                      imageUrl,
+                      height: 110.h,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 60.h,
+                right: 10.w,
+                child: PopupMenuButton<String>(
+                  icon: Image.asset(
+                    'assets/icons/more_options.png',
+                    scale: 1.8,
+                  ),
+                  onSelected: (value) {
+                    if (value == 'edit') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditProductPage(),
+                        ),
+                      );
+                    }
+                    else if (value == 'boost_products') {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text("Boost Products"),
+                          content: const Text(
+                            "Here you want to Boost Product ?",
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              child: const Text("Cancel"),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(ctx);
+                                ScaffoldMessenger.of(
+                                  context,
+                                ).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Product Boosted"),
+                                  ),
+                                );
+                              },
+                              child: const Text("Boost"),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    else if (value == 'delete') {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text("Delete Product"),
+                          content: const Text(
+                            "Are you sure you want to delete this product?",
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              child: const Text("Cancel"),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(ctx);
+                                ScaffoldMessenger.of(
+                                  context,
+                                ).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Product Deleted"),
+                                  ),
+                                );
+                              },
+                              child: const Text("Delete"),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<String>>[
+                        const PopupMenuItem<String>(
+                          value: 'edit',
+                          child: Text('Edit'),
+                        ),
+                        const PopupMenuItem<String>(
+                          value: 'boost_products',
+                          child: Text('Boost Products'),
+                        ), const PopupMenuItem<String>(
+                          value: 'delete',
+                          child: Text('Delete'),
+                        ),
+                      ],
+                ),
+              ),
+              if (isBoosted)
+                Positioned(
+                  top: 10.h,
+                  left: 18.w,
+                  child: Image.asset(
+                    'assets/icons/boost.png',
+                    scale: 1.8,
+                  ),
+                ),
+            ],
+          ),
+          Padding(
+            padding: EdgeInsets.all(8.0.sp),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 10.h),
-                Stack(
+                Text(
+                  productName,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14.sp,
+                    color: Color(0xff4A4C56),
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 5.h),
+                Row(
                   children: [
-                    Align(
-                      alignment: Alignment.topCenter,
-                      child: Container(
-                        width: 150.w,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(12.r),
-                          ),
-                          child: Image.asset(
-                            imageUrl,
-                            height: 110.h,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                    Text(
+                      'Aug 6,13:55',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xff777980),
                       ),
                     ),
-                    Positioned(
-                      bottom: 60.h,
-                      right: 10.w,
-                      child: PopupMenuButton<String>(
-                        icon: Image.asset(
-                          'assets/icons/more_options.png',
-                          scale: 1.8,
-                        ),
-                        onSelected: (value) {
-                          if (value == 'edit') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => EditProductPage(),
-                              ),
-                            );
-                          } else if (value == 'delete') {
-                            showDialog(
-                              context: context,
-                              builder: (ctx) => AlertDialog(
-                                title: const Text("Delete Product"),
-                                content: const Text(
-                                  "Are you sure you want to delete this product?",
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(ctx),
-                                    child: const Text("Cancel"),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.pop(ctx);
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        const SnackBar(
-                                          content: Text("Product Deleted"),
-                                        ),
-                                      );
-                                    },
-                                    child: const Text("Delete"),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-                        },
-                        itemBuilder: (BuildContext context) =>
-                            <PopupMenuEntry<String>>[
-                              const PopupMenuItem<String>(
-                                value: 'edit',
-                                child: Text('Edit'),
-                              ),
-                              const PopupMenuItem<String>(
-                                value: 'delete',
-                                child: Text('Delete'),
-                              ),
-                            ],
+                    SizedBox(width: 5.w),
+                    Text(
+                      '(12h:12m:30s)',
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xff1A9882),
                       ),
                     ),
-                    if (isBoosted)
-                      Positioned(
-                        top: 10.h,
-                        left: 18.w,
-                        child: Image.asset(
-                          'assets/icons/boost.png',
-                          scale: 1.8,
-                        ),
-                      ),
                   ],
                 ),
-                Padding(
-                  padding: EdgeInsets.all(8.0.sp),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        productName,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14.sp,
-                          color: Color(0xff4A4C56),
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                Divider(color: Color(0xffE9E9EA)),
+                Row(
+                  children: [
+                    Text(
+                      price,
+                      style: TextStyle(
+                        color: Color(0xffDE3526),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.sp,
                       ),
-                      SizedBox(height: 5.h),
-                      Row(
-                        children: [
-                          Text(
-                            'Aug 6,13:55',
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xff777980),
-                            ),
-                          ),
-                          SizedBox(width: 5.w),
-                          Text(
-                            '(12h:12m:30s)',
-                            style: TextStyle(
-                              fontSize: 11.sp,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xff1A9882),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Divider(color: Color(0xffE9E9EA)),
-                      Row(
-                        children: [
-                          Text(
-                            price,
-                            style: TextStyle(
-                              color: Color(0xffDE3526),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.sp,
-                            ),
-                          ),
-                          Spacer(),
+                    ),
+                    Spacer(),
 
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pushReplacementNamed(
-                                context,
-                                RouteNames.boostProductPage,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushReplacementNamed(
+                          context,
+                          RouteNames.boostProductPage,
+                        );
+                      },
+                      child: SizedBox(
+                        height: 30.w,
+                        width: 70.w,
+                        child: PrimaryButton(
+                          onTap: () {
+                            showDialog(context: context, builder: (context) {
+                              return AlertDialog(
+                                backgroundColor: Colors.white,
+                                content: PickupOptionWidget(),
                               );
-                            },
-                            child: SizedBox(
-                              height: 30.w,
-                              width: 70.w,
-                              child: PrimaryButton(
-                                onTap: () {
-                                  showDialog(context: context, builder: (context) {
-                                    return AlertDialog(
-                                      backgroundColor: Colors.white,
-                                      content: PickupOptionWidget(),
-                                    );
-                                  });
-                                },
-                                title: 'Muss Weg',
-                                textSize: 12.sp,
-                                color: Colors.red,
-                              ),
-                            ),
-                          ),
-                        ],
+                            });
+                          },
+                          title: 'Muss Weg',
+                          textSize: 12.sp,
+                          color: Colors.red,
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }

@@ -1,19 +1,24 @@
 class CategoryBasedProductModel {
   final bool success;
   final String message;
-  final CategoryData data;
+  final List<Product> data;
+  final Pagination pagination;
 
   CategoryBasedProductModel({
     required this.success,
     required this.message,
     required this.data,
+    required this.pagination,
   });
 
   factory CategoryBasedProductModel.fromJson(Map<String, dynamic> json) {
     return CategoryBasedProductModel(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
-      data: CategoryData.fromJson(json['data'] ?? {}),
+      data: (json['data'] as List<dynamic>? ?? [])
+          .map((item) => Product.fromJson(item))
+          .toList(),
+      pagination: Pagination.fromJson(json['pagination'] ?? {}),
     );
   }
 
@@ -21,32 +26,8 @@ class CategoryBasedProductModel {
     return {
       'success': success,
       'message': message,
-      'data': data.toJson(),
-    };
-  }
-}
-
-class CategoryData {
-  final List<Product> products;
-  final int productCount;
-
-  CategoryData({
-    required this.products,
-    required this.productCount,
-  });
-
-  factory CategoryData.fromJson(Map<String, dynamic> json) {
-    var productList = json['products'] as List? ?? [];
-    return CategoryData(
-      products: productList.map((e) => Product.fromJson(e)).toList(),
-      productCount: json['product_count'] ?? 0,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'products': products.map((e) => e.toJson()).toList(),
-      'product_count': productCount,
+      'data': data.map((e) => e.toJson()).toList(),
+      'pagination': pagination.toJson(),
     };
   }
 }
@@ -99,6 +80,46 @@ class Product {
       'boost_time_left': boostTimeLeft,
       'price': price,
       'is_in_wishlist': isInWishlist,
+    };
+  }
+}
+
+class Pagination {
+  final int total;
+  final int page;
+  final int perPage;
+  final int totalPages;
+  final bool hasNextPage;
+  final bool hasPrevPage;
+
+  Pagination({
+    required this.total,
+    required this.page,
+    required this.perPage,
+    required this.totalPages,
+    required this.hasNextPage,
+    required this.hasPrevPage,
+  });
+
+  factory Pagination.fromJson(Map<String, dynamic> json) {
+    return Pagination(
+      total: json['total'] ?? 0,
+      page: json['page'] ?? 0,
+      perPage: json['perPage'] ?? 0,
+      totalPages: json['totalPages'] ?? 0,
+      hasNextPage: json['hasNextPage'] ?? false,
+      hasPrevPage: json['hasPrevPage'] ?? false,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'total': total,
+      'page': page,
+      'perPage': perPage,
+      'totalPages': totalPages,
+      'hasNextPage': hasNextPage,
+      'hasPrevPage': hasPrevPage,
     };
   }
 }
