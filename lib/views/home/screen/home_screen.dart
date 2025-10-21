@@ -46,13 +46,13 @@ class HomeScreen extends StatelessWidget {
                       child: ClipOval(
                         child: userVM.user?.avatar != null
                             ? Image.network(
-                                userVM.user!.avatar!,
+                          "${ApiEndpoints.baseUrl}/public/storage//avatar${userVM.user!.avatar!}",
                                 fit: BoxFit.cover,
                                 width: 50.w,
                                 height: 50.h,
                               )
                             : Image.asset(
-                                'assets/icons/myyyy.jpeg',
+                                'assets/icons/user.png',
                                 fit: BoxFit.cover,
                                 width: 50.w,
                                 height: 50.h,
@@ -76,7 +76,7 @@ class HomeScreen extends StatelessWidget {
                             Image.asset("assets/icons/location.png"),
                             SizedBox(width: 7.w),
                             Text(
-                              userVM.user?.address ?? 'Switzerland',
+                              userVM.user?.address ?? 'unknown',
                               style: TextStyle(
                                 color: const Color(0xff777980),
                                 fontSize: 14.sp,
@@ -174,6 +174,9 @@ class HomeScreen extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final feature =
                               categoryProvider.categoryModel?.data[index];
+                          if (feature == null) {
+                            return Text('ok');
+                          }
                           return Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8.0,
@@ -204,16 +207,17 @@ class HomeScreen extends StatelessWidget {
                                   ),
                                   SizedBox(height: 4.h),
                                   Text(
+                                    feature.categoryName ?? '',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,
-                                    feature?.categoryName ?? '',
                                     style: TextStyle(
                                       color: const Color(0xff4A4C56),
                                       fontWeight: FontWeight.w400,
                                       fontSize: 12.sp,
                                     ),
                                   ),
+
                                 ],
                               ),
                             ),
@@ -352,6 +356,30 @@ class HomeScreen extends StatelessWidget {
           child: Consumer<HomeCategoryBasedProvider>(
             builder: (_, provider, __) {
               final products =
+                  provider.categoryBasedProductModel?.data ?? [];
+              if (products.isEmpty) {
+                return Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 4,
+                    children: [
+                      Icon(
+                        Icons.production_quantity_limits,
+                        color: Colors.grey.shade400,
+                        size: 40.h,
+                      ),
+                      Text(
+                        "No Home Products Found",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
                   provider.categoryBasedProductModel?.data ?? [];
               return ListView.builder(
                 scrollDirection: Axis.horizontal,

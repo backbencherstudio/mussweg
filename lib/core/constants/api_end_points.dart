@@ -15,4 +15,6 @@ class ApiEndpoints {
   static String getProductsByCategory(String id) => '$baseUrl/api/products/category/$id/latest-products';
   static String getWishList = '$baseUrl/api/wishlist/userwishlist';
   static String createWishListProduct = '$baseUrl/api/wishlist/create';
+  static String updateProfile = '$baseUrl/api/auth/update';
+
 }

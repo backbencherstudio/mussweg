@@ -154,7 +154,7 @@ class WishlistScreen extends StatelessWidget {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        '\$ ${product?.productPrice?? ''}',
+                                        '\$ ${product?.productPrice ?? ''}',
                                         style: TextStyle(
                                           color: Colors.red,
                                           fontSize: 18.sp,
