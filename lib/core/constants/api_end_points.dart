@@ -1,7 +1,7 @@
 class ApiEndpoints {
   ApiEndpoints._();
-  static const String baseUrl = 'https://serves-first-intl-turner.trycloudflare.com';
-  static const String imageBaseurl = 'https://serves-first-intl-turner.trycloudflare.com';
+  static const String baseUrl = 'https://beans-contained-tiger-calm.trycloudflare.com';
+  static const String imageBaseurl = 'https://beans-contained-tiger-calm.trycloudflare.com';
 
   /// Auth
   static const String register = '$baseUrl/api/auth/register';
