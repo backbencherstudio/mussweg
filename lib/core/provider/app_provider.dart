@@ -14,6 +14,7 @@ import '../../view_model/home_provider/home_nav/home_category_based_provider.dar
 import '../../view_model/pickup/pickup_timer_provider.dart';
 import '../../view_model/product_item_list_provider/category_based_product_provider.dart';
 import '../../view_model/profile/boost_product_service_provider/boost_product_service.dart';
+import '../../view_model/profile/edit_image/edit_image.dart';
 import '../../view_model/profile/language_selected_provider/language_select.dart';
 import '../../view_model/profile/notification_service_provider/notification_service.dart';
 import '../../view_model/profile/sell_item_service_provider/sell_item_service.dart';
@@ -45,5 +46,6 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => CategoryBasedProductProvider()),
     ChangeNotifierProvider(create: (_) => WhistlistProviderOfGetFavouriteProduct()),
     ChangeNotifierProvider(create: (_) => WishlistCreate()),
+    ChangeNotifierProvider(create: (_) => SellerProfileProvider()),
   ];
 }

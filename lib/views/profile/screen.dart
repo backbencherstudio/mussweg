@@ -50,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         height: 90,
                         child: CircleAvatar(
                           backgroundImage: AssetImage(
-                            'assets/icons/myyyy.jpeg',
+                            'assets/icons/user.png',
                           ),
                         ),
                       ),
