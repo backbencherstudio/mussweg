@@ -28,7 +28,7 @@ class ProductListScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Consumer<CategoryBasedProductProvider>(
           builder: (context, provider, _) {
-            final products = provider.categoryBasedProductModel?.data?.products ?? [];
+            final products = provider.categoryBasedProductModel?.data ?? [];
 
             return SingleChildScrollView(
               child: Column(
@@ -129,7 +129,7 @@ class ProductListScreen extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final product = products[index];
                         final imageUrl = (product.photo != null && product.photo!.isNotEmpty)
-                            ? "${ApiEndpoints.imageBaseurl}${product.photo}"
+                            ? "${ApiEndpoints.baseUrl}${product.photo}"
                             : null;
 
                         return Padding(

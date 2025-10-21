@@ -78,7 +78,7 @@ class CategoryScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Image.network(
-                                '${ApiEndpoints.imageBaseurl}${category.photo.replaceAll('http://localhost:5005', '')}',
+                                '${ApiEndpoints.baseUrl}${category.photo.replaceAll('http://localhost:5005', '')}',
                                 height: 50,
                                 width: 50,
                                 fit: BoxFit.cover,

@@ -1,8 +1,6 @@
 class ApiEndpoints {
   ApiEndpoints._();
-  static const String baseUrl = 'https://montreal-wyoming-principles-about.trycloudflare.com';
-  static const String imageBaseurl = 'https://montreal-wyoming-principles-about.trycloudflare.com/api';
-
+  static const String baseUrl = 'https://beans-contained-tiger-calm.trycloudflare.com';
 
   /// Auth
   static const String register = '$baseUrl/api/auth/register';
@@ -17,5 +15,4 @@ class ApiEndpoints {
   static String getProductsByCategory(String id) => '$baseUrl/api/products/category/$id/latest-products';
   static String getWishList = '$baseUrl/api/wishlist/userwishlist';
   static String createWishListProduct = '$baseUrl/api/wishlist/create';
-
 }

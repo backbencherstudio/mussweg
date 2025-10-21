@@ -189,7 +189,7 @@ class HomeScreen extends StatelessWidget {
                                       color: const Color(0xffF2F1EF),
                                     ),
                                     child: Image.network(
-                                      '${ApiEndpoints.imageBaseurl}${feature?.photo.replaceAll('http://localhost:5005', '')}',
+                                      '${ApiEndpoints.baseUrl}${feature?.photo.replaceAll('http://localhost:5005', '')}',
                                       height: 45.h,
                                       width: 45.w,
                                       fit: BoxFit.cover,
@@ -278,7 +278,7 @@ class HomeScreen extends StatelessWidget {
           child: Consumer<FashionCategoryBasedProductProvider>(
             builder: (_, provider, __) {
               final products =
-                  provider.categoryBasedProductModel?.data?.products ?? [];
+                  provider.categoryBasedProductModel?.data ?? [];
               if (products.isEmpty) {
                 return Center(
                   child: Column(
@@ -352,7 +352,7 @@ class HomeScreen extends StatelessWidget {
           child: Consumer<HomeCategoryBasedProvider>(
             builder: (_, provider, __) {
               final products =
-                  provider.categoryBasedProductModel?.data?.products ?? [];
+                  provider.categoryBasedProductModel?.data ?? [];
               return ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: products.length,
@@ -403,7 +403,7 @@ class HomeScreen extends StatelessWidget {
           child: Consumer<ElectronicCategoryBasedProvider>(
             builder: (_, provider, __) {
               final products =
-                  provider.categoryBasedProductModel?.data?.products ?? [];
+                  provider.categoryBasedProductModel?.data ?? [];
               if (products.isEmpty) {
                 return Center(
                   child: Column(

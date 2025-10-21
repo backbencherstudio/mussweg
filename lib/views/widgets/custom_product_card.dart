@@ -6,7 +6,7 @@ import '../../data/model/home/category_based_product_model.dart';
 import '../../view_model/home_provider/favorite_icon_provider.dart';
 
 class CustomProductCard extends StatelessWidget {
-  final Product product;
+  final ProductData product;
 
   CustomProductCard({super.key, required this.product});
 
@@ -37,7 +37,7 @@ class CustomProductCard extends StatelessWidget {
                       ),
                       child: (product.photo != null && product.photo!.isNotEmpty)
                           ? Image.network(
-                        '${ApiEndpoints.imageBaseurl}${product.photo}',
+                        '${ApiEndpoints.baseUrl}${product.photo}',
                         fit: BoxFit.cover,
                         height: 105.h,
                         width: double.infinity,
