@@ -2,8 +2,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/core/routes/route_names.dart';
+import 'package:mussweg/view_model/profile/user_all_products/user_all_products_provider.dart';
 import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
 import 'package:provider/provider.dart';
+import '../../../../core/constants/api_end_points.dart';
 import '../../../../view_model/auth/login/get_me_viewmodel.dart';
 import '../../../../view_model/profile/edit_image/edit_image.dart';
 import '../../widgets/product_card.dart';
@@ -62,17 +64,19 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                         width: 110.w,
                         height: 110.h,
                         child: ClipOval(
-                          child: sellerVM.profileImage != null
-                              ? Image.file(
-                            sellerVM.profileImage!,
-                            fit: BoxFit.cover,
-                          )
+                          child: userVM.user?.avatar != null
+                              ? Image.network(
+                                  "${ApiEndpoints.imageBaseurl}/public/storage//avatar${userVM.user!.avatar!}",
+                                  fit: BoxFit.cover,
+                                  width: 50.w,
+                                  height: 50.h,
+                                )
                               : Image.asset(
-                            'assets/icons/myyyy.jpeg',
-                            fit: BoxFit.cover,
-                            width: 110.w,
-                            height: 110.h,
-                          ),
+                                  'assets/icons/user.png',
+                                  fit: BoxFit.cover,
+                                  width: 50.w,
+                                  height: 50.h,
+                                ),
                         ),
                       ),
 
@@ -83,15 +87,17 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           onTap: () async {
                             await sellerVM.pickProfileImage();
                             if (sellerVM.profileImage != null) {
-                              final success =
-                              await sellerVM.uploadProfileImage();
+                              final success = await sellerVM
+                                  .uploadProfileImage();
                               if (context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(success
-                                        ? sellerVM.uploadMessage ??
-                                        'Profile updated'
-                                        : 'Upload failed'),
+                                    content: Text(
+                                      success
+                                          ? sellerVM.uploadMessage ??
+                                                'Profile updated'
+                                          : 'Upload failed',
+                                    ),
                                   ),
                                 );
                               }
@@ -183,8 +189,9 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           Text(
                             ' 86 Reviewers',
                             style: TextStyle(
-                                color: const Color(0xff777980),
-                                fontSize: 14.sp),
+                              color: const Color(0xff777980),
+                              fontSize: 14.sp,
+                            ),
                           ),
                         ],
                       ),
@@ -243,7 +250,9 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           GestureDetector(
                             onTap: () {
                               Navigator.pushNamed(
-                                  context, RouteNames.sellItemPage);
+                                context,
+                                RouteNames.sellItemPage,
+                              );
                             },
                             child: Container(
                               width: 80.w,
@@ -255,38 +264,51 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.add_box_outlined,
-                                      color: Colors.white, size: 16.w),
+                                  Icon(
+                                    Icons.add_box_outlined,
+                                    color: Colors.white,
+                                    size: 16.w,
+                                  ),
                                   Text(
                                     'Sell',
                                     style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14.sp),
-                                  )
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14.sp,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                       SizedBox(height: 8.h),
                       Expanded(
-                        child: GridView.builder(
-                          itemCount: 6,
-                          gridDelegate:
-                          SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 8.w,
-                            mainAxisSpacing: 8.w,
-                            childAspectRatio: .65,
-                          ),
-                          itemBuilder: (context, index) {
-                            return ProductCard(
-                              imageUrl: 'assets/images/dress.png',
-                              productName: 'Man Exclusive T-Shirt',
-                              price: '\$20.00',
-                              isBoosted: true,
+                        child: Consumer<UserAllProductsProvider>(
+                          builder: (_, provider, __) {
+                            final userAllProducts =
+                                provider.userAllProductsViewmodel?.data;
+                            return GridView.builder(
+                              itemCount: userAllProducts?.length ?? 0,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 8.w,
+                                    mainAxisSpacing: 8.w,
+                                    childAspectRatio: .65,
+                                  ),
+                              itemBuilder: (context, index) {
+                                return ProductCard(
+                                  imageUrl: 'assets/images/dress.png',
+                                  productName: userAllProducts?[index].title ?? '',
+                                  price: userAllProducts?[index].price ?? '',
+                                  isBoosted: true,
+                                  productId: userAllProducts?[index].id ?? '',
+                                  productDate: userAllProducts?[index].uploaded ?? '',
+                                  productBoostTime: userAllProducts?[index].remainingTime ?? '',
+                                );
+                              },
                             );
                           },
                         ),

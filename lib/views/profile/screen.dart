@@ -5,11 +5,14 @@ import 'package:mussweg/core/services/token_storage.dart';
 import 'package:mussweg/core/services/user_email_storage.dart';
 import 'package:mussweg/core/services/user_id_storage.dart';
 import 'package:mussweg/core/services/user_name_storage.dart';
+import 'package:mussweg/data/user_all_products/user_all_products_viewmodel.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
+import 'package:mussweg/view_model/profile/user_all_products/user_all_products_provider.dart';
 import 'package:mussweg/views/profile/widgets/profile_menu_item.dart';
 import 'package:mussweg/views/widgets/simple_apppbar.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/constants/api_end_points.dart';
 import '../../view_model/auth/login/get_me_viewmodel.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -19,6 +22,17 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+
+  @override
+  void initState() {
+
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async{
+      await context.read<UserAllProductsProvider>().getAllUserProduct();
+    });
+
+  }
+
   @override
   Widget build(BuildContext context) {
     final userVM = Provider.of<GetMeViewmodel>(context);
@@ -48,9 +62,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       SizedBox(
                         width: 90,
                         height: 90,
-                        child: CircleAvatar(
-                          backgroundImage: AssetImage(
+                        child: ClipOval(
+                          child: userVM.user?.avatar != null
+                              ? Image.network(
+                            "${ApiEndpoints.imageBaseurl}/public/storage//avatar${userVM.user!.avatar!}",
+                            fit: BoxFit.cover,
+                            width: 50.w,
+                            height: 50.h,
+                          )
+                              : Image.asset(
                             'assets/icons/user.png',
+                            fit: BoxFit.cover,
+                            width: 50.w,
+                            height: 50.h,
                           ),
                         ),
                       ),

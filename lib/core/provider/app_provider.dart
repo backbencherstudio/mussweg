@@ -7,6 +7,7 @@ import 'package:mussweg/view_model/auth/signup/signup_viewmodel.dart';
 import 'package:mussweg/view_model/home_provider/home_screen_provider.dart';
 import '../../view_model/auth/login/get_me_viewmodel.dart';
 import '../../view_model/auth/login/login_viewmodel.dart';
+import '../../view_model/boost_product/boost_product_create_provider.dart';
 import '../../view_model/home_provider/home_nav/electronic_category_based_provider.dart';
 import '../../view_model/home_provider/home_nav/fashion_category_based_product_provider.dart';
 import '../../view_model/home_provider/favorite_icon_provider.dart';
@@ -19,6 +20,7 @@ import '../../view_model/profile/language_selected_provider/language_select.dart
 import '../../view_model/profile/notification_service_provider/notification_service.dart';
 import '../../view_model/profile/sell_item_service_provider/sell_item_service.dart';
 import '../../view_model/profile/transaction_service_provider/transaction_service.dart';
+import '../../view_model/profile/user_all_products/user_all_products_provider.dart';
 import '../../view_model/search_history_provider/search_history.dart';
 import '../../view_model/whistlist/whistlist_provider_of_get_favourite_product.dart';
 import '../../view_model/whistlist/wishlist_create.dart';
@@ -47,5 +49,7 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => WhistlistProviderOfGetFavouriteProduct()),
     ChangeNotifierProvider(create: (_) => WishlistCreate()),
     ChangeNotifierProvider(create: (_) => SellerProfileProvider()),
+    ChangeNotifierProvider(create: (_) => BoostProductCreateProvider()),
+    ChangeNotifierProvider(create: (_) => UserAllProductsProvider()),
   ];
 }
