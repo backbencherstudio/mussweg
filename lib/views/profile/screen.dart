@@ -6,11 +6,14 @@ import 'package:mussweg/core/services/token_storage.dart';
 import 'package:mussweg/core/services/user_email_storage.dart';
 import 'package:mussweg/core/services/user_id_storage.dart';
 import 'package:mussweg/core/services/user_name_storage.dart';
+import 'package:mussweg/data/user_all_products/user_all_products_viewmodel.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
+import 'package:mussweg/view_model/profile/user_all_products/user_all_products_provider.dart';
 import 'package:mussweg/views/profile/widgets/profile_menu_item.dart';
 import 'package:mussweg/views/widgets/simple_apppbar.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/constants/api_end_points.dart';
 import '../../view_model/auth/login/get_me_viewmodel.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -20,6 +23,18 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<GetMeViewmodel>().fetchUserData();
+      context.read<UserAllProductsProvider>().getAllUserProduct();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final userVM = context.watch<GetMeViewmodel>();
@@ -46,29 +61,46 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   child: Row(
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(90.r),
-                        child: Container(
+                      ClipOval(
+                        child: userVM.user?.avatar != null
+                            ? Image.network(
+                          "${ApiEndpoints.baseUrl}/public/storage//avatar${userVM.user!.avatar!}",
+                          fit: BoxFit.cover,
+                          width: 50.w,
+                          height: 50.h,
+                          errorBuilder: (_, __, ___) {
+                            return Container(
+                              height: 50.w,
+                              width: 50.w,
+                              padding: EdgeInsets.all(8.w),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.black12),
+                              ),
+                              child: Image.asset(
+                                'assets/icons/user.png',
+                                fit: BoxFit.cover,
+                                width: 50.w,
+                                height: 50.h,
+                              ),
+                            );
+                          },
+                        )
+                            : Container(
+                          height: 50.w,
+                          width: 50.w,
+                          padding: EdgeInsets.all(8.w),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.grey.shade300,
-                              width: 1.w,
-                            ),
+                            border: Border.all(color: Colors.black12),
                           ),
-                          child: Image.network(
-                            '${ApiEndpoints.baseUrl}/public/storage/avatar${userVM.user?.avatar ?? ""}',
-                            width: 90,
-                            height: 90,
+                          child: Image.asset(
+                            'assets/icons/user.png',
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) {
-                              return SizedBox(
-                                width: 90,
-                                height: 90,
-                                child: Image.asset('assets/icons/user.png',)
-                              );
-                            },
+                            width: 50.w,
+                            height: 50.h,
                           ),
                         ),
                       ),

@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/views/widgets/simple_apppbar.dart';
 import 'package:provider/provider.dart';
+import '../../../core/constants/api_end_points.dart';
 import '../../../view_model/auth/login/get_me_viewmodel.dart';
 import '../../widgets/seller_profile_refresh.dart';
 
@@ -29,12 +30,27 @@ class ViewProfileScreen extends StatelessWidget {
               children: [
                 Transform.translate(
                   offset: Offset(0, -40),
-                  child:  ClipOval(
-                    child: Image.asset(
-                      'assets/icons/myyyy.jpeg',
+                  child: ClipOval(
+                    child: userVM.user?.avatar != null
+                        ? Image.network(
+                      "${ApiEndpoints.imageBaseurl}/public/storage//avatar${userVM.user!.avatar!}",
                       fit: BoxFit.cover,
-                      width: 85.w,
-                      height: 85.h,
+                      width: 80.w,
+                      height: 80.h,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          'assets/icons/user.png',
+                          fit: BoxFit.cover,
+                          width: 50.w,
+                          height: 50.h,
+                        );
+                      },
+                    )
+                        : Image.asset(
+                      'assets/icons/user.png',
+                      fit: BoxFit.cover,
+                      width: 50.w,
+                      height: 50.h,
                     ),
                   ),
                 ),
