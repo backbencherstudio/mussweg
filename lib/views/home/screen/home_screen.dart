@@ -196,9 +196,9 @@ class HomeScreen extends StatelessWidget {
                             categoryProvider.categoryModel?.data.length ?? 0,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
-                          final feature =
+                          final category =
                               categoryProvider.categoryModel?.data[index];
-                          if (feature == null) {
+                          if (category == null) {
                             return Text('ok');
                           }
                           return Padding(
@@ -209,29 +209,43 @@ class HomeScreen extends StatelessWidget {
                               width: 56.w,
                               child: Column(
                                 children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      color: const Color(0xffF2F1EF),
-                                    ),
-                                    child: Image.network(
-                                      '${ApiEndpoints.baseUrl}${feature.photo.replaceAll('http://localhost:5005', '')}',
-                                      height: 45.h,
-                                      width: 45.w,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (_, __, ___) {
-                                        return Icon(
-                                          Icons.error,
-                                          color: Colors.grey.shade400,
-                                          size: 24.h,
-                                        );
-                                      },
+                                  GestureDetector(
+                                    onTap: () async {
+                                      context
+                                          .read<CategoryBasedProductProvider>()
+                                          .setCategoryTitle(category.categoryName);
+                                      await context
+                                          .read<CategoryBasedProductProvider>()
+                                          .getCategoryBasedProduct(category.categoryId);
+                                      Navigator.pushNamed(
+                                        context,
+                                        RouteNames.productListScreen,
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        color: const Color(0xffF2F1EF),
+                                      ),
+                                      child: Image.network(
+                                        '${ApiEndpoints.baseUrl}${category.photo.replaceAll('http://localhost:5005', '')}',
+                                        height: 45.h,
+                                        width: 45.w,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (_, __, ___) {
+                                          return Icon(
+                                            Icons.error,
+                                            color: Colors.grey.shade400,
+                                            size: 24.h,
+                                          );
+                                        },
+                                      ),
                                     ),
                                   ),
                                   SizedBox(height: 4.h),
                                   Text(
-                                    feature.categoryName ?? '',
+                                    category.categoryName ?? '',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,

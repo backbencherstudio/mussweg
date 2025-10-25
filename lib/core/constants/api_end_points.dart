@@ -18,6 +18,7 @@ class ApiEndpoints {
   static String createWishListProduct = '$baseUrl/api/wishlist/create';
   static String updateProfile = '$baseUrl/api/auth/update';
   static String userAllProducts = '$baseUrl/api/products/user-all-products/?page=1&perPage=10';
+  static String createProduct = '$baseUrl/api/products/create';
 
   static String createBoost(String id) => '$baseUrl/api/products/create-boost';
 

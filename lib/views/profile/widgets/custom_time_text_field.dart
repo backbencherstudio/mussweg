@@ -3,10 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomTimeField extends StatelessWidget {
   final String title;
+  final TextEditingController controller;
 
   const CustomTimeField({
     super.key,
-    required this.title,
+    required this.title, required this.controller,
   });
 
   @override
@@ -23,9 +24,9 @@ class CustomTimeField extends StatelessWidget {
               )),
           SizedBox(height: 8.h),
           TextField(
+            controller: controller,
             decoration: InputDecoration(
-              hintText: 'Set time',
-              suffixIcon: Icon(Icons.access_time, size: 20.w),
+              hintText: 'Set Price',
               filled: true,
               fillColor: Colors.grey[200],
               border: OutlineInputBorder(

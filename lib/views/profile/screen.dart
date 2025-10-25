@@ -121,7 +121,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               onTap: () {
                                 Navigator.pushNamed(
                                   context,
-                                  RouteNames.sellerProfilePage,
+                                  RouteNames.accountSettingsPage,
                                 );
                               },
                               child: const Text(

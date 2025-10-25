@@ -37,6 +37,8 @@ class _SellerProfilePageState extends State<SellerProfilePage>
   Widget build(BuildContext context) {
     final userVM = Provider.of<GetMeViewmodel>(context);
     final sellerVM = Provider.of<SellerProfileProvider>(context);
+    final userProductVM = Provider.of<UserAllProductsProvider>(context);
+
 
     return Scaffold(
       appBar: SimpleApppbar(title: 'View Profile'),
@@ -100,13 +102,15 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                             if (sellerVM.profileImage != null) {
                               final success = await sellerVM
                                   .uploadProfileImage();
+                              if (success) {
+                                await context.read<GetMeViewmodel>().fetchUserData();
+                              }
                               if (context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(
                                       success
-                                          ? sellerVM.uploadMessage ??
-                                                'Profile updated'
+                                          ? sellerVM.uploadMessage ?? 'Profile updated'
                                           : 'Upload failed',
                                     ),
                                   ),
@@ -172,7 +176,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${userVM.user?.name ?? 'Guest'}",
+                        userVM.user?.name ?? 'Guest',
                         style: TextStyle(
                           fontSize: 20.sp,
                           fontWeight: FontWeight.w800,
@@ -249,14 +253,15 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                     children: [
                       Row(
                         children: [
-                          Text(
-                            '50+ products uploaded',
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xff4A4C56),
+                          if (userProductVM.userAllProductsViewmodel?.data != null)
+                            Text(
+                              userProductVM.userAllProductsViewmodel!.data.length > 50 ? '50+ products uploaded' : '${userProductVM.userAllProductsViewmodel?.data.length} products uploaded',
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xff4A4C56),
+                              ),
                             ),
-                          ),
                           const Spacer(),
                           GestureDetector(
                             onTap: () {
@@ -280,6 +285,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                                     color: Colors.white,
                                     size: 16.w,
                                   ),
+                                  SizedBox(width: 4.w,),
                                   Text(
                                     'Sell',
                                     style: TextStyle(
@@ -310,7 +316,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                                   ),
                               itemBuilder: (context, index) {
                                 return ProductCard(
-                                  imageUrl: 'assets/images/dress.png',
+                                  imageUrl: userAllProducts?[index].photo ?? '',
                                   productName: userAllProducts?[index].title ?? '',
                                   price: userAllProducts?[index].price ?? '',
                                   isBoosted: true,

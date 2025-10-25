@@ -7,9 +7,25 @@ import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
 import '../../../../view_model/profile/boost_product_service_provider/boost_product_service.dart';
 import '../../widgets/custom_text_field.dart';
 
-class BoostProductPage extends StatelessWidget {
+class BoostProductPage extends StatefulWidget {
   BoostProductPage({super.key});
+
+  @override
+  State<BoostProductPage> createState() => _BoostProductPageState();
+}
+
+class _BoostProductPageState extends State<BoostProductPage> {
   final List<String> _conditions = ["New", "Used", "Refurbished"];
+
+  final TextEditingController _boostDurationController = TextEditingController();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _boostDurationController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final service = GetIt.instance<BoostProductService>();
@@ -157,6 +173,7 @@ class BoostProductPage extends StatelessWidget {
                 child: Column(
                   children: [
                     CustomTextField(
+                      controller: _boostDurationController,
                       title: 'Boosting Duration',
                       hintText: '3 Days',
                       icon: Icons.access_time,

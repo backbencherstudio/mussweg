@@ -34,35 +34,34 @@ class CustomProductCard extends StatelessWidget {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(12.r),
                       ),
-                      child: (product.photo != null && product.photo!.isNotEmpty)
+                      child:
+                          (product.photo != null && product.photo!.isNotEmpty)
                           ? Image.network(
-                        '${ApiEndpoints.baseUrl}${product.photo}',
-                        fit: BoxFit.cover,
-                        height: 120.h,
-                        width: double.infinity,
-                          errorBuilder: (_, __, ___) =>
-                              Container(
-                                  height: 120.h,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade50,
-                                    borderRadius: BorderRadius.circular(12.r),
-                                    border: Border.all(color: Colors.black12),
-                                  ),
-                                  child: Icon(Icons.broken_image_outlined, color: Colors.red, size: 36.h)
-                              )
-                      )
+                              '${ApiEndpoints.baseUrl}${product.photo}',
+                              fit: BoxFit.cover,
+                              height: 120.h,
+                              width: double.infinity,
+                              errorBuilder: (_, __, ___) => Container(
+                                height: 120.h,
+                                width: double.infinity,
+                                color: Colors.grey[300],
+                                child: Image.asset(
+                                  'assets/images/placeholder.jpg',
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            )
                           : Container(
-                          height: 120.h,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade50,
-                            borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(color: Colors.black12),
+                            height: 120.h,
+                            width: double.infinity,
+                            color: Colors.grey[300],
+                            child: Image.asset(
+                              'assets/images/placeholder.jpg',
+                              fit: BoxFit.fill,
+                            ),
                           ),
-                          child: Icon(Icons.broken_image_outlined, color: Colors.red, size: 36.h)
-                     ))
-            ),
+                    ),
+                  ),
 
                   Positioned(
                     top: 8.w,

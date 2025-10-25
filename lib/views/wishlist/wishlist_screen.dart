@@ -65,15 +65,24 @@ class WishlistScreen extends StatelessWidget {
                                       child: Container(
                                         decoration: BoxDecoration(
                                           color: Colors.white,
-                                          border: Border.all(
-                                            color: Colors.grey,
-                                          ),
                                           borderRadius: BorderRadius.circular(
                                             12.r,
                                           ),
                                         ),
-                                        child: Image.asset(
-                                          'assets/images/post_card.png',
+                                        child: Image.network(
+                                          product?.productPhoto ?? '',
+                                          fit: BoxFit.cover,
+                                          height: 180.h,
+                                          width: double.infinity,
+                                          errorBuilder: (_, __, ___) => Container(
+                                            height: 180.h,
+                                            width: double.infinity,
+                                            color: Colors.grey.shade50,
+                                            child: Image.asset(
+                                              'assets/images/placeholder.jpg',
+                                              fit: BoxFit.fill,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),

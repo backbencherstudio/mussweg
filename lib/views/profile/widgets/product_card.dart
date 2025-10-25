@@ -22,7 +22,10 @@ class ProductCard extends StatelessWidget {
     required this.imageUrl,
     required this.productName,
     required this.price,
-    this.isBoosted = false, required this.productId, required this.productDate, required this.productBoostTime,
+    this.isBoosted = false,
+    required this.productId,
+    required this.productDate,
+    required this.productBoostTime,
   });
 
   @override
@@ -48,17 +51,23 @@ class ProductCard extends StatelessWidget {
             children: [
               Align(
                 alignment: Alignment.topCenter,
-                child: Container(
+                child: SizedBox(
                   width: 150.w,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(12.r),
-                    ),
-                    child: Image.asset(
+                    borderRadius: BorderRadius.circular(8.r),
+                    child: Image.network(
                       imageUrl,
                       height: 110.h,
                       width: double.infinity,
                       fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        height: 110.h,
+                        color: Colors.grey[300],
+                        child: Image.asset(
+                          'assets/images/placeholder.jpg',
+                          fit: BoxFit.fill,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -79,8 +88,7 @@ class ProductCard extends StatelessWidget {
                           builder: (context) => EditProductPage(),
                         ),
                       );
-                    }
-                    else if (value == 'boost_products') {
+                    } else if (value == 'boost_products') {
                       showDialog(
                         context: context,
                         builder: (ctx) {
@@ -97,39 +105,53 @@ class ProductCard extends StatelessWidget {
                               Consumer<BoostProductCreateProvider>(
                                 builder: (_, boostProductCreateProvider, __) {
                                   return ElevatedButton(
-                                    onPressed: boostProductCreateProvider.isLoading
+                                    onPressed:
+                                        boostProductCreateProvider.isLoading
                                         ? null
                                         : () async {
-                                      bool success = await boostProductCreateProvider
-                                          .createBoostProduct(productId);
+                                            bool success =
+                                                await boostProductCreateProvider
+                                                    .createBoostProduct(
+                                                      productId,
+                                                    );
 
-                                      if (success) {
+                                            if (success) {
+                                              Navigator.pop(ctx);
 
-                                        Navigator.pop(ctx);
-
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(
-                                            content: Text("Product Boosted Successfully"),
-                                          ),
-                                        );
-                                      } else {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text(
-                                              boostProductCreateProvider.errorMessage.isNotEmpty
-                                                  ? boostProductCreateProvider.errorMessage
-                                                  : "Failed to boost product",
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                    },
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                    "Product Boosted Successfully",
+                                                  ),
+                                                ),
+                                              );
+                                            } else {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    boostProductCreateProvider
+                                                            .errorMessage
+                                                            .isNotEmpty
+                                                        ? boostProductCreateProvider
+                                                              .errorMessage
+                                                        : "Failed to boost product",
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          },
                                     child: boostProductCreateProvider.isLoading
                                         ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(strokeWidth: 2),
-                                    )
+                                            height: 20,
+                                            width: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ),
+                                          )
                                         : const Text("Boost"),
                                   );
                                 },
@@ -138,9 +160,7 @@ class ProductCard extends StatelessWidget {
                           );
                         },
                       );
-                    }
-
-                    else if (value == 'delete') {
+                    } else if (value == 'delete') {
                       showDialog(
                         context: context,
                         builder: (ctx) => AlertDialog(
@@ -156,9 +176,7 @@ class ProductCard extends StatelessWidget {
                             ElevatedButton(
                               onPressed: () {
                                 Navigator.pop(ctx);
-                                ScaffoldMessenger.of(
-                                  context,
-                                ).showSnackBar(
+                                ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text("Product Deleted"),
                                   ),
@@ -180,7 +198,8 @@ class ProductCard extends StatelessWidget {
                         const PopupMenuItem<String>(
                           value: 'boost_products',
                           child: Text('Boost Products'),
-                        ), const PopupMenuItem<String>(
+                        ),
+                        const PopupMenuItem<String>(
                           value: 'delete',
                           child: Text('Delete'),
                         ),
@@ -191,19 +210,17 @@ class ProductCard extends StatelessWidget {
                 Positioned(
                   top: 10.h,
                   left: 18.w,
-                  child: Image.asset(
-                    'assets/icons/boost.png',
-                    scale: 1.8,
-                  ),
+                  child: Image.asset('assets/icons/boost.png', scale: 1.8),
                 ),
             ],
           ),
           Padding(
-            padding: EdgeInsets.all(1.0.sp),
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text( productName,
+                Text(
+                  productName,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 14.sp,
@@ -213,26 +230,22 @@ class ProductCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(height: 5.h),
-                Row(
-                  children: [
-                    Text(
-                      productDate,
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xff777980),
-                      ),
-                    ),
-                    SizedBox(width: 5.w),
-                    Text(
-                     productBoostTime,
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xff1A9882),
-                      ),
-                    ),
-                  ],
+                Text(
+                  productDate,
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xff777980),
+                  ),
+                ),
+                SizedBox(height: 5.w),
+                Text(
+                  productBoostTime,
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xff1A9882),
+                  ),
                 ),
                 Divider(color: Color(0xffE9E9EA)),
                 Row(
@@ -259,12 +272,15 @@ class ProductCard extends StatelessWidget {
                         width: 70.w,
                         child: PrimaryButton(
                           onTap: () {
-                            showDialog(context: context, builder: (context) {
-                              return AlertDialog(
-                                backgroundColor: Colors.white,
-                                content: PickupOptionWidget(),
-                              );
-                            });
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  backgroundColor: Colors.white,
+                                  content: PickupOptionWidget(),
+                                );
+                              },
+                            );
                           },
                           title: 'Muss Weg',
                           textSize: 12.sp,
