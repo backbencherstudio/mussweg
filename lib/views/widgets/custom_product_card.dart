@@ -8,7 +8,7 @@ import '../../view_model/home_provider/favorite_icon_provider.dart';
 class CustomProductCard extends StatelessWidget {
   final ProductData product;
 
-  CustomProductCard({super.key, required this.product});
+  const CustomProductCard({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -32,33 +32,32 @@ class CustomProductCard extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        border: Border.all(color: Colors.grey),
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                       child: (product.photo != null && product.photo!.isNotEmpty)
                           ? Image.network(
                         '${ApiEndpoints.baseUrl}${product.photo}',
                         fit: BoxFit.cover,
-                        height: 105.h,
+                        height: 120.h,
                         width: double.infinity,
                           errorBuilder: (_, __, ___) =>
                               Container(
-                                  height: 105,
+                                  height: 120.h,
                                   width: double.infinity,
                                   decoration: BoxDecoration(
                                     color: Colors.grey.shade50,
-                                    borderRadius: BorderRadius.circular(20),
+                                    borderRadius: BorderRadius.circular(12.r),
                                     border: Border.all(color: Colors.black12),
                                   ),
                                   child: Icon(Icons.broken_image_outlined, color: Colors.red, size: 36.h)
                               )
                       )
                           : Container(
-                          height: 105,
+                          height: 120.h,
                           width: double.infinity,
                           decoration: BoxDecoration(
                             color: Colors.grey.shade50,
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(12.r),
                             border: Border.all(color: Colors.black12),
                           ),
                           child: Icon(Icons.broken_image_outlined, color: Colors.red, size: 36.h)
@@ -78,16 +77,14 @@ class CustomProductCard extends StatelessWidget {
                         padding: EdgeInsets.all(4.w),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: favoriteProvider.isFavorite
-                              ? const Color(0xffffd6d6)
-                              : const Color(0xffC7C8C8),
+                          color: const Color(0xffC7C8C8),
                         ),
                         child: Center(
                           child: Icon(
-                            favoriteProvider.isFavorite
+                            product.isInWishlist
                                 ? Icons.favorite
                                 : Icons.favorite_border,
-                            color: favoriteProvider.isFavorite
+                            color: product.isInWishlist
                                 ? Colors.red
                                 : Colors.white,
                             size: 20.h,
@@ -113,7 +110,7 @@ class CustomProductCard extends StatelessWidget {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: "${product.createdTime ?? ''}",
+                      text: product.createdTime ?? '',
                       style: TextStyle(
                         color: const Color(0xff777980),
                         fontSize: 13.sp,
@@ -121,7 +118,7 @@ class CustomProductCard extends StatelessWidget {
                       ),
                     ),
                     TextSpan(
-                      text: " ${product.boostTimeLeft ?? '(12h :12m :30s)'}",
+                      text: " ${product.boostTimeLeft ?? ''}",
                       style: TextStyle(
                         color: const Color(0xff1A9882),
                         fontSize: 13.sp,

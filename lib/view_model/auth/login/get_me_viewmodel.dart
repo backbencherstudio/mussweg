@@ -36,9 +36,13 @@ class GetMeViewmodel extends ChangeNotifier {
         _error = "Server error (${response.statusCode})";
         _user = null;
       }
+
+      notifyListeners();
+
     } catch (e) {
       _error = "Something went wrong: $e";
       _user = null;
+      notifyListeners();
     } finally {
       _setLoading(false);
     }

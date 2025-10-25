@@ -6,6 +6,7 @@ import 'package:mussweg/views/auth/sign_up/screen/sign_up_screen.dart';
 import 'package:mussweg/views/auth/sign_up/widgets/signup_form.dart';
 import 'package:provider/provider.dart';
 import 'package:get_it/get_it.dart';
+import '../../../view_model/auth/login/get_me_viewmodel.dart';
 import '../../../view_model/auth/login/login_viewmodel.dart';
 import '../../../view_model/auth/signup/signup_viewmodel.dart';
 import '../sign_up/widgets/buttons.dart';
@@ -136,6 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 password: _passwordController.text,
               );
               if(result){
+                await context.read<GetMeViewmodel>().fetchUserData();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(viewModel.errorMessage ?? "Login Successful")),
                 );
