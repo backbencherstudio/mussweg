@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
         final token = await TokenStorage().getToken();
         if (token != null) {
           context.read<ParentScreensProvider>().onSelectedIndex(0);
-          Navigator.pushReplacementNamed(context, RouteNames.parentScreen);
+          Navigator.pushReplacementNamed(context, RouteNames.loginScreen);
         } else {
           Navigator.pushReplacementNamed(context, RouteNames.onboardingScreen);
         }

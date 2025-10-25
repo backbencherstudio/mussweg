@@ -6,11 +6,14 @@ import 'package:mussweg/core/services/token_storage.dart';
 import 'package:mussweg/core/services/user_email_storage.dart';
 import 'package:mussweg/core/services/user_id_storage.dart';
 import 'package:mussweg/core/services/user_name_storage.dart';
+import 'package:mussweg/data/user_all_products/user_all_products_viewmodel.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
+import 'package:mussweg/view_model/profile/user_all_products/user_all_products_provider.dart';
 import 'package:mussweg/views/profile/widgets/profile_menu_item.dart';
 import 'package:mussweg/views/widgets/simple_apppbar.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/constants/api_end_points.dart';
 import '../../view_model/auth/login/get_me_viewmodel.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -20,6 +23,18 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<GetMeViewmodel>().fetchUserData();
+      context.read<UserAllProductsProvider>().getAllUserProduct();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final userVM = context.watch<GetMeViewmodel>();
