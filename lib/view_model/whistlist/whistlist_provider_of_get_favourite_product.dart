@@ -13,8 +13,8 @@ class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
   String _errorMessage = '';
   String get errorMessage => _errorMessage;
 
-  WishlistModel? _wishlistModel;
-  WishlistModel? get wishlistModel => _wishlistModel;
+  WishListModel? _wishlistModel;
+  WishListModel? get wishlistModel => _wishlistModel;
 
   final ApiService _apiService = ApiService();
 
@@ -29,7 +29,7 @@ class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
         _isLoading = false;
         notifyListeners();
         _errorMessage = response.data['message'];
-        _wishlistModel = WishlistModel.fromJson(response.data);
+        _wishlistModel = WishListModel.fromJson(response.data);
         notifyListeners();
         return response.data['success'];
       } else {

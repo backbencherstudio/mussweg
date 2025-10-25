@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mussweg/core/constants/api_end_points.dart';
 import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/core/services/token_storage.dart';
 import 'package:mussweg/core/services/user_email_storage.dart';
@@ -23,19 +24,20 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
 
+
   @override
   void initState() {
-
+    // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async{
-      await context.read<UserAllProductsProvider>().getAllUserProduct();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<GetMeViewmodel>().fetchUserData();
+      context.read<UserAllProductsProvider>().getAllUserProduct();
     });
-
   }
 
   @override
   Widget build(BuildContext context) {
-    final userVM = Provider.of<GetMeViewmodel>(context);
+    final userVM = context.watch<GetMeViewmodel>();
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -59,18 +61,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   child: Row(
                     children: [
-                      SizedBox(
-                        width: 90,
-                        height: 90,
-                        child: ClipOval(
-                          child: userVM.user?.avatar != null
-                              ? Image.network(
-                            "${ApiEndpoints.imageBaseurl}/public/storage//avatar${userVM.user!.avatar!}",
-                            fit: BoxFit.cover,
-                            width: 50.w,
-                            height: 50.h,
-                          )
-                              : Image.asset(
+                      ClipOval(
+                        child: userVM.user?.avatar != null
+                            ? Image.network(
+                          "${ApiEndpoints.baseUrl}/public/storage//avatar${userVM.user!.avatar!}",
+                          fit: BoxFit.cover,
+                          width: 50.w,
+                          height: 50.h,
+                          errorBuilder: (_, __, ___) {
+                            return Container(
+                              height: 50.w,
+                              width: 50.w,
+                              padding: EdgeInsets.all(8.w),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.black12),
+                              ),
+                              child: Image.asset(
+                                'assets/icons/user.png',
+                                fit: BoxFit.cover,
+                                width: 50.w,
+                                height: 50.h,
+                              ),
+                            );
+                          },
+                        )
+                            : Container(
+                          height: 50.w,
+                          width: 50.w,
+                          padding: EdgeInsets.all(8.w),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.black12),
+                          ),
+                          child: Image.asset(
                             'assets/icons/user.png',
                             fit: BoxFit.cover,
                             width: 50.w,
@@ -85,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "${userVM.user?.name ?? 'Guest'}",
+                              userVM.user?.name ?? 'Guest',
                               style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w600,
@@ -193,15 +219,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           RouteNames.notificationsPage,
                         );
                       },
-                    ), Divider(color: Colors.grey[350]),
+                    ),
+                    Divider(color: Colors.grey[350]),
                     ProfileMenuItem(
                       image: 'assets/icons/border-all-01.png',
                       title: 'Bid List',
                       onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          RouteNames.bidList,
-                        );
+                        Navigator.pushNamed(context, RouteNames.bidList);
                       },
                     ),
                     Divider(color: Colors.grey[350]),
@@ -239,31 +263,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       image: 'assets/icons/language.png',
                       title: 'Logout',
                       onTap: () {
-                        showDialog(context: context, builder: (context) {
-                          return AlertDialog(
-                            backgroundColor: Colors.white,
-                            title: const Text('Logout'),
-                            content: const Text('Are you sure you want to logout?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('Cancel', style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w600),),
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              backgroundColor: Colors.white,
+                              title: const Text('Logout'),
+                              content: const Text(
+                                'Are you sure you want to logout?',
                               ),
-                              TextButton(
-                                onPressed: () async {
-                                  await TokenStorage().clearToken();
-                                  await UserEmailStorage().clearUserEmail();
-                                  await UserIdStorage().clearUserId();
-                                  await UserNameStorage().clearUserName();
-                                  Navigator.pushNamedAndRemoveUntil(context, RouteNames.loginScreen, (pre) => false);
-                                },
-                                child: const Text('Logout', style: TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold),),
-                              ),
-                            ],
-                          );
-                        });
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text(
+                                    'Cancel',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    await TokenStorage().clearToken();
+                                    await UserEmailStorage().clearUserEmail();
+                                    await UserIdStorage().clearUserId();
+                                    await UserNameStorage().clearUserName();
+                                    Navigator.pushNamedAndRemoveUntil(
+                                      context,
+                                      RouteNames.loginScreen,
+                                      (pre) => false,
+                                    );
+                                  },
+                                  child: const Text(
+                                    'Logout',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       },
                     ),
                   ],

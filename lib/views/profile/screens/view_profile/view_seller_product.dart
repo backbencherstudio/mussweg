@@ -287,8 +287,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                       Expanded(
                         child: Consumer<UserAllProductsProvider>(
                           builder: (_, provider, __) {
-                            final userAllProducts =
-                                provider.userAllProductsViewmodel?.data;
+                            final userAllProducts = provider.userAllProductsViewmodel?.data;
                             return GridView.builder(
                               itemCount: userAllProducts?.length ?? 0,
                               gridDelegate:

@@ -199,7 +199,7 @@ class ProductCard extends StatelessWidget {
             ],
           ),
           Padding(
-            padding: EdgeInsets.all(8.0.sp),
+            padding: EdgeInsets.all(1.0.sp),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -218,7 +218,7 @@ class ProductCard extends StatelessWidget {
                     Text(
                       productDate,
                       style: TextStyle(
-                        fontSize: 12.sp,
+                        fontSize: 11.sp,
                         fontWeight: FontWeight.w400,
                         color: Color(0xff777980),
                       ),

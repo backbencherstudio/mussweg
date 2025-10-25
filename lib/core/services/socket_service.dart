@@ -22,7 +22,7 @@ class SocketService with ChangeNotifier {
     }
 
     _socket = IO.io(
-      ApiEndpoints.imageBaseurl,
+      ApiEndpoints.baseUrl,
       IO.OptionBuilder()
           .setTransports(['websocket'])
           .disableAutoConnect()

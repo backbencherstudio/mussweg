@@ -19,7 +19,9 @@ class UserAllProductsViewmodel {
           ?.map((item) => ProductData.fromJson(item))
           .toList() ??
           [],
-      pagination: Pagination.fromJson(json['pagination'] ?? {}),
+      pagination: json['pagination'] != null
+          ? Pagination.fromJson(json['pagination'])
+          : Pagination.empty(),
     );
   }
 
@@ -134,5 +136,17 @@ class Pagination {
       'hasNextPage': hasNextPage,
       'hasPrevPage': hasPrevPage,
     };
+  }
+
+  /// helper constructor for fallback
+  factory Pagination.empty() {
+    return Pagination(
+      total: 0,
+      page: 1,
+      perPage: 10,
+      totalPages: 1,
+      hasNextPage: false,
+      hasPrevPage: false,
+    );
   }
 }

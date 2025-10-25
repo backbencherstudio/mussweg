@@ -1,7 +1,7 @@
 class CategoryBasedProductModel {
   final bool success;
   final String message;
-  final List<Product> data;
+  final List<ProductData> data;
   final Pagination pagination;
 
   CategoryBasedProductModel({
@@ -13,12 +13,12 @@ class CategoryBasedProductModel {
 
   factory CategoryBasedProductModel.fromJson(Map<String, dynamic> json) {
     return CategoryBasedProductModel(
-      success: json['success'] ?? false,
-      message: json['message'] ?? '',
-      data: (json['data'] as List<dynamic>? ?? [])
-          .map((item) => Product.fromJson(item))
+      success: json['success'],
+      message: json['message'],
+      data: (json['data'] as List)
+          .map((item) => ProductData.fromJson(item))
           .toList(),
-      pagination: Pagination.fromJson(json['pagination'] ?? {}),
+      pagination: Pagination.fromJson(json['pagination']),
     );
   }
 
@@ -26,13 +26,13 @@ class CategoryBasedProductModel {
     return {
       'success': success,
       'message': message,
-      'data': data.map((e) => e.toJson()).toList(),
+      'data': data.map((item) => item.toJson()).toList(),
       'pagination': pagination.toJson(),
     };
   }
 }
 
-class Product {
+class ProductData {
   final String id;
   final String? photo;
   final String title;
@@ -42,8 +42,9 @@ class Product {
   final String? boostTimeLeft;
   final String price;
   final bool isInWishlist;
+  final String? minimumBid;
 
-  Product({
+  ProductData({
     required this.id,
     this.photo,
     required this.title,
@@ -53,19 +54,21 @@ class Product {
     this.boostTimeLeft,
     required this.price,
     required this.isInWishlist,
+    this.minimumBid,
   });
 
-  factory Product.fromJson(Map<String, dynamic> json) {
-    return Product(
-      id: json['id'] ?? '',
+  factory ProductData.fromJson(Map<String, dynamic> json) {
+    return ProductData(
+      id: json['id'],
       photo: json['photo'],
-      title: json['title'] ?? '',
-      size: json['size'] ?? '',
-      condition: json['condition'] ?? '',
-      createdTime: json['created_time'] ?? '',
+      title: json['title'],
+      size: json['size'],
+      condition: json['condition'],
+      createdTime: json['created_time'],
       boostTimeLeft: json['boost_time_left'],
-      price: json['price'] ?? '',
-      isInWishlist: json['is_in_wishlist'] ?? false,
+      price: json['price'],
+      isInWishlist: json['is_in_wishlist'],
+      minimumBid: json['minimum_bid'],
     );
   }
 
@@ -80,6 +83,7 @@ class Product {
       'boost_time_left': boostTimeLeft,
       'price': price,
       'is_in_wishlist': isInWishlist,
+      'minimum_bid': minimumBid,
     };
   }
 }
@@ -103,12 +107,12 @@ class Pagination {
 
   factory Pagination.fromJson(Map<String, dynamic> json) {
     return Pagination(
-      total: json['total'] ?? 0,
-      page: json['page'] ?? 0,
-      perPage: json['perPage'] ?? 0,
-      totalPages: json['totalPages'] ?? 0,
-      hasNextPage: json['hasNextPage'] ?? false,
-      hasPrevPage: json['hasPrevPage'] ?? false,
+      total: json['total'],
+      page: json['page'],
+      perPage: json['perPage'],
+      totalPages: json['totalPages'],
+      hasNextPage: json['hasNextPage'],
+      hasPrevPage: json['hasPrevPage'],
     );
   }
 

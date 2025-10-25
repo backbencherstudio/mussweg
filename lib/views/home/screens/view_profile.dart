@@ -37,6 +37,14 @@ class ViewProfileScreen extends StatelessWidget {
                       fit: BoxFit.cover,
                       width: 80.w,
                       height: 80.h,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          'assets/icons/user.png',
+                          fit: BoxFit.cover,
+                          width: 50.w,
+                          height: 50.h,
+                        );
+                      },
                     )
                         : Image.asset(
                       'assets/icons/user.png',

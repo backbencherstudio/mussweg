@@ -30,14 +30,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
     return Scaffold(
       appBar: SimpleApppbar(
         title:
-        '${context.watch<CategoryBasedProductProvider>().categoryTitle} Products',
+            '${context.watch<CategoryBasedProductProvider>().categoryTitle} Products',
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Consumer<CategoryBasedProductProvider>(
           builder: (context, provider, _) {
-            final products =
-                provider.categoryBasedProductModel?.data?? [];
+            final products = provider.categoryBasedProductModel?.data ?? [];
 
             final displayedProducts = selectedFilter == "Oldest Product"
                 ? products.reversed.toList()
@@ -57,7 +56,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         final isSelected = selectedFilter == data["title"];
                         return Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 8),
+                            horizontal: 8,
+                            vertical: 8,
+                          ),
                           child: InkWell(
                             onTap: () {
                               if (data["title"] == "Filter") {
@@ -84,7 +85,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 15, vertical: 10),
+                                horizontal: 15,
+                                vertical: 10,
+                              ),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(30),
                                 color: isSelected
@@ -94,8 +97,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
                               child: Row(
                                 children: [
                                   if (data["title"] == "Filter")
-                                    Image.asset("assets/icons/filter.png",
-                                        height: 20.h),
+                                    Image.asset(
+                                      "assets/icons/filter.png",
+                                      height: 20.h,
+                                    ),
                                   const SizedBox(width: 10),
                                   Text(
                                     data["title"],
@@ -134,8 +139,11 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     Center(
                       child: Column(
                         children: [
-                          Icon(Icons.production_quantity_limits,
-                              color: Colors.grey.shade400, size: 40.h),
+                          Icon(
+                            Icons.production_quantity_limits,
+                            color: Colors.grey.shade400,
+                            size: 40.h,
+                          ),
                           SizedBox(height: 5.h),
                           Text(
                             "No Fashion Products Found",
@@ -147,8 +155,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         ],
                       ),
                     )
-
-
                   else
                     ListView.builder(
                       itemCount: displayedProducts.length,
@@ -156,9 +162,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         final product = displayedProducts[index];
-                        final imageUrl = (product.photo != null &&
-                            product.photo!.isNotEmpty)
-                            ? "${ApiEndpoints.imageBaseurl}${product.photo?.replaceAll('http://localhost:5005', '')}"
+                        final imageUrl =
+                            (product.photo != null && product.photo!.isNotEmpty)
+                            ? "${ApiEndpoints.baseUrl}${product.photo?.replaceAll('http://localhost:5005', '')}"
                             : null;
 
                         return Padding(
@@ -178,32 +184,52 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                       borderRadius: BorderRadius.circular(20),
                                       child: imageUrl != null
                                           ? Image.network(
-                                        imageUrl,
-                                        width: double.infinity,
-                                        height: 200,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (_, __, ___) =>
-                                            Container(
+                                              imageUrl,
+                                              width: double.infinity,
+                                              height: 200,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (_, __, ___) =>
+                                                  Container(
+                                                    height: 200,
+                                                    width: double.infinity,
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          Colors.grey.shade50,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            20,
+                                                          ),
+                                                      border: Border.all(
+                                                        color: Colors.black12,
+                                                      ),
+                                                    ),
+                                                    child: Icon(
+                                                      Icons
+                                                          .broken_image_outlined,
+                                                      color: Colors.red,
+                                                      size: 50.h,
+                                                      fontWeight: FontWeight.w100,
+                                                    ),
+                                                  ),
+                                            )
+                                          : Container(
                                               height: 200,
                                               width: double.infinity,
                                               decoration: BoxDecoration(
                                                 color: Colors.grey.shade50,
-                                                borderRadius: BorderRadius.circular(20),
-                                                border: Border.all(color: Colors.black12),
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                border: Border.all(
+                                                  color: Colors.black12,
+                                                ),
                                               ),
-                                              child: Icon(Icons.broken_image_outlined, color: Colors.red, size: 50.h)
-                                            )
-                                      )
-                                          : Container(
-                                          height: 200,
-                                          width: double.infinity,
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey.shade50,
-                                            borderRadius: BorderRadius.circular(20),
-                                            border: Border.all(color: Colors.black12),
-                                          ),
-                                          child: Icon(Icons.broken_image_outlined, color: Colors.red, size: 50.h)
-                                      )
+                                              child: Icon(
+                                                Icons.broken_image_outlined,
+                                                color: Colors.red,
+                                                size: 50.h,
+                                                fontWeight: FontWeight.w100,
+                                              ),
+                                            ),
                                     ),
                                     Positioned(
                                       top: 10,
@@ -229,19 +255,24 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                           final result = await context
                                               .read<WishlistCreate>()
                                               .createWishListProduct(
-                                              product.id);
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
+                                                product.id,
+                                              );
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
                                             SnackBar(
-                                              content: Text(context
-                                                  .read<WishlistCreate>()
-                                                  .errorMessage),
+                                              content: Text(
+                                                context
+                                                    .read<WishlistCreate>()
+                                                    .errorMessage,
+                                              ),
                                             ),
                                           );
                                           if (result) {
                                             await context
                                                 .read<
-                                                WhistlistProviderOfGetFavouriteProduct>()
+                                                  WhistlistProviderOfGetFavouriteProduct
+                                                >()
                                                 .getWishlistProduct();
                                           }
                                         },
@@ -255,7 +286,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                             product.isInWishlist
                                                 ? Icons.favorite
                                                 : Icons.favorite_border,
-                                            color: Colors.white,
+                                            color: product.isInWishlist
+                                                ? Colors.red
+                                                : Colors.white,
                                             size: 24,
                                           ),
                                         ),
@@ -268,7 +301,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Row(
                                     mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Expanded(
                                         child: Text(
@@ -295,7 +328,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
+                                    horizontal: 8.0,
+                                  ),
                                   child: Row(
                                     children: [
                                       Text(
@@ -317,7 +351,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                     ],
                                   ),
                                 ),
-
 
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -371,15 +404,18 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     SizedBox(
-                                      width: MediaQuery.of(context).size.width *
+                                      width:
+                                          MediaQuery.of(context).size.width *
                                           0.4,
                                       child: OutlinedButton(
                                         style: OutlinedButton.styleFrom(
                                           side: const BorderSide(
-                                              color: Colors.red),
+                                            color: Colors.red,
+                                          ),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(10),
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
                                           ),
                                         ),
                                         onPressed: () {
@@ -397,30 +433,31 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                     ),
                                     SizedBox(width: 13.w),
                                     SizedBox(
-                                      width: MediaQuery.of(context).size.width *
+                                      width:
+                                          MediaQuery.of(context).size.width *
                                           0.4,
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.red,
                                           side: const BorderSide(
-                                              color: Colors.red),
+                                            color: Colors.red,
+                                          ),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(10),
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
                                           ),
                                         ),
                                         onPressed: () {
                                           Navigator.pushNamed(
                                             context,
-                                            RouteNames
-                                                .productDetailsBuyScreens,
+                                            RouteNames.productDetailsBuyScreens,
                                             arguments: product,
                                           );
                                         },
                                         child: const Text(
                                           "Buy Now",
-                                          style:
-                                          TextStyle(color: Colors.white),
+                                          style: TextStyle(color: Colors.white),
                                         ),
                                       ),
                                     ),
