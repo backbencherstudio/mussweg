@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
 import 'package:provider/provider.dart';
+import '../../../../core/constants/api_end_points.dart';
 import '../../../../view_model/auth/login/get_me_viewmodel.dart';
 import '../../../../view_model/profile/edit_image/edit_image.dart';
 import '../../widgets/product_card.dart';
@@ -61,17 +62,30 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                       SizedBox(
                         width: 110.w,
                         height: 110.h,
-                        child: ClipOval(
-                          child: sellerVM.profileImage != null
-                              ? Image.file(
-                            sellerVM.profileImage!,
-                            fit: BoxFit.cover,
-                          )
-                              : Image.asset(
-                            'assets/icons/myyyy.jpeg',
-                            fit: BoxFit.cover,
-                            width: 110.w,
-                            height: 110.h,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(90.r),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.grey.shade300,
+                                width: 1.w,
+                              ),
+                            ),
+                            child: Image.network(
+                              "${ApiEndpoints.baseUrl}/public/storage/avatar/${userVM.user!.avatar!}",
+                              width: 90,
+                              height: 90,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) {
+                                return SizedBox(
+                                    width: 90,
+                                    height: 90,
+                                    child: Image.asset('assets/icons/user.png',)
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ),
