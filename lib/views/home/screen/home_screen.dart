@@ -42,7 +42,7 @@ class HomeScreen extends StatelessWidget {
                       child: ClipOval(
                         child: userVM.user?.avatar != null
                             ? Image.network(
-                                "${ApiEndpoints.baseUrl}/public/storage//avatar${userVM.user!.avatar!}",
+                                "${ApiEndpoints.baseUrl}/public/storage/avatar/${userVM.user!.avatar!}",
                                 fit: BoxFit.cover,
                                 width: 50.w,
                                 height: 50.h,
