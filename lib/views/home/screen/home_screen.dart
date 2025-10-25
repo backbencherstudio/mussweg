@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:mussweg/data/model/home/category_based_product_model.dart';
-import 'package:mussweg/data/model/home/category_model.dart';
 import 'package:mussweg/view_model/home_provider/home_nav/electronic_category_based_provider.dart';
 import 'package:mussweg/view_model/home_provider/home_nav/fashion_category_based_product_provider.dart';
 import 'package:mussweg/view_model/home_provider/home_nav/home_category_based_provider.dart';
@@ -10,7 +7,6 @@ import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/api_end_points.dart';
 import '../../../core/routes/route_names.dart';
-import '../../../data/model/home/category_based_product_model.dart';
 import '../../../view_model/auth/login/get_me_viewmodel.dart';
 import '../../../view_model/home_provider/all_category_provider.dart';
 import '../../../view_model/home_provider/home_screen_provider.dart';
@@ -22,7 +18,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userVM = Provider.of<GetMeViewmodel>(context);
+    final userVM = context.watch<GetMeViewmodel>();
     final homScreenProvider = context.watch<HomeScreenProvider>();
 
     return SafeArea(
@@ -46,16 +42,44 @@ class HomeScreen extends StatelessWidget {
                       child: ClipOval(
                         child: userVM.user?.avatar != null
                             ? Image.network(
-                          "${ApiEndpoints.imageBaseurl}/public/storage//avatar${userVM.user!.avatar!}",
+                                "${ApiEndpoints.baseUrl}/public/storage//avatar${userVM.user!.avatar!}",
                                 fit: BoxFit.cover,
                                 width: 50.w,
                                 height: 50.h,
+                                errorBuilder: (_, __, ___) {
+                                  return Container(
+                                    height: 50.w,
+                                    width: 50.w,
+                                    padding: EdgeInsets.all(8.w),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(color: Colors.black12),
+                                    ),
+                                    child: Image.asset(
+                                      'assets/icons/user.png',
+                                      fit: BoxFit.cover,
+                                      width: 50.w,
+                                      height: 50.h,
+                                    ),
+                                  );
+                                },
                               )
-                            : Image.asset(
-                                'assets/icons/user.png',
-                                fit: BoxFit.cover,
+                            : Container(
+                                height: 50.w,
                                 width: 50.w,
-                                height: 50.h,
+                                padding: EdgeInsets.all(8.w),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: Colors.black12),
+                                ),
+                                child: Image.asset(
+                                  'assets/icons/user.png',
+                                  fit: BoxFit.cover,
+                                  width: 50.w,
+                                  height: 50.h,
+                                ),
                               ),
                       ),
                     ),
@@ -192,7 +216,7 @@ class HomeScreen extends StatelessWidget {
                                       color: const Color(0xffF2F1EF),
                                     ),
                                     child: Image.network(
-                                      '${ApiEndpoints.imageBaseurl}${feature?.photo.replaceAll('http://localhost:5005', '')}',
+                                      '${ApiEndpoints.baseUrl}${feature.photo.replaceAll('http://localhost:5005', '')}',
                                       height: 45.h,
                                       width: 45.w,
                                       fit: BoxFit.cover,
@@ -217,7 +241,6 @@ class HomeScreen extends StatelessWidget {
                                       fontSize: 12.sp,
                                     ),
                                   ),
-
                                 ],
                               ),
                             ),
@@ -232,10 +255,10 @@ class HomeScreen extends StatelessWidget {
                 _buildFashionProductSection("Fashion Products", context),
 
                 // Home Accessories Section
-                _buildHomeProductSection("Home Accessories",context),
+                _buildHomeProductSection("Home Accessories", context),
 
                 // Electronics Products Section
-                _buildElectronicProductSection("Electronics Products",context),
+                _buildElectronicProductSection("Electronics Products", context),
 
                 SizedBox(height: 90.h),
               ],
@@ -264,28 +287,38 @@ class HomeScreen extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () async {
-                final provider = Provider.of<CategoryBasedProductProvider>(context, listen: false);
-                final categoryProvider = Provider.of<AllCategoryProvider>(context, listen: false);
+                final provider = Provider.of<CategoryBasedProductProvider>(
+                  context,
+                  listen: false,
+                );
+                final categoryProvider = Provider.of<AllCategoryProvider>(
+                  context,
+                  listen: false,
+                );
 
                 provider.setCategoryTitle('Fashion');
-                await provider.getCategoryBasedProduct(categoryProvider.fashionCategoryId);
+                await provider.getCategoryBasedProduct(
+                  categoryProvider.fashionCategoryId,
+                );
                 Navigator.pushNamed(context, RouteNames.productListScreen);
               },
-              child: const Text("View All", style: TextStyle(color: Colors.red)),
+              child: const Text(
+                "View All",
+                style: TextStyle(color: Colors.red),
+              ),
             ),
-
           ],
         ),
         SizedBox(height: 10.h),
-        SizedBox(
-          height: 235.h,
-          child: Consumer<FashionCategoryBasedProductProvider>(
-            builder: (_, provider, __) {
-              final products =
-                  provider.categoryBasedProductModel?.data ?? [];
-              if (products.isEmpty) {
-                return Center(
+        Consumer<FashionCategoryBasedProductProvider>(
+          builder: (_, provider, __) {
+            final products = provider.categoryBasedProductModel?.data ?? [];
+            if (products.isEmpty) {
+              return SizedBox(
+                height: 120.h,
+                child: Center(
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     spacing: 4,
@@ -293,7 +326,7 @@ class HomeScreen extends StatelessWidget {
                       Icon(
                         Icons.production_quantity_limits,
                         color: Colors.grey.shade400,
-                        size: 40.h,
+                        size: 32.h,
                       ),
                       Text(
                         "No Fashion Products Found",
@@ -304,24 +337,27 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                );
-              }
-              return ListView.builder(
+                ),
+              );
+            }
+            return SizedBox(
+              height: 265.h,
+              child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: products.length,
+                itemCount: products.length > 10 ? 10 : products.length,
                 itemBuilder: (context, index) {
                   final product = products[index];
                   return CustomProductCard(product: product);
                 },
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ],
     );
   }
 
-  Widget _buildHomeProductSection(String title,context) {
+  Widget _buildHomeProductSection(String title, context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -339,26 +375,36 @@ class HomeScreen extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () async {
-                final provider = Provider.of<CategoryBasedProductProvider>(context, listen: false);
-                final categoryProvider = Provider.of<AllCategoryProvider>(context, listen: false);
+                final provider = Provider.of<CategoryBasedProductProvider>(
+                  context,
+                  listen: false,
+                );
+                final categoryProvider = Provider.of<AllCategoryProvider>(
+                  context,
+                  listen: false,
+                );
 
                 provider.setCategoryTitle('Home');
-                await provider.getCategoryBasedProduct(categoryProvider.homeCategoryId);
+                await provider.getCategoryBasedProduct(
+                  categoryProvider.homeCategoryId,
+                );
                 Navigator.pushNamed(context, RouteNames.productListScreen);
               },
-              child: const Text("View All", style: TextStyle(color: Colors.red)),
+              child: const Text(
+                "View All",
+                style: TextStyle(color: Colors.red),
+              ),
             ),
           ],
         ),
         SizedBox(height: 10.h),
-        SizedBox(
-          height: 235.h,
-          child: Consumer<HomeCategoryBasedProvider>(
-            builder: (_, provider, __) {
-              final products =
-                  provider.categoryBasedProductModel?.data ?? [];
-              if (products.isEmpty) {
-                return Center(
+        Consumer<HomeCategoryBasedProvider>(
+          builder: (_, provider, __) {
+            final products = provider.categoryBasedProductModel?.data ?? [];
+            if (products.isEmpty) {
+              return SizedBox(
+                height: 120.h,
+                child: Center(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -367,7 +413,7 @@ class HomeScreen extends StatelessWidget {
                       Icon(
                         Icons.production_quantity_limits,
                         color: Colors.grey.shade400,
-                        size: 40.h,
+                        size: 32.h,
                       ),
                       Text(
                         "No Home Products Found",
@@ -378,24 +424,28 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                );
-              }
-              return ListView.builder(
+                ),
+              );
+            }
+            provider.categoryBasedProductModel?.data ?? [];
+            return SizedBox(
+              height: 265.h,
+              child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: products.length,
+                itemCount: products.length > 10 ? 10 : products.length,
                 itemBuilder: (context, index) {
                   final product = products[index];
                   return CustomProductCard(product: product);
                 },
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ],
     );
   }
 
-  Widget _buildElectronicProductSection(String title,context) {
+  Widget _buildElectronicProductSection(String title, context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -413,26 +463,36 @@ class HomeScreen extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () async {
-                final provider = Provider.of<CategoryBasedProductProvider>(context, listen: false);
-                final categoryProvider = Provider.of<AllCategoryProvider>(context, listen: false);
+                final provider = Provider.of<CategoryBasedProductProvider>(
+                  context,
+                  listen: false,
+                );
+                final categoryProvider = Provider.of<AllCategoryProvider>(
+                  context,
+                  listen: false,
+                );
 
                 provider.setCategoryTitle('Electronic');
-                await provider.getCategoryBasedProduct(categoryProvider.electronicsCategoryId);
+                await provider.getCategoryBasedProduct(
+                  categoryProvider.electronicsCategoryId,
+                );
                 Navigator.pushNamed(context, RouteNames.productListScreen);
               },
-              child: const Text("View All", style: TextStyle(color: Colors.red)),
+              child: const Text(
+                "View All",
+                style: TextStyle(color: Colors.red),
+              ),
             ),
           ],
         ),
         SizedBox(height: 10.h),
-        SizedBox(
-          height: 235.h,
-          child: Consumer<ElectronicCategoryBasedProvider>(
-            builder: (_, provider, __) {
-              final products =
-                  provider.categoryBasedProductModel?.data ?? [];
-              if (products.isEmpty) {
-                return Center(
+        Consumer<ElectronicCategoryBasedProvider>(
+          builder: (_, provider, __) {
+            final products = provider.categoryBasedProductModel?.data ?? [];
+            if (products.isEmpty) {
+              return SizedBox(
+                height: 120.h,
+                child: Center(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -441,7 +501,7 @@ class HomeScreen extends StatelessWidget {
                       Icon(
                         Icons.production_quantity_limits,
                         color: Colors.grey.shade400,
-                        size: 40.h,
+                        size: 32.h,
                       ),
                       Text(
                         "No Electronic Products Found",
@@ -452,18 +512,21 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                );
-              }
-              return ListView.builder(
+                ),
+              );
+            }
+            return SizedBox(
+              height: 265.h,
+              child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: products.length,
+                itemCount: products.length > 10 ? 10 : products.length,
                 itemBuilder: (context, index) {
                   final product = products[index];
                   return CustomProductCard(product: product);
                 },
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ],
     );

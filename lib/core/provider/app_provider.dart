@@ -1,6 +1,7 @@
 import 'package:mussweg/view_model/home_provider/all_category_provider.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:mussweg/view_model/pickup/pickup_option_provider.dart';
+import 'package:mussweg/view_model/profile/update_profile/update_profile_details_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:mussweg/view_model/auth/signup/signup_viewmodel.dart';
@@ -47,5 +48,6 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => WhistlistProviderOfGetFavouriteProduct()),
     ChangeNotifierProvider(create: (_) => WishlistCreate()),
     ChangeNotifierProvider(create: (_) => SellerProfileProvider()),
+    ChangeNotifierProvider(create: (_) => UpdateProfileDetailsProvider()),
   ];
 }
