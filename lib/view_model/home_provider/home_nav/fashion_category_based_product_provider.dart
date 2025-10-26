@@ -22,7 +22,7 @@ class FashionCategoryBasedProductProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await _apiService.get(ApiEndpoints.getProductsByCategory(id));
+      final response = await _apiService.get(ApiEndpoints.getProductsByCategory(id, 1, 10));
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         _isLoading = false;

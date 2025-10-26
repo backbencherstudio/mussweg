@@ -1,6 +1,7 @@
 import 'package:mussweg/view_model/home_provider/all_category_provider.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:mussweg/view_model/pickup/pickup_option_provider.dart';
+import 'package:mussweg/view_model/profile/update_item_service.dart';
 import 'package:mussweg/view_model/profile/update_profile/update_profile_details_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -15,6 +16,7 @@ import '../../view_model/home_provider/favorite_icon_provider.dart';
 import '../../view_model/home_provider/home_nav/home_category_based_provider.dart';
 import '../../view_model/pickup/pickup_timer_provider.dart';
 import '../../view_model/product_item_list_provider/category_based_product_provider.dart';
+import '../../view_model/product_item_list_provider/get_product_details_provider.dart';
 import '../../view_model/profile/boost_product_service_provider/boost_product_service.dart';
 import '../../view_model/profile/edit_image/edit_image.dart';
 import '../../view_model/profile/language_selected_provider/language_select.dart';
@@ -32,6 +34,7 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => HomeScreenProvider()),
     ChangeNotifierProvider(create: (_) => LanguageService()),
     ChangeNotifierProvider(create: (_) => SellItemService()),
+    ChangeNotifierProvider(create: (_) => UpdateItemService()),
     ChangeNotifierProvider(create: (_) => TransactionService()),
     ChangeNotifierProvider(create: (_) => NotificationService()),
     ChangeNotifierProvider(create: (_) => BoostProductService()),
@@ -53,5 +56,6 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => BoostProductCreateProvider()),
     ChangeNotifierProvider(create: (_) => UserAllProductsProvider()),
     ChangeNotifierProvider(create: (_) => UpdateProfileDetailsProvider()),
+    ChangeNotifierProvider(create: (_) => GetProductDetailsProvider()),
   ];
 }

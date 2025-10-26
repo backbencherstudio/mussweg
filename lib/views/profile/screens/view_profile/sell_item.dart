@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get_it/get_it.dart';
 import 'package:mussweg/views/profile/model/category_name_id_model.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
-import '../../../../data/model/home/category_model.dart';
 import '../../../../view_model/home_provider/all_category_provider.dart';
 import '../../../../view_model/profile/sell_item_service_provider/sell_item_service.dart';
+import '../../../../view_model/profile/user_all_products/user_all_products_provider.dart';
 import '../../../widgets/simple_apppbar.dart';
 import '../../widgets/custom_dropdown_field.dart';
 import '../../widgets/custom_text_field.dart';
@@ -192,39 +190,45 @@ class _SellItemPageState extends State<SellItemPage> {
                   ),
                 ),
                 SizedBox(height: 20.h),
-                ElevatedButton(
-                  onPressed: () async {
-                    final title = _titleController.text;
-                    final description = _descriptionController.text;
-                    final location = _locationController.text;
-                    final color = _colorController.text;
-                    final stock = _stockController.text;
-                    final price = _priceController.text;
-
-                    final res = await sellItemProvider.createPost(
-                      title,
-                      description,
-                      location,
-                      color,
-                      stock,
-                      price,
-                    );
-                    final message = sellItemProvider.message ?? 'Product Create Failed';
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(message)),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    padding: EdgeInsets.symmetric(vertical: 16.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
+                Visibility(
+                  visible: !sellItemProvider.isLoading,
+                  replacement: Center(
+                    child: CircularProgressIndicator(color: Colors.red,),
                   ),
-                  child: Text(
-                    'Sell',
-                    style: TextStyle(color: Colors.white, fontSize: 18.sp),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final title = _titleController.text;
+                      final description = _descriptionController.text;
+                      final location = _locationController.text;
+                      final color = _colorController.text;
+                      final stock = _stockController.text;
+                      final price = _priceController.text;
+
+                      final res = await sellItemProvider.createPost(
+                        title,
+                        description,
+                        location,
+                        color,
+                        stock,
+                        price,
+                      );
+                      final message = sellItemProvider.message ?? 'Product Create Failed';
+                      await context.read<UserAllProductsProvider>().getAllUserProduct();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(message)),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      padding: EdgeInsets.symmetric(vertical: 16.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                    ),
+                    child: Text(
+                      'Sell',
+                      style: TextStyle(color: Colors.white, fontSize: 18.sp),
+                    ),
                   ),
                 ),
                 SizedBox(height: 40.h),

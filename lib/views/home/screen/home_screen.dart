@@ -5,13 +5,16 @@ import 'package:mussweg/view_model/home_provider/home_nav/fashion_category_based
 import 'package:mussweg/view_model/home_provider/home_nav/home_category_based_provider.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../core/constants/api_end_points.dart';
 import '../../../core/routes/route_names.dart';
 import '../../../view_model/auth/login/get_me_viewmodel.dart';
 import '../../../view_model/home_provider/all_category_provider.dart';
 import '../../../view_model/home_provider/home_screen_provider.dart';
 import '../../../view_model/product_item_list_provider/category_based_product_provider.dart';
+import '../../../view_model/product_item_list_provider/get_product_details_provider.dart';
 import '../../widgets/custom_product_card.dart';
+import '../../widgets/shimmer_card_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -32,56 +35,48 @@ class HomeScreen extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          RouteNames.viewProfileScreen,
-                        );
-                      },
-                      child: ClipOval(
-                        child: userVM.user?.avatar != null
-                            ? Image.network(
-                                "${ApiEndpoints.baseUrl}/public/storage/avatar/${userVM.user!.avatar!}",
+                    ClipOval(
+                      child: userVM.user?.avatar != null
+                          ? Image.network(
+                              "${ApiEndpoints.baseUrl}/public/storage/avatar/${userVM.user!.avatar!}",
+                              fit: BoxFit.cover,
+                              width: 50.w,
+                              height: 50.h,
+                              errorBuilder: (_, __, ___) {
+                                return Container(
+                                  height: 50.w,
+                                  width: 50.w,
+                                  padding: EdgeInsets.all(8.w),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: Colors.black12),
+                                  ),
+                                  child: Image.asset(
+                                    'assets/icons/user.png',
+                                    fit: BoxFit.cover,
+                                    width: 50.w,
+                                    height: 50.h,
+                                  ),
+                                );
+                              },
+                            )
+                          : Container(
+                              height: 50.w,
+                              width: 50.w,
+                              padding: EdgeInsets.all(8.w),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.black12),
+                              ),
+                              child: Image.asset(
+                                'assets/icons/user.png',
                                 fit: BoxFit.cover,
                                 width: 50.w,
                                 height: 50.h,
-                                errorBuilder: (_, __, ___) {
-                                  return Container(
-                                    height: 50.w,
-                                    width: 50.w,
-                                    padding: EdgeInsets.all(8.w),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(color: Colors.black12),
-                                    ),
-                                    child: Image.asset(
-                                      'assets/icons/user.png',
-                                      fit: BoxFit.cover,
-                                      width: 50.w,
-                                      height: 50.h,
-                                    ),
-                                  );
-                                },
-                              )
-                            : Container(
-                                height: 50.w,
-                                width: 50.w,
-                                padding: EdgeInsets.all(8.w),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(color: Colors.black12),
-                                ),
-                                child: Image.asset(
-                                  'assets/icons/user.png',
-                                  fit: BoxFit.cover,
-                                  width: 50.w,
-                                  height: 50.h,
-                                ),
                               ),
-                      ),
+                            ),
                     ),
                     SizedBox(width: 12.w),
                     Column(
@@ -189,18 +184,63 @@ class HomeScreen extends StatelessWidget {
 
                 Consumer<AllCategoryProvider>(
                   builder: (_, categoryProvider, __) {
+                    if (categoryProvider.isLoading) {
+                      return SizedBox(
+                        height: 75.h,
+                        child: ListView.builder(
+                          itemCount: 6,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0,
+                              ),
+                              child: Shimmer.fromColors(
+                                baseColor: Colors.grey.shade300,
+                                highlightColor: Colors.grey.shade100,
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      width: 56.w,
+                                      height: 54.h,
+                                      padding: const EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        color: const Color(0xffF2F1EF),
+                                      ),
+                                    ),
+                                    SizedBox(height: 4.h),
+                                    Container(
+                                      width: 56.w,
+                                      height: 12.h,
+                                      padding: const EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        color: const Color(0xffF2F1EF),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    }
+                    if (categoryProvider.categoryModel?.data == null) {
+                      return const Center(child: Text('No Categories Found'));
+                    }
                     return SizedBox(
                       height: 75.h,
                       child: ListView.builder(
                         itemCount:
-                            categoryProvider.categoryModel?.data.length ?? 0,
+                            categoryProvider.categoryModel!.data.length > 10
+                            ? 10
+                            : categoryProvider.categoryModel?.data.length ?? 0,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
                           final category =
                               categoryProvider.categoryModel?.data[index];
-                          if (category == null) {
-                            return Text('ok');
-                          }
                           return Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8.0,
@@ -213,10 +253,14 @@ class HomeScreen extends StatelessWidget {
                                     onTap: () async {
                                       context
                                           .read<CategoryBasedProductProvider>()
-                                          .setCategoryTitle(category.categoryName);
+                                          .setCategoryTitle(
+                                            category?.categoryName ?? '',
+                                          );
                                       await context
                                           .read<CategoryBasedProductProvider>()
-                                          .getCategoryBasedProduct(category.categoryId);
+                                          .setCategoryId(
+                                            category?.categoryId ?? '',
+                                          );
                                       Navigator.pushNamed(
                                         context,
                                         RouteNames.productListScreen,
@@ -229,7 +273,7 @@ class HomeScreen extends StatelessWidget {
                                         color: const Color(0xffF2F1EF),
                                       ),
                                       child: Image.network(
-                                        '${ApiEndpoints.baseUrl}${category.photo.replaceAll('http://localhost:5005', '')}',
+                                        '${ApiEndpoints.baseUrl}${category?.photo.replaceAll('http://localhost:5005', '')}',
                                         height: 45.h,
                                         width: 45.w,
                                         fit: BoxFit.cover,
@@ -245,7 +289,7 @@ class HomeScreen extends StatelessWidget {
                                   ),
                                   SizedBox(height: 4.h),
                                   Text(
-                                    category.categoryName ?? '',
+                                    category?.categoryName ?? '',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,
@@ -311,9 +355,10 @@ class HomeScreen extends StatelessWidget {
                 );
 
                 provider.setCategoryTitle('Fashion');
-                await provider.getCategoryBasedProduct(
+                await provider.setCategoryId(
                   categoryProvider.fashionCategoryId,
                 );
+                await provider.getCategoryBasedProduct();
                 Navigator.pushNamed(context, RouteNames.productListScreen);
               },
               child: const Text(
@@ -326,6 +371,18 @@ class HomeScreen extends StatelessWidget {
         SizedBox(height: 10.h),
         Consumer<FashionCategoryBasedProductProvider>(
           builder: (_, provider, __) {
+            if (provider.isLoading) {
+              return SizedBox(
+                height: 265.h, // Adjust size to your design
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 4,
+                  itemBuilder: (context, index) {
+                    return ShimmerCardWidget();
+                  },
+                ),
+              );
+            }
             final products = provider.categoryBasedProductModel?.data ?? [];
             if (products.isEmpty) {
               return SizedBox(
@@ -399,9 +456,8 @@ class HomeScreen extends StatelessWidget {
                 );
 
                 provider.setCategoryTitle('Home');
-                await provider.getCategoryBasedProduct(
-                  categoryProvider.homeCategoryId,
-                );
+                await provider.setCategoryId(categoryProvider.homeCategoryId);
+                await provider.getCategoryBasedProduct();
                 Navigator.pushNamed(context, RouteNames.productListScreen);
               },
               child: const Text(
@@ -414,6 +470,18 @@ class HomeScreen extends StatelessWidget {
         SizedBox(height: 10.h),
         Consumer<HomeCategoryBasedProvider>(
           builder: (_, provider, __) {
+            if (provider.isLoading) {
+              return SizedBox(
+                height: 265.h, // Adjust size to your design
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 4,
+                  itemBuilder: (context, index) {
+                    return ShimmerCardWidget();
+                  },
+                ),
+              );
+            }
             final products = provider.categoryBasedProductModel?.data ?? [];
             if (products.isEmpty) {
               return SizedBox(
@@ -441,7 +509,6 @@ class HomeScreen extends StatelessWidget {
                 ),
               );
             }
-            provider.categoryBasedProductModel?.data ?? [];
             return SizedBox(
               height: 265.h,
               child: ListView.builder(
@@ -487,9 +554,10 @@ class HomeScreen extends StatelessWidget {
                 );
 
                 provider.setCategoryTitle('Electronic');
-                await provider.getCategoryBasedProduct(
+                await provider.setCategoryId(
                   categoryProvider.electronicsCategoryId,
                 );
+                await provider.getCategoryBasedProduct();
                 Navigator.pushNamed(context, RouteNames.productListScreen);
               },
               child: const Text(
@@ -502,6 +570,18 @@ class HomeScreen extends StatelessWidget {
         SizedBox(height: 10.h),
         Consumer<ElectronicCategoryBasedProvider>(
           builder: (_, provider, __) {
+            if (provider.isLoading) {
+              return SizedBox(
+                height: 265.h, // Adjust size to your design
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 4,
+                  itemBuilder: (context, index) {
+                    return ShimmerCardWidget();
+                  },
+                ),
+              );
+            }
             final products = provider.categoryBasedProductModel?.data ?? [];
             if (products.isEmpty) {
               return SizedBox(

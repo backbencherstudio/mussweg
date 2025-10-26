@@ -10,12 +10,21 @@ import 'package:mime/mime.dart';
 import '../../../core/constants/api_end_points.dart';
 import '../../../core/services/token_storage.dart';
 
-class SellItemService extends ChangeNotifier {
+class UpdateItemService extends ChangeNotifier {
   String location = '';
   String categoryId = '';
   String categoryName = '';
   String size = '';
   String condition = '';
+
+  String _productId = '';
+  String get productId => _productId;
+
+  void setProductId(String value) {
+    _productId = value;
+    debugPrint('---- ProductId : $_productId ----');
+    notifyListeners();
+  }
 
   void setLocation(String value) {
     location = value;
@@ -83,7 +92,7 @@ class SellItemService extends ChangeNotifier {
   final tokenStorage = TokenStorage();
 
   // Method for posting the item with the image via multipart request
-  Future<bool> createPost(
+  Future<bool> updatePost(
       String title,
       String description,
       String location,
@@ -94,7 +103,7 @@ class SellItemService extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    final url = Uri.parse(ApiEndpoints.createProduct);
+    final url = Uri.parse(ApiEndpoints.updateProductById(_productId));
 
     try {
       final accessToken = await tokenStorage.getToken();
@@ -141,7 +150,7 @@ class SellItemService extends ChangeNotifier {
       final response = await request.send();
       final responseBody = await response.stream.bytesToString();
       if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 409) {
-        debugPrint('Create post successfully. Status: ${response.statusCode}');
+        debugPrint('Update post successfully. Status: ${response.statusCode}');
         debugPrint('Response Body: $responseBody');
         _isLoading = false;
         _isUploaded = true;
@@ -153,7 +162,7 @@ class SellItemService extends ChangeNotifier {
         notifyListeners();
         return responseMap['success'];
       } else {
-        debugPrint('Failed to add details. Status: ${response.statusCode}');
+        debugPrint('Failed to update details. Status: ${response.statusCode}');
         debugPrint('Request URL: ${request.url}');
         debugPrint('Request Headers: ${request.headers}');
         debugPrint('Request Fields: ${request.fields}');
@@ -164,7 +173,7 @@ class SellItemService extends ChangeNotifier {
         return false;
       }
     } catch (error) {
-      debugPrint('Error adding details: $error');
+      debugPrint('Error Updating details: $error');
       _isLoading = false;
       _isUploaded = false;
       notifyListeners();

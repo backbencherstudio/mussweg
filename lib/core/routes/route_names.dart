@@ -10,7 +10,7 @@ class RouteNames {
   static const String sellerProfilePage = '/sellerProfilePage';
   static const String categoryScreen = '/categoryScreen';
   static const String productListScreen = '/productListScreen';
-  static const String productDetailsBidScreens = '/productDetailsBidScreens';
+  static const String productDetailsScreen = '/productDetailsScreen';
   static const String chatScreen = '/chatScreen';
   static const String viewProfileScreen = '/viewProfileScreen';
   static const String boughtItemsScreen = '/boughtItemsScreen';

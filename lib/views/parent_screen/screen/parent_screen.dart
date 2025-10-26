@@ -24,7 +24,6 @@ class _ParentScreensState extends State<ParentScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await context.read<AllCategoryProvider>().getAllCategories();
       final allCategoryProvider = context.read<AllCategoryProvider>();
       context.read<FashionCategoryBasedProductProvider>().getCategoryBasedProduct(allCategoryProvider.fashionCategoryId);
       context.read<HomeCategoryBasedProvider>().getCategoryBasedProduct(allCategoryProvider.homeCategoryId);

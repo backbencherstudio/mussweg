@@ -9,6 +9,7 @@ import 'package:get_it/get_it.dart';
 import '../../../view_model/auth/login/get_me_viewmodel.dart';
 import '../../../view_model/auth/login/login_viewmodel.dart';
 import '../../../view_model/auth/signup/signup_viewmodel.dart';
+import '../../../view_model/home_provider/all_category_provider.dart';
 import '../sign_up/widgets/buttons.dart';
 import '../sign_up/widgets/signup_email_text_form_field_widget.dart';
 import '../sign_up/widgets/signup_password_text_form_field_widget.dart';
@@ -138,6 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
               );
               if(result){
                 await context.read<GetMeViewmodel>().fetchUserData();
+                await context.read<AllCategoryProvider>().getAllCategories();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(viewModel.errorMessage ?? "Login Successful")),
                 );
