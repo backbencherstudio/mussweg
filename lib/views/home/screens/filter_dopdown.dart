@@ -61,8 +61,10 @@ class _FilterPageState extends State<FilterPage> {
               title: 'Location',
               hintText: 'St.Gallen & Eastern Switzerland',
               items: _conditions,
-              value: service.category,
-              onChanged: service.setCategory,
+              value: service.categoryId,
+              onChanged: (value) {
+                service.setCategoryId(value ?? '');
+              }
             ),
             _buildCustomLocation(),
             const SizedBox(height: 20),

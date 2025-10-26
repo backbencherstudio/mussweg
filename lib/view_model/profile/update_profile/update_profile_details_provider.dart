@@ -91,6 +91,7 @@ class UpdateProfileDetailsProvider extends ChangeNotifier {
       if (response.statusCode == 200 || response.statusCode == 201) {
         debugPrint('Create post successfully. Status: ${response.statusCode}');
         debugPrint('Response Body: $responseBody');
+        debugPrint('Request Fields: ${request.fields}');
         _isLoading = false;
         _isUploaded = true;
         notifyListeners();

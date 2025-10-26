@@ -61,46 +61,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   child: Row(
                     children: [
-                      ClipOval(
-                        child: userVM.user?.avatar != null
-                            ? Image.network(
-                          "${ApiEndpoints.baseUrl}/public/storage//avatar${userVM.user!.avatar!}",
-                          fit: BoxFit.cover,
-                          width: 50.w,
-                          height: 50.h,
-                          errorBuilder: (_, __, ___) {
-                            return Container(
-                              height: 50.w,
-                              width: 50.w,
-                              padding: EdgeInsets.all(8.w),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                border: Border.all(color: Colors.black12),
-                              ),
-                              child: Image.asset(
-                                'assets/icons/user.png',
-                                fit: BoxFit.cover,
-                                width: 50.w,
-                                height: 50.h,
-                              ),
-                            );
-                          },
-                        )
-                            : Container(
-                          height: 50.w,
-                          width: 50.w,
-                          padding: EdgeInsets.all(8.w),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(90.r),
+                        child: Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
-                            border: Border.all(color: Colors.black12),
+                            border: Border.all(
+                              color: Colors.grey.shade300,
+                              width: 1.w,
+                            ),
                           ),
-                          child: Image.asset(
-                            'assets/icons/user.png',
+                          child: Image.network(
+                            "${ApiEndpoints.baseUrl}/public/storage/avatar/${userVM.user!.avatar!}",
+                            width: 90,
+                            height: 90,
                             fit: BoxFit.cover,
-                            width: 50.w,
-                            height: 50.h,
+                            errorBuilder: (_, __, ___) {
+                              return SizedBox(
+                                width: 90,
+                                height: 90,
+                                child: Image.asset('assets/icons/user.png',)
+                              );
+                            },
                           ),
                         ),
                       ),
@@ -138,7 +121,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               onTap: () {
                                 Navigator.pushNamed(
                                   context,
-                                  RouteNames.sellerProfilePage,
+                                  RouteNames.accountSettingsPage,
                                 );
                               },
                               child: const Text(

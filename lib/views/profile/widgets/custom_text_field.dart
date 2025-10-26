@@ -5,12 +5,13 @@ class CustomTextField extends StatelessWidget {
   final String title;
   final String hintText;
   final IconData? icon; // 👈 optional now
+  final TextEditingController controller;
 
   const CustomTextField({
     super.key,
     required this.title,
     required this.hintText,
-    this.icon, // 👈 no longer required
+    this.icon, required this.controller, // 👈 no longer required
   });
 
   @override
@@ -29,6 +30,7 @@ class CustomTextField extends StatelessWidget {
           ),
           SizedBox(height: 8.h),
           TextField(
+            controller: controller,
             decoration: InputDecoration(
               hintText: hintText,
               suffixIcon: icon != null ? Icon(icon) : null,

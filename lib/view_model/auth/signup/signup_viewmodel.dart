@@ -50,15 +50,6 @@ class RegisterProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  String _selectedRole = "admin";
-  String get selectedRole => _selectedRole;
-
-  void setSelectedRole(String role) {
-    _selectedRole = role;
-    debugPrint("Selected role: $role");
-    notifyListeners();
-  }
-
   final ApiService _apiService = ApiService();
 
   Future<bool> registerUser({

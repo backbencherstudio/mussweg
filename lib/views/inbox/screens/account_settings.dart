@@ -35,6 +35,21 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
     super.dispose();
   }
 
+  String? _normalizeGender(String? gender) {
+    if (gender == null) return null;
+    switch (gender.toLowerCase()) {
+      case 'male':
+        return 'Male';
+      case 'female':
+        return 'Female';
+      case 'other':
+        return 'Other';
+      default:
+        return null;
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Consumer<GetMeViewmodel>(
@@ -42,22 +57,34 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
         final userdata = getMeProvider.user;
 
         if (userdata == null) {
-          // Show loading spinner while fetching user data
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
 
-        // Populate controllers safely (so rebuilds don’t overwrite user typing)
-        _nameController.text = userdata.name ?? "";
-        _emailController.text = userdata.email ?? "";
-        _locationController.text = userdata.address ?? "";
-        _genderController.text = userdata.gender ?? "";
-        selectedGender = userdata.gender;
-        _dobController.text = userdata.dateOfBirth != null
-            ? DateFormat('yyyy-MM-dd')
-            .format(DateTime.parse(userdata.dateOfBirth!))
-            : '';
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_nameController.text.isEmpty && userdata.name != null) {
+            _nameController.text = userdata.name;
+          }
+          if (_emailController.text.isEmpty && userdata.email != null) {
+            _emailController.text = userdata.email;
+          }
+          if (_locationController.text.isEmpty && userdata.address != null) {
+            _locationController.text = userdata.address!;
+          }
+          if (_genderController.text.isEmpty && userdata.gender != null) {
+            final normalizedGender = _normalizeGender(userdata.gender);
+            _genderController.text = normalizedGender ?? '';
+            setState(() {
+              selectedGender = normalizedGender;
+            });
+          }
+          if (_dobController.text.isEmpty && userdata.dateOfBirth != null) {
+            _dobController.text = DateFormat('yyyy-MM-dd')
+                .format(DateTime.parse(userdata.dateOfBirth!));
+          }
+        });
+
 
         return Scaffold(
           appBar: SimpleApppbar(title: 'Account Settings'),
@@ -124,7 +151,6 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                   ),
                   SizedBox(height: 20.h),
 
-                  /// Update Button + Loader
                   Consumer<UpdateProfileDetailsProvider>(
                     builder: (_, updateProvider, __) {
                       return Visibility(
@@ -147,7 +173,6 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                             );
 
                             if (res) {
-                              await context.read<GetMeViewmodel>().fetchUserData();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content:
@@ -163,6 +188,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                 ),
                               );
                             }
+
+                            await context.read<GetMeViewmodel>().fetchUserData();
                           },
                           title: 'Update',
                           color: Colors.red,

@@ -37,6 +37,8 @@ class _SellerProfilePageState extends State<SellerProfilePage>
   Widget build(BuildContext context) {
     final userVM = Provider.of<GetMeViewmodel>(context);
     final sellerVM = Provider.of<SellerProfileProvider>(context);
+    final userProductVM = Provider.of<UserAllProductsProvider>(context);
+
 
     return Scaffold(
       appBar: SimpleApppbar(title: 'View Profile'),
@@ -58,51 +60,64 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                 Positioned(
                   top: 120.h,
                   left: 16.w,
-                  child: Stack(
-                    children: [
-                      SizedBox(
-                        width: 110.w,
-                        height: 110.h,
-                        child: ClipOval(
-                          child: userVM.user?.avatar != null
-                              ? Image.network(
-                                  "${ApiEndpoints.imageBaseurl}/public/storage//avatar${userVM.user!.avatar!}",
-                                  fit: BoxFit.cover,
-                                  width: 50.w,
-                                  height: 50.h,
-                                )
-                              : Image.asset(
-                                  'assets/icons/user.png',
-                                  fit: BoxFit.cover,
-                                  width: 50.w,
-                                  height: 50.h,
+                  child: GestureDetector(
+                    onTap: () async {
+                      await sellerVM.pickProfileImage();
+                      if (sellerVM.profileImage != null) {
+                        final success = await sellerVM
+                            .uploadProfileImage();
+                        if (success) {
+                          await context.read<GetMeViewmodel>().fetchUserData();
+                        }
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                success
+                                    ? sellerVM.uploadMessage ?? 'Profile updated'
+                                    : 'Upload failed',
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                    child: Stack(
+                      children: [
+                        SizedBox(
+                          width: 110.w,
+                          height: 110.h,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(90.r),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.grey.shade300,
+                                  width: 1.w,
                                 ),
+                              ),
+                              child: Image.network(
+                                "${ApiEndpoints.baseUrl}/public/storage/avatar/${userVM.user!.avatar!}",
+                                width: 90,
+                                height: 90,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) {
+                                  return SizedBox(
+                                      width: 90,
+                                      height: 90,
+                                      child: Image.asset('assets/icons/user.png',)
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
 
-                      Positioned(
-                        right: 4.w,
-                        bottom: 4.w,
-                        child: GestureDetector(
-                          onTap: () async {
-                            await sellerVM.pickProfileImage();
-                            if (sellerVM.profileImage != null) {
-                              final success = await sellerVM
-                                  .uploadProfileImage();
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      success
-                                          ? sellerVM.uploadMessage ??
-                                                'Profile updated'
-                                          : 'Upload failed',
-                                    ),
-                                  ),
-                                );
-                              }
-                            }
-                          },
+                        Positioned(
+                          right: 4.w,
+                          bottom: 4.w,
                           child: SizedBox(
                             width: 30.w,
                             height: 30.h,
@@ -114,8 +129,8 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 Positioned(
@@ -161,7 +176,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${userVM.user?.name ?? 'Guest'}",
+                        userVM.user?.name ?? 'Guest',
                         style: TextStyle(
                           fontSize: 20.sp,
                           fontWeight: FontWeight.w800,
@@ -238,14 +253,15 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                     children: [
                       Row(
                         children: [
-                          Text(
-                            '50+ products uploaded',
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xff4A4C56),
+                          if (userProductVM.userAllProductsViewmodel?.data != null)
+                            Text(
+                              userProductVM.userAllProductsViewmodel!.data.length > 50 ? '50+ products uploaded' : '${userProductVM.userAllProductsViewmodel?.data.length} products uploaded',
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xff4A4C56),
+                              ),
                             ),
-                          ),
                           const Spacer(),
                           GestureDetector(
                             onTap: () {
@@ -269,6 +285,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                                     color: Colors.white,
                                     size: 16.w,
                                   ),
+                                  SizedBox(width: 4.w,),
                                   Text(
                                     'Sell',
                                     style: TextStyle(
@@ -295,14 +312,14 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                                     crossAxisCount: 2,
                                     crossAxisSpacing: 8.w,
                                     mainAxisSpacing: 8.w,
-                                    childAspectRatio: .65,
+                                    childAspectRatio: .7,
                                   ),
                               itemBuilder: (context, index) {
                                 return ProductCard(
-                                  imageUrl: 'assets/images/dress.png',
+                                  imageUrl: userAllProducts?[index].photo ?? '',
                                   productName: userAllProducts?[index].title ?? '',
                                   price: userAllProducts?[index].price ?? '',
-                                  isBoosted: true,
+                                  isBoosted: userAllProducts?[index].remainingTime != null,
                                   productId: userAllProducts?[index].id ?? '',
                                   productDate: userAllProducts?[index].uploaded ?? '',
                                   productBoostTime: userAllProducts?[index].remainingTime ?? '',

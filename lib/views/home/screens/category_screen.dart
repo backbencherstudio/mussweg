@@ -51,7 +51,7 @@ class CategoryScreen extends StatelessWidget {
                   children: feature.map((category) {
                     return SizedBox(
                       width: 85.w,
-                      height: 135.h,
+                      height: 145.h,
                       child: Column(
                         children: [
                           SizedBox(height: 30),
@@ -62,7 +62,7 @@ class CategoryScreen extends StatelessWidget {
                                   .setCategoryTitle(category.categoryName);
                               await context
                                   .read<CategoryBasedProductProvider>()
-                                  .getCategoryBasedProduct(category.categoryId);
+                                  .setCategoryId(category.categoryId);
                               Navigator.pushNamed(
                                 context,
                                 RouteNames.productListScreen,
@@ -82,6 +82,9 @@ class CategoryScreen extends StatelessWidget {
                                 height: 50,
                                 width: 50,
                                 fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Icon(Icons.error, color: Colors.grey.shade300, size: 16.h,);
+                                },
                               ),
                             ),
                           ),

@@ -65,6 +65,7 @@ class SellerProfileProvider extends ChangeNotifier {
         final data = jsonDecode(responseBody);
         _uploadMessage = data['message'] ?? 'Profile updated successfully.';
         _isUploading = false;
+        debugPrint('---- profile image updated ----');
         notifyListeners();
         return true;
       } else {

@@ -1,77 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mussweg/core/constants/api_end_points.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
+import 'package:mussweg/view_model/product_item_list_provider/get_product_details_provider.dart';
+import 'package:mussweg/views/widgets/custom_primary_button.dart';
 import 'package:mussweg/views/widgets/simple_apppbar.dart';
 import 'package:provider/provider.dart';
 import '../../../core/routes/route_names.dart';
+import '../../widgets/custom_main_button.dart';
 
 class ProductDetailsBidScreens extends StatefulWidget {
   const ProductDetailsBidScreens({super.key});
 
   @override
-  State<ProductDetailsBidScreens> createState() => _ProductDetailsBidScreensState();
+  State<ProductDetailsBidScreens> createState() =>
+      _ProductDetailsBidScreensState();
 }
 
 class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
   @override
   Widget build(BuildContext context) {
+    final productProvider = context.watch<GetProductDetailsProvider>();
+    final product = productProvider.productDetailsResponse?.data;
+    if (productProvider.loading) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
     return Scaffold(
       appBar: SimpleApppbar(title: 'Product Details'),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Stack(
-              children: [
-                ClipRRect(
-                  child: Image.asset(
-                    "assets/images/shirt.png",
-                    height: 200.h,
-                    width: 500.w,
-                    fit: BoxFit.contain,
-                  ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.r),
+                child: Image.network(
+                  "${ApiEndpoints.baseUrl}${product?.productPhoto?.replaceAll('http://localhost:5005', '')}",
+                  height: 200.h,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) {
+                    return Container(
+                      height: 200.h,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade50,
+                        border: Border.all(color: Colors.grey.shade200),
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12.r),
+                        child: Image.asset(
+                          'assets/images/placeholder.jpg',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+                  },
                 ),
-                Positioned(
-                  left: 160,
-                  bottom: 20,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 3),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(99),
-                      color: Colors.white,
-                    ),
-                    child: Wrap(
-                      children: [
-                        Container(
-                          height: 5,
-                          width: 5,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.red,
-                          ),
-                        ),
-                        SizedBox(width: 5),
-                        Container(
-                          height: 5,
-                          width: 5,
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        SizedBox(width: 5),
-                        Container(
-                          height: 5,
-                          width: 5,
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
             SizedBox(height: 16),
             Padding(
@@ -79,22 +69,27 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
               child: Row(
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.asset("assets/images/user_2.png"),
+                    borderRadius: BorderRadius.circular(90.r),
+                    child: Image.network(
+                      "${ApiEndpoints.baseUrl}${product?.sellerInfo?.profilePhoto?.replaceAll('http://localhost:5005', '')}",
+                      height: 60.w,
+                      width: 60.w,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   SizedBox(width: 6),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Cameron Williamson",
+                        product?.sellerInfo?.name ?? '',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
                       ),
                       Text(
-                        "300 items",
+                        "${product?.sellerInfo?.totalItems} items",
                         style: TextStyle(color: Colors.grey, fontSize: 14),
                       ),
                     ],
@@ -105,7 +100,10 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                       Navigator.pushNamed(context, RouteNames.chatScreen);
                     },
                     child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.red,
                         borderRadius: BorderRadius.circular(99),
@@ -126,15 +124,15 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                 children: [
                   SizedBox(width: 15.w),
                   Container(
-                    width: 48.w,
                     height: 22.h,
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
                     decoration: BoxDecoration(
                       color: Color(0xffEEFAF6),
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Center(
                       child: Text(
-                        'Men',
+                        product?.category?.categoryName ?? '',
                         style: TextStyle(
                           color: Color(0xff3A9B7A),
                           fontWeight: FontWeight.w700,
@@ -145,13 +143,14 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                 ],
               ),
             ),
+            SizedBox(height: 8.h),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Men Exclusive T-Shirt",
+                    product?.title ?? 'Unknown',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
@@ -161,10 +160,13 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                   Row(
                     spacing: 2,
                     children: [
-                      Icon(Icons.location_on_outlined,
-                          color: Color(0xffA5A5AB), size: 20),
+                      Icon(
+                        Icons.location_on_outlined,
+                        color: Color(0xffA5A5AB),
+                        size: 20,
+                      ),
                       Text(
-                        "Switzerland",
+                        product?.location ?? 'unknown',
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 14,
@@ -175,7 +177,7 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    '\$25.00',
+                    '\$${product?.price ?? '0.00'}',
                     style: TextStyle(
                       color: Colors.red,
                       fontSize: 18.sp,
@@ -194,7 +196,7 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    "The speaker unit contains a diaphragm that is precision-grown from NAC Audio bio-cellulose, making it stiffer, lighter, and stronger than regular PET speaker units, and allowing the sound-producing diaphragm to vibrate without the levels of distortion found in other speakers.",
+                    product?.description ?? '',
                     style: TextStyle(fontSize: 14, color: Colors.black87),
                   ),
                   SizedBox(height: 16),
@@ -210,60 +212,95 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                           spacing: 4,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Condition",
-                                style: TextStyle(
-                                    fontSize: 14, color: Colors.black87)),
+                            Text(
+                              "Condition",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black87,
+                              ),
+                            ),
                             SizedBox(height: 4),
-                            Text("Size",
-                                style: TextStyle(
-                                    fontSize: 14, color: Colors.black87)),
+                            Text(
+                              "Size",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black87,
+                              ),
+                            ),
                             SizedBox(height: 4),
-                            Text("Materials",
-                                style: TextStyle(
-                                    fontSize: 14, color: Colors.black87)),
+                            Text(
+                              "Color",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black87,
+                              ),
+                            ),
                             SizedBox(height: 4),
-                            Text("Color",
-                                style: TextStyle(
-                                    fontSize: 14, color: Colors.black87)),
+                            Text(
+                              "Uploaded",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black87,
+                              ),
+                            ),
                             SizedBox(height: 4),
-                            Text("Uploaded",
-                                style: TextStyle(
-                                    fontSize: 14, color: Colors.black87)),
-                            SizedBox(height: 4),
-                            Text("Remaining Time",
-                                style: TextStyle(
-                                    fontSize: 14, color: Colors.black87)),
+                            Text(
+                              "Remaining Time",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black87,
+                              ),
+                            ),
                           ],
                         ),
                         Spacer(),
-                        Column(
-                          spacing: 4,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(": Like New",
+                        SizedBox(
+                          width: 140.w,
+                          child: Column(
+                            spacing: 4,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                ": ${product?.condition ?? ''}",
                                 style: TextStyle(
-                                    fontSize: 14, color: Colors.black87)),
-                            SizedBox(height: 4),
-                            Text(": XL",
+                                  fontSize: 14,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                ": ${product?.size ?? ''}",
                                 style: TextStyle(
-                                    fontSize: 14, color: Colors.black87)),
-                            SizedBox(height: 4),
-                            Text(": Cotton Blend",
+                                  fontSize: 14,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                ": ${product?.color ?? ''}",
                                 style: TextStyle(
-                                    fontSize: 14, color: Colors.black87)),
-                            SizedBox(height: 4),
-                            Text(": Orange",
+                                  fontSize: 14,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                ": ${product?.uploaded ?? ''}",
                                 style: TextStyle(
-                                    fontSize: 14, color: Colors.black87)),
-                            SizedBox(height: 4),
-                            Text(": 6 Aug 2025",
+                                  fontSize: 14,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                ": ${product?.remainingTime ?? ''}",
                                 style: TextStyle(
-                                    fontSize: 14, color: Colors.black87)),
-                            SizedBox(height: 4),
-                            Text(": 12h : 12m : 30s",
-                                style: TextStyle(
-                                    fontSize: 14, color: Colors.black87)),
-                          ],
+                                  fontSize: 14,
+                                  color: Color(0xff1A9882),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -280,79 +317,65 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                       child: Row(
                         children: [
                           SizedBox(width: 12),
-                          Icon(Icons.check_circle_outline,
-                              color: Color(0Xff1DBF73)),
+                          Icon(
+                            Icons.check_circle_outline,
+                            color: Color(0Xff1DBF73),
+                          ),
                           SizedBox(width: 12.w),
                           Text(
                             "If a scam occurs, their money is protected.",
                             style: TextStyle(color: Color(0xff1DBF73)),
-                          )
+                          ),
                         ],
                       ),
                     ),
                   ),
                   SizedBox(height: 25),
-                  Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Market Price: \$25.00 ',
-                            style: TextStyle(
-                              color: Color(0xff4A4C56),
-                              fontSize: 13.sp,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: "Last bid Price: \$20.00  ",
-                                  style: TextStyle(
-                                    color: Color(0xff4A4C56),
-                                    fontSize: 13.sp,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: "(10% discount)",
-                                  style: TextStyle(
-                                    color: Color(0xff777980),
-                                    fontSize: 13.sp,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: 10.w),
-                      SizedBox(
-                        width: 110.w,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            context.read<ParentScreensProvider>().onSelectedIndex(2);
-                            Navigator.pushNamed(context, RouteNames.parentScreen);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            padding: EdgeInsets.symmetric(vertical: 16),
-                          ),
-                          child: Text(
-                            "Place a Bid",
-                            style:
-                            TextStyle(fontSize: 15, color: Colors.white),
+                  Text(
+                    'Market Price: \$${product?.price ?? '0.00'} ',
+                    style: TextStyle(
+                      color: Color(0xff4A4C56),
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    "Last bid Price: \$${product?.minimumBid ?? '0.00'}  ",
+                    style: TextStyle(
+                      color: Color(0xff4A4C56),
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(height: 36.h),
+                  SizedBox(
+                    height: 60.h,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: CustomMainButton(
+                            onTap: () {},
+                            title: 'Place a Bid',
                           ),
                         ),
-                      ),
-                    ],
+                        SizedBox(width: 12.w),
+                        Expanded(
+                          child: CustomMainButton(
+                            onTap: () {
+                              context
+                                  .read<ParentScreensProvider>()
+                                  .onSelectedIndex(2);
+                              Navigator.pushNamed(
+                                context,
+                                RouteNames.parentScreen,
+                              );
+                            },
+                            title: 'Buy Now',
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(height: 60.h),
                 ],

@@ -21,15 +21,6 @@ class CategoryBasedProductModel {
       pagination: Pagination.fromJson(json['pagination']),
     );
   }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data.map((item) => item.toJson()).toList(),
-      'pagination': pagination.toJson(),
-    };
-  }
 }
 
 class ProductData {
@@ -71,21 +62,6 @@ class ProductData {
       minimumBid: json['minimum_bid'],
     );
   }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'photo': photo,
-      'title': title,
-      'size': size,
-      'condition': condition,
-      'created_time': createdTime,
-      'boost_time_left': boostTimeLeft,
-      'price': price,
-      'is_in_wishlist': isInWishlist,
-      'minimum_bid': minimumBid,
-    };
-  }
 }
 
 class Pagination {
@@ -114,16 +90,5 @@ class Pagination {
       hasNextPage: json['hasNextPage'],
       hasPrevPage: json['hasPrevPage'],
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'total': total,
-      'page': page,
-      'perPage': perPage,
-      'totalPages': totalPages,
-      'hasNextPage': hasNextPage,
-      'hasPrevPage': hasPrevPage,
-    };
   }
 }

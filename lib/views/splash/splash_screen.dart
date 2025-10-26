@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../core/routes/route_names.dart';
 import '../../core/services/token_storage.dart';
 import '../../view_model/auth/login/get_me_viewmodel.dart';
+import '../../view_model/home_provider/all_category_provider.dart';
 import '../../view_model/parent_provider/parent_screen_provider.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -23,8 +24,9 @@ class _SplashScreenState extends State<SplashScreen> {
         await context.read<GetMeViewmodel>().fetchUserData();
         final token = await TokenStorage().getToken();
         if (token != null) {
+          await context.read<AllCategoryProvider>().getAllCategories();
           context.read<ParentScreensProvider>().onSelectedIndex(0);
-          Navigator.pushReplacementNamed(context, RouteNames.loginScreen);
+          Navigator.pushReplacementNamed(context, RouteNames.parentScreen);
         } else {
           Navigator.pushReplacementNamed(context, RouteNames.onboardingScreen);
         }

@@ -19,6 +19,8 @@ class CustomDropdownField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final safeValue = (value != null && items.contains(value)) ? value : null;
+
     return Padding(
       padding: EdgeInsets.only(bottom: 16.0.h),
       child: Column(
@@ -41,12 +43,19 @@ class CustomDropdownField extends StatelessWidget {
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 isExpanded: true,
-                value: value,
-                hint: Text(hintText, style: TextStyle(fontSize: 14.sp)),
+                value: safeValue,
+                hint: Text(
+                  hintText,
+                  style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
+                ),
                 items: items
+                    .toSet()
                     .map((item) => DropdownMenuItem<String>(
                   value: item,
-                  child: Text(item, style: TextStyle(fontSize: 14.sp)),
+                  child: Text(
+                    item,
+                    style: TextStyle(fontSize: 14.sp),
+                  ),
                 ))
                     .toList(),
                 onChanged: onChanged,
