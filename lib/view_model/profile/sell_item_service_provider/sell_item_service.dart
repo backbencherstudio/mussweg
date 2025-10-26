@@ -59,13 +59,15 @@ class SellItemService extends ChangeNotifier {
   File? image;
   final ImagePicker _picker = ImagePicker();
 
+  // Image selection method
   Future<void> pickImage() async {
     final pickedFile = await _picker.pickImage(
       source: ImageSource.gallery,
       imageQuality: 80,
     );
     if (pickedFile != null) {
-      image = File(pickedFile.path);
+      image = File(pickedFile.path);  // The image file should be stored here
+      debugPrint('Image selected: ${image!.path}');  // Check if the image is picked correctly
       notifyListeners();
     } else {
       debugPrint('No image selected.');
@@ -80,14 +82,15 @@ class SellItemService extends ChangeNotifier {
 
   final tokenStorage = TokenStorage();
 
+  // Method for posting the item with the image via multipart request
   Future<bool> createPost(
-    String title,
-    String description,
-    String location,
-    String color,
-    String stock,
-    String price,
-  ) async {
+      String title,
+      String description,
+      String location,
+      String color,
+      String stock,
+      String price,
+      ) async {
     _isLoading = true;
     notifyListeners();
 
@@ -113,14 +116,17 @@ class SellItemService extends ChangeNotifier {
       request.fields['stock'] = stock;
       request.fields['condition'] = condition;
 
+      // Upload the image if selected
       if (image != null) {
         debugPrint('Uploading image...');
-        String? mimeType = lookupMimeType(image!.path);
-        String filename = path.basename(image!.path);
+        String? mimeType = lookupMimeType(image!.path);  // Get the MIME type of the image
+        String filename = path.basename(image!.path);    // Get the image filename
+
+        // Adding the image to the multipart request
         request.files.add(
           await http.MultipartFile.fromPath(
-            'image',
-            image!.path,
+            'image',  // Field name for image in the backend
+            image!.path,  // Image file path
             filename: filename,
             contentType: mimeType != null ? MediaType.parse(mimeType) : null,
           ),
@@ -139,7 +145,10 @@ class SellItemService extends ChangeNotifier {
         _isLoading = false;
         _isUploaded = true;
         Map<String, dynamic> responseMap = jsonDecode(responseBody);
-        setMessage(responseMap['message']['message']);
+        if (responseBody.contains('409')) {
+          setMessage(responseMap['message']['message']);
+        }
+        setMessage(responseMap['message']);
         notifyListeners();
         return responseMap['success'];
       } else {

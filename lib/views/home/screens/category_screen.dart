@@ -82,6 +82,9 @@ class CategoryScreen extends StatelessWidget {
                                 height: 50,
                                 width: 50,
                                 fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Icon(Icons.error, color: Colors.grey.shade300, size: 16.h,);
+                                },
                               ),
                             ),
                           ),

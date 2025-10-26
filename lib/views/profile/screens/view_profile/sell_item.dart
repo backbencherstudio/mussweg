@@ -53,7 +53,6 @@ class _SellItemPageState extends State<SellItemPage> {
 
   @override
   Widget build(BuildContext context) {
-    final service = GetIt.instance<SellItemService>();
     final categoriesData = context.read<AllCategoryProvider>().categoryModel?.data;
 
     if (categoriesData != null) {
@@ -100,7 +99,7 @@ class _SellItemPageState extends State<SellItemPage> {
                             style: TextStyle(color: Colors.red, fontSize: 14.sp),
                           ),
                           onPressed: () {
-
+                            sellItemProvider.pickImage();
                           },
                           style: OutlinedButton.styleFrom(
                             side: BorderSide(color: Colors.red, width: 1.w),
@@ -136,56 +135,56 @@ class _SellItemPageState extends State<SellItemPage> {
                           title: 'Descriptions',
                           hintText: 'e.g. Blue Pottery Vase',
                         ),
-                        AnimatedBuilder(
-                          animation: service,
-                          builder: (context, _) => Column(
-                            children: [
-                              CustomTextField(
-                                controller: _locationController,
-                                title: 'Location',
-                                hintText: 'Enter Location',
-                              ),
-                              CustomDropdownField(
-                                title: 'Category',
-                                hintText: 'Select category',
-                                items: _categories.map((category) => category.categoryName).toList(),
-                                value: service.categoryName,
-                                onChanged: (value) {
-                                  final selectedCategory = _categories.firstWhere((category) => category.categoryName == value);
-                                  service.setCategoryId(selectedCategory.categoryId);
-                                  service.setCategoryName(selectedCategory.categoryName);
-                                },
-                              ),
-                              CustomDropdownField(
-                                title: 'Size',
-                                hintText: 'Select size',
-                                items: _size,
-                                value: service.size,
-                                onChanged: (value) {
-                                  service.setSize(value ?? '');
-                                },
-                              ),
-                              CustomTextField(
-                                controller: _colorController,
-                                title: 'Color',
-                                hintText: 'Enter Color',
-                              ),
-                              CustomDropdownField(
-                                title: 'Condition',
-                                hintText: 'Select condition',
-                                items: _conditions,
-                                value: service.condition,
-                                onChanged: (value) {
-                                  service.setCondition(value ?? '');
-                                },
-                              ),
-                              CustomTextField(
-                                controller: _stockController,
-                                title: 'Stock',
-                                hintText: 'Enter stock',
-                              ),
-                            ],
-                          ),
+                        CustomTextField(
+                          controller: _locationController,
+                          title: 'Location',
+                          hintText: 'Enter Location',
+                        ),
+                        CustomDropdownField(
+                          title: 'Category',
+                          hintText: 'Select category',
+                          items: _categories.map((category) => category.categoryName).toList(),
+                          value: sellItemProvider.categoryName,
+                          onChanged: (value) {
+                            if (value != null) {
+                              final selectedCategory = _categories.firstWhere(
+                                      (category) => category.categoryName == value);
+                              sellItemProvider.setCategoryId(selectedCategory.categoryId);
+                              sellItemProvider.setCategoryName(selectedCategory.categoryName);
+                            }
+                          },
+                        ),
+                        CustomDropdownField(
+                          title: 'Size',
+                          hintText: 'Select size',
+                          items: _size,
+                          value: sellItemProvider.size,
+                          onChanged: (value) {
+                            if (value != null) {
+                              sellItemProvider.setSize(value);
+                            }
+                          },
+                        ),
+                        CustomTextField(
+                          controller: _colorController,
+                          title: 'Color',
+                          hintText: 'Enter Color',
+                        ),
+                        CustomDropdownField(
+                          title: 'Condition',
+                          hintText: 'Select condition',
+                          items: _conditions,
+                          value: sellItemProvider.condition,
+                          onChanged: (value) {
+                            if (value != null) {
+                              sellItemProvider.setCondition(value);
+                            }
+                          },
+                        ),
+                        CustomTextField(
+                          controller: _stockController,
+                          title: 'Stock',
+                          hintText: 'Enter stock',
                         ),
                         CustomTimeField(title: 'Price', controller: _priceController),
                       ],
@@ -201,7 +200,8 @@ class _SellItemPageState extends State<SellItemPage> {
                     final color = _colorController.text;
                     final stock = _stockController.text;
                     final price = _priceController.text;
-                    final res = await service.createPost(
+
+                    final res = await sellItemProvider.createPost(
                       title,
                       description,
                       location,
@@ -209,7 +209,7 @@ class _SellItemPageState extends State<SellItemPage> {
                       stock,
                       price,
                     );
-                    final message = service.message ?? 'Product Create Failed';
+                    final message = sellItemProvider.message ?? 'Product Create Failed';
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(message)),
@@ -236,4 +236,3 @@ class _SellItemPageState extends State<SellItemPage> {
     );
   }
 }
-

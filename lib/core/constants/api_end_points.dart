@@ -1,7 +1,7 @@
 class ApiEndpoints {
   ApiEndpoints._();
-  static const String baseUrl = 'https://carries-customize-incident-ghz.trycloudflare.com';
-  static const String imageBaseurl = 'https://carries-customize-incident-ghz.trycloudflare.com';
+  static const String baseUrl = 'https://repair-frequent-butterfly-install.trycloudflare.com';
+  static const String imageBaseurl = 'https://repair-frequent-butterfly-install.trycloudflare.com';
 
   /// Auth
   static const String register = '$baseUrl/api/auth/register';
