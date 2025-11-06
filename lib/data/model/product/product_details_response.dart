@@ -21,7 +21,7 @@ class ProductDetailsResponse {
 class ProductData {
   final SellerInfo? sellerInfo;
   final String? productId;
-  final String? productPhoto;
+  final List<String>? productPhoto; // Changed to List<String> for photos
   final String? title;
   final String? status;
   final String? location;
@@ -61,7 +61,9 @@ class ProductData {
           ? SellerInfo.fromJson(json['seller_Info'])
           : null,
       productId: json['product_id'],
-      productPhoto: json['product_photo'],
+      productPhoto: (json['product_photo'] as List<dynamic>?)
+          ?.map((item) => item.toString())
+          .toList(), // Correctly handling the list of photo URLs
       title: json['title'],
       status: json['status'],
       location: json['location'],
@@ -74,8 +76,9 @@ class ProductData {
       uploaded: json['uploaded'],
       remainingTime: json['remaining_time'],
       minimumBid: json['minimum_bid'],
-      category:
-      json['category'] != null ? Category.fromJson(json['category']) : null,
+      category: json['category'] != null
+          ? Category.fromJson(json['category'])
+          : null,
     );
   }
 }

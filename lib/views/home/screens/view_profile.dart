@@ -33,7 +33,7 @@ class ViewProfileScreen extends StatelessWidget {
                   child: ClipOval(
                     child: userVM.user?.avatar != null
                         ? Image.network(
-                      "${ApiEndpoints.imageBaseurl}/public/storage//avatar${userVM.user!.avatar!}",
+                      "${ApiEndpoints.baseUrl}/public/storage//avatar${userVM.user!.avatar!}",
                       fit: BoxFit.cover,
                       width: 80.w,
                       height: 80.h,

@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/core/constants/api_end_points.dart';
+import 'package:mussweg/view_model/bid/place_a_bid_provider.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:mussweg/view_model/product_item_list_provider/get_product_details_provider.dart';
-import 'package:mussweg/views/widgets/custom_primary_button.dart';
+import 'package:mussweg/views/auth/sign_up/widgets/buttons.dart';
+import 'package:mussweg/views/widgets/custom_text_field.dart';
 import 'package:mussweg/views/widgets/simple_apppbar.dart';
 import 'package:provider/provider.dart';
 import '../../../core/routes/route_names.dart';
 import '../../widgets/custom_main_button.dart';
+
+import '../widgets/bider_list_card.dart';
+import '../widgets/custom_page_indicator.dart';
 
 class ProductDetailsBidScreens extends StatefulWidget {
   const ProductDetailsBidScreens({super.key});
@@ -18,52 +23,92 @@ class ProductDetailsBidScreens extends StatefulWidget {
 }
 
 class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
+  final PageController _pageController = PageController();
+
+  final _bidController = TextEditingController();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _bidController.dispose();
+    _pageController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final productProvider = context.watch<GetProductDetailsProvider>();
     final product = productProvider.productDetailsResponse?.data;
+
+    final isBidingProvider = context.watch<PlaceABidProvider>();
+
     if (productProvider.loading) {
       return Scaffold(
         backgroundColor: Colors.white,
         body: const Center(child: CircularProgressIndicator()),
       );
     }
+
     return Scaffold(
       appBar: SimpleApppbar(title: 'Product Details'),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // PageView for images
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12.r),
-                child: Image.network(
-                  "${ApiEndpoints.baseUrl}${product?.productPhoto?.replaceAll('http://localhost:5005', '')}",
-                  height: 200.h,
+                child: SizedBox(
+                  height: 200.h, // Set the height for the PageView
                   width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) {
-                    return Container(
-                      height: 200.h,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade50,
-                        border: Border.all(color: Colors.grey.shade200),
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12.r),
-                        child: Image.asset(
-                          'assets/images/placeholder.jpg',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    );
-                  },
+                  child: PageView.builder(
+                    controller: _pageController,
+                    itemCount:
+                        product?.productPhoto?.length ??
+                        0, // Use the length of the images list
+                    itemBuilder: (context, index) {
+                      return Image.network(
+                        "${ApiEndpoints.baseUrl}${product?.productPhoto?[index].replaceAll('http://localhost:5005', '')}",
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade50,
+                              border: Border.all(color: Colors.grey.shade200),
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12.r),
+                              child: Image.asset(
+                                'assets/images/placeholder.jpg',
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
+
+            // Page Indicator (optional)
+            SizedBox(height: 8),
+            CustomPageIndicator(
+              controller: _pageController,
+              count: product?.productPhoto?.length ?? 0,
+              activeColor: Colors.red,
+              inactiveColor: Colors.grey.shade300,
+              activeSize: 10,
+              inactiveSize: 10,
+              spacing: 8,
+            ),
+
             SizedBox(height: 16),
+
+            // Seller Info Section
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Row(
@@ -75,6 +120,23 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                       height: 60.w,
                       width: 60.w,
                       fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) {
+                        return Container(
+                          padding: EdgeInsets.all(8.w),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade50,
+                            border: Border.all(color: Colors.grey.shade200),
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12.r),
+                            child: Image.asset(
+                              'assets/icons/user.png',
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                   SizedBox(width: 6),
@@ -118,6 +180,8 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
               ),
             ),
             SizedBox(height: 16),
+
+            // Category
             Align(
               alignment: Alignment.topLeft,
               child: Row(
@@ -144,6 +208,8 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
               ),
             ),
             SizedBox(height: 8.h),
+
+            // Product Details
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
@@ -186,197 +252,298 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                   ),
                   Divider(),
                   SizedBox(height: 4.h),
-                  Text(
-                    "Description Product",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Colors.black,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    product?.description ?? '',
-                    style: TextStyle(fontSize: 14, color: Colors.black87),
-                  ),
-                  SizedBox(height: 16),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                    decoration: BoxDecoration(
-                      color: Color(0xffFDF3F2),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: [
-                        Column(
-                          spacing: 4,
+                  isBidingProvider.isBidding == false
+                      ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Condition",
+                              "Product Description",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              product?.description ?? '',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.black87,
                               ),
                             ),
-                            SizedBox(height: 4),
+                            SizedBox(height: 16),
+                            // Condition, Size, Color, etc.
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 20,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Color(0xffFDF3F2),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Row(
+                                children: [
+                                  Column(
+                                    spacing: 4,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Condition",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        "Size",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        "Color",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        "Uploaded",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        "Remaining Time",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Spacer(),
+                                  SizedBox(
+                                    width: 140.w,
+                                    child: Column(
+                                      spacing: 4,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          ": ${product?.condition ?? ''}",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          ": ${product?.size ?? ''}",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          ": ${product?.color ?? ''}",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          ": ${product?.uploaded ?? ''}",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          ": ${product?.remainingTime ?? '00h : 00m : 00s'}",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Color(0xff1A9882),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            Center(
+                              child: Container(
+                                width: 320.w,
+                                height: 25.h,
+                                decoration: BoxDecoration(
+                                  color: Color(0xffF4FCF8),
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: Row(
+                                  children: [
+                                    SizedBox(width: 12),
+                                    Icon(
+                                      Icons.check_circle_outline,
+                                      color: Color(0Xff1DBF73),
+                                    ),
+                                    SizedBox(width: 12.w),
+                                    Text(
+                                      "If a scam occurs, their money is protected.",
+                                      style: TextStyle(
+                                        color: Color(0xff1DBF73),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 25),
                             Text(
-                              "Size",
+                              'Market Price: \$${product?.price ?? '0.00'} ',
                               style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black87,
+                                color: Color(0xff4A4C56),
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             SizedBox(height: 4),
                             Text(
-                              "Color",
+                              "Last bid Price: \$${product?.minimumBid ?? '0.00'}  ",
                               style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black87,
+                                color: Color(0xff4A4C56),
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
-                            SizedBox(height: 4),
-                            Text(
-                              "Uploaded",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              "Remaining Time",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black87,
+                            SizedBox(height: 36.h),
+                            SizedBox(
+                              height: 60.h,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Consumer<PlaceABidProvider>(
+                                      builder: (_, provider, __) {
+                                        return CustomMainButton(
+                                          onTap: () async {
+                                            context.read<PlaceABidProvider>().getAllBidsForProduct(product?.productId ?? '');
+                                            await provider.setIsBidding(true);
+                                          },
+                                          title: 'Place a Bid',
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(width: 12.w),
+                                  Expanded(
+                                    child: CustomMainButton(
+                                      onTap: () {
+                                        context
+                                            .read<ParentScreensProvider>()
+                                            .onSelectedIndex(2);
+                                        Navigator.pushNamed(
+                                          context,
+                                          RouteNames.parentScreen,
+                                        );
+                                      },
+                                      title: 'Buy Now',
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Total bid",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Consumer<PlaceABidProvider>(
+                              builder: (_, bidListProvider, __) {
+                                final bids = bidListProvider.bidsResponse?.bids;
+                                return Column(
+                                  spacing: 16.h,
+                                  children: List.generate(bids?.length ?? 0, (
+                                    index,
+                                  ) {
+                                    final bid = bids?[index];
+                                    return BiderListCard(bid: bid);
+                                  }),
+                                );
+                              },
+                            ),
+                            CustomTextField(
+                              title: '',
+                              hintText: 'Enter your bid price',
+                              controller: _bidController,
+                            ),
+                            Consumer<PlaceABidProvider>(
+                              builder: (_, pro, __) {
+                                return Visibility(
+                                  visible: !pro.isCreateBidLoading,
+                                  replacement: const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                  child: PrimaryButton(
+                                    onTap: () async {
+                                      if (_bidController.text.isNotEmpty) {
+                                        final result = await pro
+                                            .createBidByProductId(
+                                              product?.productId ?? '',
+                                              _bidController.text,
+                                            );
+                                        if (result) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(pro.message),
+                                            ),
+                                          );
+                                          Navigator.pushNamed(
+                                            context,
+                                            RouteNames.bidSuccessScreen,
+                                          );
+                                        } else {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(pro.message),
+                                            ),
+                                          );
+                                        }
+                                      }
+                                    },
+                                    title: 'Bid Now',
+                                    color: Colors.red,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
-                        Spacer(),
-                        SizedBox(
-                          width: 140.w,
-                          child: Column(
-                            spacing: 4,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                ": ${product?.condition ?? ''}",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                ": ${product?.size ?? ''}",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                ": ${product?.color ?? ''}",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                ": ${product?.uploaded ?? ''}",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                ": ${product?.remainingTime ?? ''}",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Color(0xff1A9882),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Center(
-                    child: Container(
-                      width: 320.w,
-                      height: 25.h,
-                      decoration: BoxDecoration(
-                        color: Color(0xffF4FCF8),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Row(
-                        children: [
-                          SizedBox(width: 12),
-                          Icon(
-                            Icons.check_circle_outline,
-                            color: Color(0Xff1DBF73),
-                          ),
-                          SizedBox(width: 12.w),
-                          Text(
-                            "If a scam occurs, their money is protected.",
-                            style: TextStyle(color: Color(0xff1DBF73)),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 25),
-                  Text(
-                    'Market Price: \$${product?.price ?? '0.00'} ',
-                    style: TextStyle(
-                      color: Color(0xff4A4C56),
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    "Last bid Price: \$${product?.minimumBid ?? '0.00'}  ",
-                    style: TextStyle(
-                      color: Color(0xff4A4C56),
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  SizedBox(height: 36.h),
-                  SizedBox(
-                    height: 60.h,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: CustomMainButton(
-                            onTap: () {},
-                            title: 'Place a Bid',
-                          ),
-                        ),
-                        SizedBox(width: 12.w),
-                        Expanded(
-                          child: CustomMainButton(
-                            onTap: () {
-                              context
-                                  .read<ParentScreensProvider>()
-                                  .onSelectedIndex(2);
-                              Navigator.pushNamed(
-                                context,
-                                RouteNames.parentScreen,
-                              );
-                            },
-                            title: 'Buy Now',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                   SizedBox(height: 60.h),
                 ],
               ),

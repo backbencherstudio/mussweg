@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/views/profile/model/category_name_id_model.dart';
@@ -18,16 +19,8 @@ class SellItemPage extends StatefulWidget {
 }
 
 class _SellItemPageState extends State<SellItemPage> {
-  final List<String> _conditions = const [
-    "NEW",
-    "OLD",
-  ];
-  final List<String> _size = const [
-    "SMALL",
-    "MEDIUM",
-    "LARGE",
-    "EXTRA_LARGE"
-  ];
+  final List<String> _conditions = const ["NEW", "OLD"];
+  final List<String> _size = const ["SMALL", "MEDIUM", "LARGE", "EXTRA_LARGE"];
 
   late List<CategoryNameIdModel> _categories = [];
 
@@ -40,13 +33,13 @@ class _SellItemPageState extends State<SellItemPage> {
 
   @override
   void dispose() {
-    super.dispose();
     _titleController.dispose();
     _descriptionController.dispose();
     _locationController.dispose();
     _colorController.dispose();
     _stockController.dispose();
     _priceController.dispose();
+    super.dispose();
   }
 
   @override
@@ -71,17 +64,18 @@ class _SellItemPageState extends State<SellItemPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // ------------------ IMAGE PICKER SECTION ------------------
                 GestureDetector(
                   onTap: () {
-                    sellItemProvider.pickImage();
+                    sellItemProvider.pickMultipleImages();
                   },
                   child: Container(
-                    height: 200.h,
+                    height: 220.h,
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(10.r),
                     ),
-                    child: sellItemProvider.image == null
+                    child: sellItemProvider.images.isEmpty
                         ? Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
@@ -97,7 +91,7 @@ class _SellItemPageState extends State<SellItemPage> {
                             style: TextStyle(color: Colors.red, fontSize: 14.sp),
                           ),
                           onPressed: () {
-                            sellItemProvider.pickImage();
+                            sellItemProvider.pickMultipleImages();
                           },
                           style: OutlinedButton.styleFrom(
                             side: BorderSide(color: Colors.red, width: 1.w),
@@ -108,10 +102,62 @@ class _SellItemPageState extends State<SellItemPage> {
                         ),
                       ],
                     )
-                        : Image.file(sellItemProvider.image!, fit: BoxFit.cover),
+                        : Padding(
+                      padding: EdgeInsets.all(8.0.sp),
+                      child: GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 8.w,
+                          mainAxisSpacing: 8.h,
+                        ),
+                        itemCount: sellItemProvider.images.length,
+                        itemBuilder: (context, index) {
+                          final image = sellItemProvider.images[index];
+                          return Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8.r),
+                                child: Image.file(
+                                  File(image.path),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              Positioned(
+                                top: 4,
+                                right: 4,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      sellItemProvider.images.removeAt(index);
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.black54,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    padding: EdgeInsets.all(4.sp),
+                                    child: Icon(
+                                      Icons.close,
+                                      color: Colors.white,
+                                      size: 16.sp,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
                   ),
                 ),
                 SizedBox(height: 24.h),
+
+                // ------------------ FORM SECTION ------------------
                 Card(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
@@ -131,7 +177,7 @@ class _SellItemPageState extends State<SellItemPage> {
                         CustomTextField(
                           controller: _descriptionController,
                           title: 'Descriptions',
-                          hintText: 'e.g. Blue Pottery Vase',
+                          hintText: 'Describe your product',
                         ),
                         CustomTextField(
                           controller: _locationController,
@@ -141,14 +187,14 @@ class _SellItemPageState extends State<SellItemPage> {
                         CustomDropdownField(
                           title: 'Category',
                           hintText: 'Select category',
-                          items: _categories.map((category) => category.categoryName).toList(),
+                          items: _categories.map((c) => c.categoryName).toList(),
                           value: sellItemProvider.categoryName,
                           onChanged: (value) {
                             if (value != null) {
-                              final selectedCategory = _categories.firstWhere(
-                                      (category) => category.categoryName == value);
-                              sellItemProvider.setCategoryId(selectedCategory.categoryId);
-                              sellItemProvider.setCategoryName(selectedCategory.categoryName);
+                              final selected = _categories.firstWhere(
+                                      (c) => c.categoryName == value);
+                              sellItemProvider.setCategoryId(selected.categoryId);
+                              sellItemProvider.setCategoryName(selected.categoryName);
                             }
                           },
                         ),
@@ -182,18 +228,24 @@ class _SellItemPageState extends State<SellItemPage> {
                         CustomTextField(
                           controller: _stockController,
                           title: 'Stock',
-                          hintText: 'Enter stock',
+                          hintText: 'Enter stock quantity',
                         ),
-                        CustomTimeField(title: 'Price', controller: _priceController),
+                        CustomTimeField(
+                          title: 'Price',
+                          controller: _priceController,
+                        ),
                       ],
                     ),
                   ),
                 ),
+
                 SizedBox(height: 20.h),
+
+                // ------------------ SUBMIT BUTTON ------------------
                 Visibility(
                   visible: !sellItemProvider.isLoading,
-                  replacement: Center(
-                    child: CircularProgressIndicator(color: Colors.red,),
+                  replacement: const Center(
+                    child: CircularProgressIndicator(color: Colors.red),
                   ),
                   child: ElevatedButton(
                     onPressed: () async {
@@ -212,11 +264,26 @@ class _SellItemPageState extends State<SellItemPage> {
                         stock,
                         price,
                       );
-                      final message = sellItemProvider.message ?? 'Product Create Failed';
-                      await context.read<UserAllProductsProvider>().getAllUserProduct();
+
+                      final message =
+                          sellItemProvider.message ?? 'Product creation failed';
+                      await context
+                          .read<UserAllProductsProvider>()
+                          .getAllUserProduct();
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(message)),
                       );
+
+                      if (res) {
+                        _titleController.clear();
+                        _descriptionController.clear();
+                        _locationController.clear();
+                        _colorController.clear();
+                        _stockController.clear();
+                        _priceController.clear();
+                        sellItemProvider.images.clear();
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,

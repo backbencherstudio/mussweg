@@ -6,12 +6,13 @@ import 'package:mussweg/view_model/boost_product/boost_product_create_provider.d
 import 'package:mussweg/views/auth/sign_up/widgets/buttons.dart';
 import 'package:mussweg/views/profile/widgets/pickup_option_widget.dart';
 import 'package:provider/provider.dart';
+import '../../../view_model/bid/place_a_bid_provider.dart';
 import '../../../view_model/product_item_list_provider/get_product_details_provider.dart';
 import '../../../view_model/profile/user_all_products/user_all_products_provider.dart';
 import '../screens/view_profile/edit_product_page.dart';
 
 class ProductCard extends StatelessWidget {
-  final String imageUrl;
+  final String? imageUrl;
   final String productId;
   final String productName;
   final String price;
@@ -21,7 +22,7 @@ class ProductCard extends StatelessWidget {
 
   const ProductCard({
     super.key,
-    required this.imageUrl,
+    this.imageUrl,
     required this.productName,
     required this.price,
     this.isBoosted = false,
@@ -35,6 +36,7 @@ class ProductCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         context.read<GetProductDetailsProvider>().getProductDetails(productId);
+        context.read<PlaceABidProvider>().getAllBidsForProduct(productId);
         Navigator.pushNamed(
           context,
           RouteNames.productDetailsScreen,
@@ -63,10 +65,10 @@ class ProductCard extends StatelessWidget {
                   alignment: Alignment.topCenter,
                   child: SizedBox(
                     width: double.infinity,
-                    child: ClipRRect(
+                    child: imageUrl != null || imageUrl != '' ? ClipRRect(
                       borderRadius: BorderRadius.circular(8.r),
                       child: Image.network(
-                        "${ApiEndpoints.baseUrl}${imageUrl.replaceAll('http://localhost:5005', '')}",
+                        "${ApiEndpoints.baseUrl}${imageUrl?.replaceAll('http://localhost:5005', '')}",
                         height: 110.h,
                         width: double.infinity,
                         fit: BoxFit.cover,
@@ -78,6 +80,13 @@ class ProductCard extends StatelessWidget {
                             fit: BoxFit.fill,
                           ),
                         ),
+                      ),
+                    ) : Container(
+                      height: 110.h,
+                      color: Colors.grey[300],
+                      child: Image.asset(
+                        'assets/images/placeholder.jpg',
+                        fit: BoxFit.fill,
                       ),
                     ),
                   ),
@@ -92,6 +101,8 @@ class ProductCard extends StatelessWidget {
                     ),
                     onSelected: (value) {
                       if (value == 'edit') {
+                        context.read<GetProductDetailsProvider>().getProductDetails(productId);
+                        context.read<PlaceABidProvider>().getAllBidsForProduct(productId);
                         Navigator.push(
                           context,
                           MaterialPageRoute(

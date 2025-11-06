@@ -1,3 +1,4 @@
+import 'package:mussweg/view_model/bid/place_a_bid_provider.dart';
 import 'package:mussweg/view_model/home_provider/all_category_provider.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:mussweg/view_model/pickup/pickup_option_provider.dart';
@@ -57,5 +58,6 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => UserAllProductsProvider()),
     ChangeNotifierProvider(create: (_) => UpdateProfileDetailsProvider()),
     ChangeNotifierProvider(create: (_) => GetProductDetailsProvider()),
+    ChangeNotifierProvider(create: (_) => PlaceABidProvider()),
   ];
 }

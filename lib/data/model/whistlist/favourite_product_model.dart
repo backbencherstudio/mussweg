@@ -29,7 +29,7 @@ class WishlistItem {
   final String userId;
   final String productId;
   final String productTitle;
-  final String? productPhoto;
+  final List<String>? productPhoto; // updated to List<String>?
   final String productSize;
   final String productCondition;
   final String productPrice;
@@ -57,7 +57,9 @@ class WishlistItem {
       userId: json['user_id'] ?? '',
       productId: json['product_id'] ?? '',
       productTitle: json['product_title'] ?? '',
-      productPhoto: json['product_photo'],
+      productPhoto: json['product_photo'] != null
+          ? List<String>.from(json['product_photo'])
+          : null,
       productSize: json['product_size'] ?? '',
       productCondition: json['product_condition'] ?? '',
       productPrice: json['product_price'] ?? '',

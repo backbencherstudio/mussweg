@@ -315,8 +315,11 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                                     childAspectRatio: .7,
                                   ),
                               itemBuilder: (context, index) {
+                                final image = (userAllProducts?[index].productPhotoUrl?.isNotEmpty ?? false)
+                                    ? userAllProducts![index].productPhotoUrl!.first
+                                    : null;
                                 return ProductCard(
-                                  imageUrl: userAllProducts?[index].photo ?? '',
+                                  imageUrl: image,
                                   productName: userAllProducts?[index].title ?? '',
                                   price: userAllProducts?[index].price ?? '',
                                   isBoosted: userAllProducts?[index].remainingTime != null,
