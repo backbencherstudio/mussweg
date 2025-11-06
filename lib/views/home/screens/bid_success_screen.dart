@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/core/routes/route_names.dart';
+import 'package:mussweg/view_model/bid/place_a_bid_provider.dart';
 import 'package:mussweg/views/widgets/custom_button.dart';
+import 'package:provider/provider.dart';
 
-class SuccessScreen extends StatelessWidget {
-  const SuccessScreen({super.key});
+class BidSuccessScreen extends StatelessWidget {
+  const BidSuccessScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,22 +36,32 @@ class SuccessScreen extends StatelessWidget {
                     Image.asset('assets/icons/success-icon.png'),
                     SizedBox(height: 10.h),
                     Text(
-                      'Congratulations, your\nitem is weg!',
+                      'Your bid request\nhas been placed!',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 24.sp,
+                        fontSize: 20.sp,
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF4A4C56),
                       ),
                     ),
                     SizedBox(height: 10.h),
-
+                    Text(
+                      'when the seller approves your request, you can\nproceed with the payment',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xFF4A4C56),
+                      ),
+                    ),
+                    SizedBox(height: 10.h),
                     CustomButton(
-                      text: 'Track Your Order',
+                      text: 'Back to Home',
                       textColor: Colors.white,
                       buttonColor: Colors.red,
-                      onPressed: () {
-                        Navigator.pushReplacementNamed(context, RouteNames.trackProgressScreen);
+                      onPressed: () async {
+                        await context.read<PlaceABidProvider>().setIsBidding(false);
+                        Navigator.pushReplacementNamed(context, RouteNames.productDetailsScreen);
                       },
                     ),
                     SizedBox(height: 10.h),

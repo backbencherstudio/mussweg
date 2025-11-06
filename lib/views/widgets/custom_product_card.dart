@@ -6,6 +6,7 @@ import 'package:redacted/redacted.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../core/routes/route_names.dart';
 import '../../data/model/home/category_based_product_model.dart';
+import '../../view_model/bid/place_a_bid_provider.dart';
 import '../../view_model/home_provider/favorite_icon_provider.dart';
 import '../../view_model/product_item_list_provider/get_product_details_provider.dart';
 
@@ -24,6 +25,7 @@ class CustomProductCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         context.read<GetProductDetailsProvider>().getProductDetails(product.id);
+        context.read<PlaceABidProvider>().getAllBidsForProduct(product.id);
         Navigator.pushNamed(
           context,
           RouteNames.productDetailsScreen,
@@ -62,7 +64,7 @@ class CustomProductCard extends StatelessWidget {
                         )
                             : (product.photo != null && product.photo!.isNotEmpty)
                             ? Image.network(
-                          '${ApiEndpoints.baseUrl}${product.photo?.replaceAll('http://localhost:5005', '')}',
+                          '${ApiEndpoints.baseUrl}${product.photo?.first.replaceAll('http://localhost:5005', '')}',
                           fit: BoxFit.cover,
                           height: 120.h,
                           width: double.infinity,

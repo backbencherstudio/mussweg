@@ -6,6 +6,7 @@ import 'package:mussweg/views/widgets/simple_apppbar.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/routes/route_names.dart';
+import '../../view_model/bid/place_a_bid_provider.dart';
 import '../../view_model/product_item_list_provider/category_based_product_provider.dart';
 import '../../view_model/product_item_list_provider/get_product_details_provider.dart';
 import '../../view_model/whistlist/whistlist_provider_of_get_favourite_product.dart';
@@ -95,6 +96,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                           return GestureDetector(
                             onTap: () {
                               context.read<GetProductDetailsProvider>().getProductDetails(product.productId);
+                              context.read<PlaceABidProvider>().getAllBidsForProduct(product.productId);
                               Navigator.pushNamed(
                                 context,
                                 RouteNames.productDetailsScreen,
@@ -119,7 +121,9 @@ class _WishlistScreenState extends State<WishlistScreen> {
                                               borderRadius: BorderRadius.circular(12.r),
                                             ),
                                             child: Image.network(
-                                              "${ApiEndpoints.baseUrl}${product?.productPhoto?.replaceAll('http://localhost:5005', '') ?? ''}",
+                                              product.productPhoto != null && product.productPhoto!.isNotEmpty
+                                                  ? "${ApiEndpoints.baseUrl}${product.productPhoto!.first.replaceAll('http://localhost:5005', '')}"
+                                                  : 'https://via.placeholder.com/150',
                                               fit: BoxFit.cover,
                                               height: 180.h,
                                               width: double.infinity,

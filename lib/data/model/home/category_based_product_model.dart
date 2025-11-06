@@ -25,9 +25,9 @@ class CategoryBasedProductModel {
 
 class ProductData {
   final String id;
-  final String? photo;
+  final List<String>? photo;
   final String title;
-  final String size;
+  final String? size;
   final String condition;
   final String createdTime;
   final String? boostTimeLeft;
@@ -39,7 +39,7 @@ class ProductData {
     required this.id,
     this.photo,
     required this.title,
-    required this.size,
+    this.size,
     required this.condition,
     required this.createdTime,
     this.boostTimeLeft,
@@ -51,7 +51,10 @@ class ProductData {
   factory ProductData.fromJson(Map<String, dynamic> json) {
     return ProductData(
       id: json['id'],
-      photo: json['photo'],
+      photo: (json['photo'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList() ??
+          [],
       title: json['title'],
       size: json['size'],
       condition: json['condition'],

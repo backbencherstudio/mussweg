@@ -37,7 +37,8 @@ class UserAllProductsViewmodel {
 
 class ProductData {
   final String id;
-  final String? photo;
+  final List<String>? photo; // filenames only
+  final List<String>? productPhotoUrl; // full URLs
   final String title;
   final String price;
   final String description;
@@ -51,7 +52,8 @@ class ProductData {
 
   ProductData({
     required this.id,
-    this.photo,
+    required this.photo,
+    required this.productPhotoUrl,
     required this.title,
     required this.price,
     required this.description,
@@ -67,7 +69,14 @@ class ProductData {
   factory ProductData.fromJson(Map<String, dynamic> json) {
     return ProductData(
       id: json['id'] ?? '',
-      photo: json['photo'],
+      photo: (json['photo'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList() ??
+          [],
+      productPhotoUrl: (json['product_photo_url'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList() ??
+          [],
       title: json['title'] ?? '',
       price: json['price']?.toString() ?? '0',
       description: json['description'] ?? '',
@@ -85,6 +94,7 @@ class ProductData {
     return {
       'id': id,
       'photo': photo,
+      'product_photo_url': productPhotoUrl,
       'title': title,
       'price': price,
       'description': description,
@@ -97,6 +107,7 @@ class ProductData {
       'is_in_wishlist': isInWishlist,
     };
   }
+
 }
 
 class Pagination {
@@ -138,7 +149,6 @@ class Pagination {
     };
   }
 
-  /// helper constructor for fallback
   factory Pagination.empty() {
     return Pagination(
       total: 0,

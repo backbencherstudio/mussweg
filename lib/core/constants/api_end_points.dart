@@ -1,7 +1,6 @@
 class ApiEndpoints {
   ApiEndpoints._();
-  static const String baseUrl = 'https://repair-frequent-butterfly-install.trycloudflare.com';
-  static const String imageBaseurl = 'https://repair-frequent-butterfly-install.trycloudflare.com';
+  static const String baseUrl = 'http://192.168.7.14:5005';
 
   /// Auth
   static const String register = '$baseUrl/api/auth/register';
@@ -23,5 +22,10 @@ class ApiEndpoints {
   static String updateProductById(String id) => '$baseUrl/api/products/updatebyid/$id';
 
   static String createBoost(String id) => '$baseUrl/api/products/create-boost';
+
+
+
+  static String getProductBids(String id) => '$baseUrl/api/bid/singleproductbid/$id';
+  static String createBid = '$baseUrl/api/bid/create';
 
 }

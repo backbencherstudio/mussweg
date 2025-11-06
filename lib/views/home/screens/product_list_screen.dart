@@ -5,6 +5,7 @@ import 'package:mussweg/view_model/product_item_list_provider/category_based_pro
 import 'package:mussweg/view_model/product_item_list_provider/get_product_details_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../core/routes/route_names.dart';
+import '../../../view_model/bid/place_a_bid_provider.dart';
 import '../../../view_model/whistlist/whistlist_provider_of_get_favourite_product.dart';
 import '../../../view_model/whistlist/wishlist_create.dart';
 import '../../profile/widgets/simple_apppbar.dart';
@@ -191,12 +192,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       itemBuilder: (context, index) {
                         final product = displayedProducts[index];
                         final imageUrl = (product.photo != null && product.photo!.isNotEmpty)
-                            ? "${ApiEndpoints.baseUrl}${product.photo?.replaceAll('http://localhost:5005', '')}"
+                            ? "${ApiEndpoints.baseUrl}${product.photo?.first.replaceAll('http://localhost:5005', '')}"
                             : null;
 
                         return GestureDetector(
                           onTap: () {
                             context.read<GetProductDetailsProvider>().getProductDetails(product.id);
+                            context.read<PlaceABidProvider>().getAllBidsForProduct(product.id);
                             Navigator.pushNamed(
                               context,
                               RouteNames.productDetailsScreen,
@@ -328,7 +330,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                           ),
                                           SizedBox(width: 8.w),
                                           Text(
-                                            product.boostTimeLeft ?? '(12h:12m:30s)',
+                                            product.boostTimeLeft ?? '',
                                             style: TextStyle(
                                               fontSize: 13.sp,
                                               color: const Color(0xff1A9882),
@@ -351,6 +353,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                               ),
                                               onPressed: () {
                                                 context.read<GetProductDetailsProvider>().getProductDetails(product.id);
+                                                context.read<PlaceABidProvider>().getAllBidsForProduct(product.id);
                                                 Navigator.pushNamed(
                                                   context,
                                                   RouteNames.productDetailsScreen,
@@ -374,6 +377,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                               ),
                                               onPressed: () {
                                                 context.read<GetProductDetailsProvider>().getProductDetails(product.id);
+                                                context.read<PlaceABidProvider>().getAllBidsForProduct(product.id);
                                                 Navigator.pushNamed(
                                                   context,
                                                   RouteNames.productDetailsScreen,
@@ -412,7 +416,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   return const SizedBox.shrink();
                 },
               ),
-              SizedBox(height: 60.h),
+              SizedBox(height: 10.h),
             ],
           ),
         ),

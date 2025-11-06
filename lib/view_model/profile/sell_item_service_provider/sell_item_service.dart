@@ -56,21 +56,25 @@ class SellItemService extends ChangeNotifier {
     notifyListeners();
   }
 
-  File? image;
   final ImagePicker _picker = ImagePicker();
+  final List<File> _images = []; // multiple images
 
-  // Image selection method
-  Future<void> pickImage() async {
-    final pickedFile = await _picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 80,
-    );
-    if (pickedFile != null) {
-      image = File(pickedFile.path);  // The image file should be stored here
-      debugPrint('Image selected: ${image!.path}');  // Check if the image is picked correctly
+  List<File> get images => _images;
+
+  // 🖼️ Pick multiple images
+  Future<void> pickMultipleImages() async {
+    final pickedFiles = await _picker.pickMultiImage(imageQuality: 80);
+
+    if (pickedFiles.isNotEmpty) {
+      _images.clear();
+      _images.addAll(pickedFiles.map((xfile) => File(xfile.path)));
+      debugPrint('Selected ${_images.length} images');
+      for (var img in _images) {
+        debugPrint('Image path: ${img.path}');
+      }
       notifyListeners();
     } else {
-      debugPrint('No image selected.');
+      debugPrint('No images selected.');
     }
   }
 
@@ -82,7 +86,7 @@ class SellItemService extends ChangeNotifier {
 
   final tokenStorage = TokenStorage();
 
-  // Method for posting the item with the image via multipart request
+  // 📨 Create Post (with multiple images)
   Future<bool> createPost(
       String title,
       String description,
@@ -106,6 +110,7 @@ class SellItemService extends ChangeNotifier {
       final request = http.MultipartRequest('POST', url);
       request.headers['Authorization'] = 'Bearer $accessToken';
 
+      // Text fields
       request.fields['product_title'] = title;
       request.fields['product_description'] = description;
       request.fields['price'] = price;
@@ -117,48 +122,52 @@ class SellItemService extends ChangeNotifier {
       request.fields['stock'] = stock;
       request.fields['condition'] = condition;
 
-      // Upload the image if selected
-      if (image != null) {
-        debugPrint('Uploading image...');
-        String? mimeType = lookupMimeType(image!.path);  // Get the MIME type of the image
-        String filename = path.basename(image!.path);    // Get the image filename
-
-        // Adding the image to the multipart request
-        request.files.add(
-          await http.MultipartFile.fromPath(
-            'image',  // Field name for image in the backend
-            image!.path,  // Image file path
-            filename: filename,
-            contentType: mimeType != null ? MediaType.parse(mimeType) : null,
-          ),
-        );
+      // 🖼️ Upload all selected images
+      if (_images.isNotEmpty) {
+        debugPrint('Uploading ${_images.length} images...');
+        for (var image in _images) {
+          final mimeType = lookupMimeType(image.path);
+          final filename = path.basename(image.path);
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              'images', // 👈 adjust field name based on backend expectation
+              image.path,
+              filename: filename,
+              contentType: mimeType != null ? MediaType.parse(mimeType) : null,
+            ),
+          );
+        }
       } else {
-        debugPrint('No image selected to upload.');
+        debugPrint('No images selected to upload.');
       }
 
       debugPrint('Selected CategoryId: $categoryId');
 
       final response = await request.send();
       final responseBody = await response.stream.bytesToString();
-      if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 409) {
-        debugPrint('Create post successfully. Status: ${response.statusCode}');
+
+      _isLoading = false;
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.statusCode == 409) {
+        debugPrint('Create post successful. Status: ${response.statusCode}');
         debugPrint('Response Body: $responseBody');
-        _isLoading = false;
+
         _isUploaded = true;
-        Map<String, dynamic> responseMap = jsonDecode(responseBody);
+        final responseMap = jsonDecode(responseBody);
+
         if (responseBody.contains('409')) {
           setMessage(responseMap['message']['message']);
+        } else {
+          setMessage(responseMap['message']);
         }
-        setMessage(responseMap['message']);
+
         notifyListeners();
-        return responseMap['success'];
+        return responseMap['success'] ?? false;
       } else {
         debugPrint('Failed to add details. Status: ${response.statusCode}');
-        debugPrint('Request URL: ${request.url}');
-        debugPrint('Request Headers: ${request.headers}');
-        debugPrint('Request Fields: ${request.fields}');
         debugPrint('Response Body: $responseBody');
-        _isLoading = false;
         _isUploaded = false;
         notifyListeners();
         return false;

@@ -3,11 +3,13 @@ import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/views/bought_items/bought_items_screen.dart';
 import 'package:mussweg/views/cart/cart_screen.dart';
 import 'package:mussweg/views/checkout/screen/checkout_cart_list_screen.dart';
+import 'package:mussweg/views/home/screens/bid_success_screen.dart';
 
 import 'package:mussweg/views/onboarding/screen/onboarding_screen.dart';
 import 'package:mussweg/views/order_placed/screen/weg_success_screen.dart';
 
 import 'package:mussweg/views/parent_screen/screen/parent_screen.dart';
+import 'package:mussweg/views/profile/screens/bid_list/bid_list.dart';
 import 'package:mussweg/views/selling_items/selling_items_screen.dart';
 import 'package:mussweg/views/splash/splash_screen.dart';
 import 'package:mussweg/views/track_progress/track_progress_screen.dart';
@@ -62,13 +64,14 @@ class AppRoutes {
     RouteNames.notificationsPage: (context) => const NotificationsPage(),
     RouteNames.languagePage: (context) =>  LanguagePage(),
     RouteNames.transactionsHistoryPage: (context) => const TransactionsHistoryPage(),
-    //RouteNames.wishlistScreen: (context) => const WishlistScreen(),
+    RouteNames.bidList: (context) => const BidList(),
+    RouteNames.bidSuccessScreen: (context) => const BidSuccessScreen(),
 
     RouteNames.checkoutScreen:(context) => const CheckoutScreen(),
     RouteNames.stripeCheckoutScreen:(context) => const StripeCheckoutScreen(),
     RouteNames.searchPage:(context) => const SearchPage(),
     RouteNames.orderPlacedScreen:(context) => const OrderPlacedScreen(),
-    RouteNames.wegSuccessScreen:(context) => const WegSuccessScreen(),
+    RouteNames.wegSuccessScreen:(context) => const SuccessScreen(),
     RouteNames.cartScreen:(context) => const CartScreen(),
     RouteNames.loginScreen:(context) => const LoginScreen(),
     RouteNames.trackProgressScreen:(context) => const TrackProgressScreen(),

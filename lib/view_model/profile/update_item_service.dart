@@ -1,97 +1,107 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart' as path;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
-
+import 'package:path/path.dart' as path;
 import '../../../core/constants/api_end_points.dart';
 import '../../../core/services/token_storage.dart';
 
 class UpdateItemService extends ChangeNotifier {
+  final ImagePicker _picker = ImagePicker();
+  final tokenStorage = TokenStorage();
+
   String location = '';
   String categoryId = '';
   String categoryName = '';
   String size = '';
   String condition = '';
-
   String _productId = '';
-  String get productId => _productId;
-
-  void setProductId(String value) {
-    _productId = value;
-    debugPrint('---- ProductId : $_productId ----');
-    notifyListeners();
-  }
-
-  void setLocation(String value) {
-    location = value;
-    debugPrint('---- Location : $location ----');
-    notifyListeners();
-  }
-
-  void setCategoryName(String value) {
-    categoryName = value;
-    debugPrint('---- CategoryName : $categoryName ----');
-    notifyListeners();
-  }
-
-  void setCategoryId(String value) {
-    categoryId = value;
-    debugPrint('---- CategoryId : $categoryId ----');
-    notifyListeners();
-  }
-
-  void setSize(String value) {
-    size = value;
-    debugPrint('---- Size : $size ----');
-    notifyListeners();
-  }
-
-  void setCondition(String value) {
-    condition = value;
-    debugPrint('---- Condition : $condition ----');
-    notifyListeners();
-  }
-
   String? _message;
-  String? get message => _message;
-
-  void setMessage(String message) {
-    _message = message;
-    debugPrint('---- Message : $_message ----');
-    notifyListeners();
-  }
-
-  File? image;
-  final ImagePicker _picker = ImagePicker();
-
-  // Image selection method
-  Future<void> pickImage() async {
-    final pickedFile = await _picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 80,
-    );
-    if (pickedFile != null) {
-      image = File(pickedFile.path);  // The image file should be stored here
-      debugPrint('Image selected: ${image!.path}');  // Check if the image is picked correctly
-      notifyListeners();
-    } else {
-      debugPrint('No image selected.');
-    }
-  }
 
   bool _isLoading = false;
   bool _isUploaded = false;
 
+  /// 🖼️ Local and Network Images
+  List<File> images = []; // New images picked from device
+  List<String> networkImages = []; // Existing images URLs from server
+
+  String get productId => _productId;
+  String? get message => _message;
   bool get isLoading => _isLoading;
   bool get isUploaded => _isUploaded;
 
-  final tokenStorage = TokenStorage();
+  // ---------- Setters ----------
+  void setProductId(String id) {
+    _productId = id;
+    notifyListeners();
+  }
 
-  // Method for posting the item with the image via multipart request
+  void setCategoryName(String name) {
+    categoryName = name;
+    notifyListeners();
+  }
+
+  void setCategoryId(String id) {
+    categoryId = id;
+    notifyListeners();
+  }
+
+  void setCondition(String val) {
+    condition = val;
+    notifyListeners();
+  }
+
+  void setSize(String val) {
+    size = val;
+    notifyListeners();
+  }
+
+  void setLocation(String val) {
+    location = val;
+    notifyListeners();
+  }
+
+  void setMessage(String msg) {
+    _message = msg;
+    notifyListeners();
+  }
+
+  // ---------- 🖼️ Image Handling ----------
+  Future<void> pickMultipleImages() async {
+    final pickedFiles = await _picker.pickMultiImage(imageQuality: 80);
+    if (pickedFiles != null && pickedFiles.isNotEmpty) {
+      images.addAll(pickedFiles.map((x) => File(x.path)));
+      notifyListeners();
+    }
+  }
+
+  void removeImage(int index) {
+    if (index >= 0 && index < images.length) {
+      images.removeAt(index);
+      notifyListeners();
+    }
+  }
+
+  void removeNetworkImage(String url) {
+    networkImages.remove(url);
+    notifyListeners();
+  }
+
+  void clearImages() {
+    images.clear();
+    networkImages.clear();
+    notifyListeners();
+  }
+
+  void setNetworkImages(List<String> urls) {
+    networkImages = urls;
+    notifyListeners();
+  }
+
+  // ---------- 🧠 Main Update Logic ----------
   Future<bool> updatePost(
       String title,
       String description,
@@ -104,78 +114,70 @@ class UpdateItemService extends ChangeNotifier {
     notifyListeners();
 
     final url = Uri.parse(ApiEndpoints.updateProductById(_productId));
+    final token = await tokenStorage.getToken();
+    if (token == null) {
+      setMessage('Token missing');
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
 
     try {
-      final accessToken = await tokenStorage.getToken();
-      if (accessToken == null) {
-        debugPrint('Access token not found. Cannot add item.');
-        return false;
+      final request = http.MultipartRequest('PATCH', url);
+      request.headers['Authorization'] = 'Bearer $token';
+
+      // Basic fields
+      request.fields.addAll({
+        'product_title': title,
+        'product_description': description,
+        'price': price,
+        'location': location,
+        'category_id': categoryId,
+        'product_item_size': size,
+        'color': color,
+        'stock': stock,
+        'condition': condition,
+      });
+
+      // // Include existing images as JSON string (backend expects this)
+      // if (networkImages.isNotEmpty) {
+      //   request.fields['existing_images'] = jsonEncode(networkImages);
+      // }
+
+      // Attach new images picked locally
+      for (var file in images) {
+        final mimeType = lookupMimeType(file.path);
+        final fileName = path.basename(file.path);
+        request.files.add(await http.MultipartFile.fromPath(
+          'images', // Match backend field name for multiple images
+          file.path,
+          filename: fileName,
+          contentType: mimeType != null ? MediaType.parse(mimeType) : null,
+        ));
       }
-
-      final request = http.MultipartRequest('POST', url);
-      request.headers['Authorization'] = 'Bearer $accessToken';
-
-      request.fields['product_title'] = title;
-      request.fields['product_description'] = description;
-      request.fields['price'] = price;
-      request.fields['location'] = location;
-      request.fields['product_item_size'] = size;
-      request.fields['size'] = size;
-      request.fields['category_id'] = categoryId;
-      request.fields['color'] = color;
-      request.fields['stock'] = stock;
-      request.fields['condition'] = condition;
-
-      // Upload the image if selected
-      if (image != null) {
-        debugPrint('Uploading image...');
-        String? mimeType = lookupMimeType(image!.path);  // Get the MIME type of the image
-        String filename = path.basename(image!.path);    // Get the image filename
-
-        // Adding the image to the multipart request
-        request.files.add(
-          await http.MultipartFile.fromPath(
-            'image',  // Field name for image in the backend
-            image!.path,  // Image file path
-            filename: filename,
-            contentType: mimeType != null ? MediaType.parse(mimeType) : null,
-          ),
-        );
-      } else {
-        debugPrint('No image selected to upload.');
-      }
-
-      debugPrint('Selected CategoryId: $categoryId');
 
       final response = await request.send();
       final responseBody = await response.stream.bytesToString();
-      if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 409) {
-        debugPrint('Update post successfully. Status: ${response.statusCode}');
-        debugPrint('Response Body: $responseBody');
-        _isLoading = false;
-        _isUploaded = true;
-        Map<String, dynamic> responseMap = jsonDecode(responseBody);
-        if (responseBody.contains('409')) {
-          setMessage(responseMap['message']['message']);
-        }
-        setMessage(responseMap['message']);
-        notifyListeners();
-        return responseMap['success'];
+      final decoded = jsonDecode(responseBody);
+
+      final message = decoded['message'];
+      if (message is String) {
+        setMessage(message);
+        images = [];
+      } else if (message is Map || message is List) {
+        setMessage(jsonEncode(message));
       } else {
-        debugPrint('Failed to update details. Status: ${response.statusCode}');
-        debugPrint('Request URL: ${request.url}');
-        debugPrint('Request Headers: ${request.headers}');
-        debugPrint('Request Fields: ${request.fields}');
-        debugPrint('Response Body: $responseBody');
-        _isLoading = false;
-        _isUploaded = false;
-        notifyListeners();
-        return false;
+        setMessage('No message');
       }
-    } catch (error) {
-      debugPrint('Error Updating details: $error');
+
       _isLoading = false;
-      _isUploaded = false;
+      _isUploaded = response.statusCode == 200;
+      notifyListeners();
+
+      return decoded['success'] == true;
+    } catch (e) {
+      setMessage('Error updating product: $e');
+      _isLoading = false;
       notifyListeners();
       return false;
     }
