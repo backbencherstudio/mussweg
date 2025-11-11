@@ -14,6 +14,14 @@ class LoginScreenProvider extends ChangeNotifier {
   // final UserIdStorage _userIdStorage = UserIdStorage();
   // final SocketService _socketService = SocketService();
 
+  bool _isObscured = true;
+  bool get isObscured => _isObscured;
+
+  void toggleObscured() {
+    _isObscured = !_isObscured;
+    notifyListeners();
+  }
+
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   final ApiService _apiService = ApiService();
