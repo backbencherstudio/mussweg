@@ -35,26 +35,50 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => GetIt.instance<RegisterProvider>(), // This will work now
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 80.h),
-                _buildLogo(),
-                SizedBox(height: 30.h),
-                _buildEmailField(),
-                SizedBox(height: 10.h),
-                _buildPasswordField(context),
-                SizedBox(height: 20.h),
-                _buildLoginButton(context),
-                SizedBox(height: 10.h),
-                Align(
-                  alignment: Alignment.topRight,
+    final provider = context.watch<LoginScreenProvider>();
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 50.h),
+              Center(child: Image.asset('assets/images/logo-1.png', height: 75.w, fit: BoxFit.fitHeight,)),
+              SizedBox(height: 10.h),
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  'Sign up to buy and sell',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              SizedBox(height: 20.h),
+              _buildTextField(
+                title: 'Email',
+                controller: _emailController,
+                hintText: 'Your Email',
+              ),
+              SizedBox(height: 10.h),
+              _buildTextField(
+                title: 'Password',
+                controller: _passwordController,
+                hintText: 'Your Password',
+                obscureText: provider.isObscured,
+                hasIcon: true,
+                onTapSuffixIcon: provider.toggleObscured,
+              ),
+              SizedBox(height: 20.h),
+              _buildLoginButton(context),
+              SizedBox(height: 10.h),
+              Align(
+                alignment: Alignment.topRight,
+                child: GestureDetector(
+                  onTap: () {},
                   child: Text(
                     'Forgot Password?',
                     style: TextStyle(
@@ -64,54 +88,90 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20.h),
-                _buildOrJoinWithDivider(),
-                SizedBox(height: 20.h),
-                const SignUpFormButton(
-                  title: 'Sign In With Google',
-                  image: 'assets/icons/google-icon.png',
-                ),
-                SizedBox(height: 10.h),
-                const SignUpFormButton(
-                  title: 'Sign In With Apple',
-                  image: 'assets/icons/apple-icon.png',
-                ),
-                SizedBox(height: 10.h),
-                const SignUpFormButton(
-                  title: 'Sign In With Facebook',
-                  image: 'assets/icons/microsoft-icon.png',
-                ),
-                SizedBox(height: 30.h),
-                _buildSignUpLink(context),
-              ],
-            ),
+              ),
+              SizedBox(height: 20.h),
+              _buildOrJoinWithDivider(),
+              SizedBox(height: 20.h),
+              const SignUpFormButton(
+                title: 'Sign In With Google',
+                image: 'assets/icons/google-icon.png',
+              ),
+              SizedBox(height: 10.h),
+              const SignUpFormButton(
+                title: 'Sign In With Apple',
+                image: 'assets/icons/apple-icon.png',
+              ),
+              SizedBox(height: 30.h),
+              _buildSignUpLink(context),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildLogo() {
-    return Center(child: Image.asset('assets/images/logo-1.png'));
-  }
-
-  Widget _buildEmailField() {
+  Widget _buildTextField({
+    required String title,
+    required TextEditingController controller,
+    required String hintText,
+    bool obscureText = false,
+    bool hasIcon = false,
+    VoidCallback? onTapSuffixIcon,
+  }) {
     return Column(
+      spacing: 4.h,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 6.h),
-         textFormField(hintText: 'Your Email', icon: Icons.email_outlined, controller: _emailController),
-      ],
-    );
-  }
-
-  Widget _buildPasswordField(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: 8.h),
-        textFormField(hintText: 'Your Password', icon: Icons.lock, controller: _passwordController),
-        SizedBox(height: 6.h),
+        Text(
+          title,
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        TextFormField(
+          controller: controller,
+          obscureText: obscureText,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'This field cannot be empty';
+            }
+            return null;
+          },
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: const Color(0xFFF6F6F7),
+            hintText: hintText,
+            hintStyle: const TextStyle(fontSize: 16, color: Color(0xFF777980)),
+            suffixIcon: hasIcon
+                ? GestureDetector(
+                    onTap: onTapSuffixIcon,
+                    child: Icon(
+                      obscureText
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                    ),
+                  )
+                : SizedBox(),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: BorderSide.none,
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -127,7 +187,8 @@ class _LoginScreenState extends State<LoginScreen> {
             color: const Color(0xFFDE3526),
             textColor: Colors.white,
             onTap: () async {
-              if(_emailController.text.isEmpty || _passwordController.text.isEmpty){
+              if (_emailController.text.isEmpty ||
+                  _passwordController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text("Please fill all the fields")),
                 );
@@ -137,16 +198,22 @@ class _LoginScreenState extends State<LoginScreen> {
                 email: _emailController.text,
                 password: _passwordController.text,
               );
-              if(result){
+              if (result) {
                 await context.read<GetMeViewmodel>().fetchUserData();
                 await context.read<AllCategoryProvider>().getAllCategories();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(viewModel.errorMessage ?? "Login Successful")),
+                  SnackBar(
+                    content: Text(viewModel.errorMessage ?? "Login Successful"),
+                  ),
                 );
                 Navigator.pushNamed(context, RouteNames.parentScreen);
-              }else{
+              } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(viewModel.errorMessage ?? "Something went wrong")),
+                  SnackBar(
+                    content: Text(
+                      viewModel.errorMessage ?? "Something went wrong",
+                    ),
+                  ),
                 );
               }
             },
