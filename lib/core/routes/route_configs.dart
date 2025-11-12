@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mussweg/core/routes/route_names.dart';
+import 'package:mussweg/views/auth/forget_pass/forget_pass_screen.dart';
+import 'package:mussweg/views/auth/forget_pass_otp_verify/forget_pass_otp_screen.dart';
+import 'package:mussweg/views/auth/reset_pass/reset_pass_screen.dart';
 import 'package:mussweg/views/bought_items/bought_items_screen.dart';
 import 'package:mussweg/views/cart/cart_screen.dart';
 import 'package:mussweg/views/checkout/screen/checkout_cart_list_screen.dart';
@@ -66,6 +69,9 @@ class AppRoutes {
     RouteNames.transactionsHistoryPage: (context) => const TransactionsHistoryPage(),
     RouteNames.bidList: (context) => const BidList(),
     RouteNames.bidSuccessScreen: (context) => const BidSuccessScreen(),
+    RouteNames.forgetPassScreen: (context) => const ForgetPassScreen(),
+    RouteNames.forgetPassOtpScreen: (context) => const ForgetPassOtpScreen(),
+    RouteNames.resetPassScreen: (context) => const ResetPassScreen(),
 
     RouteNames.checkoutScreen:(context) => const CheckoutScreen(),
     RouteNames.stripeCheckoutScreen:(context) => const StripeCheckoutScreen(),

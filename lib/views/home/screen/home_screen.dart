@@ -186,7 +186,7 @@ class HomeScreen extends StatelessWidget {
                   builder: (_, categoryProvider, __) {
                     if (categoryProvider.isLoading) {
                       return SizedBox(
-                        height: 75.h,
+                        height: 90.h,
                         child: ListView.builder(
                           itemCount: 6,
                           scrollDirection: Axis.horizontal,
@@ -231,7 +231,7 @@ class HomeScreen extends StatelessWidget {
                       return const Center(child: Text('No Categories Found'));
                     }
                     return SizedBox(
-                      height: 75.h,
+                      height: 80.h,
                       child: ListView.builder(
                         itemCount:
                             categoryProvider.categoryModel!.data.length > 10

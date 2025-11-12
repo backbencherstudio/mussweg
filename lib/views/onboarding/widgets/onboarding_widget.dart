@@ -45,7 +45,7 @@ class OnboardingWIdget extends StatelessWidget {
                 bottom: 20.h,
                 child: ElevatedButton(
                   onPressed: () => currentPage == totalPages - 1
-                      ? Navigator.pushNamed(context, RouteNames.signUpScreen)
+                      ? Navigator.pushNamed(context, RouteNames.loginScreen)
                       : controller.nextPage(duration: Duration(milliseconds: 300), curve: Curves.easeInOut),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,

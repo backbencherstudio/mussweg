@@ -73,7 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                           child: Image.network(
-                            "${ApiEndpoints.baseUrl}/public/storage/avatar/${userVM.user!.avatar!}",
+                            "${ApiEndpoints.baseUrl}/public/storage/avatar/${userVM.user?.avatar}",
                             width: 90,
                             height: 90,
                             fit: BoxFit.cover,
