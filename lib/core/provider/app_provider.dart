@@ -29,6 +29,7 @@ import '../../view_model/profile/user_all_products/user_all_products_provider.da
 import '../../view_model/search_history_provider/search_history.dart';
 import '../../view_model/whistlist/whistlist_provider_of_get_favourite_product.dart';
 import '../../view_model/whistlist/wishlist_create.dart';
+import '../../views/bought_items/viewModel/bought_product/bought_product_provider.dart';
 
 class AppProviders {
   static final List<SingleChildWidget> providers = [
@@ -61,5 +62,6 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => UpdateProfileDetailsProvider()),
     ChangeNotifierProvider(create: (_) => GetProductDetailsProvider()),
     ChangeNotifierProvider(create: (_) => PlaceABidProvider()),
+    ChangeNotifierProvider(create: (_) => BoughtProductProvider()),
   ];
 }
