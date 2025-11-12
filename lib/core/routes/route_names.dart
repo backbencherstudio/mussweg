@@ -38,6 +38,8 @@ class RouteNames {
   static const String productDetailsBuyScreens = '/productDetailsBuyScreens';
   static const String bidList = '/bidList';
   static const String bidSuccessScreen = '/bidSuccessScreen';
+  static const String bidForSellerScreen = '/bidForSellerScreen';
+  static const String bidForBuyerScreen = '/bidForBuyerScreen';
   static const String trackProgressScreen = '/trackProgressScreen';
 
 
