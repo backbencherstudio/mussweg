@@ -40,7 +40,7 @@ class OnboardingWIdget extends StatelessWidget {
           Stack(
             alignment: Alignment.bottomCenter,
             children: [
-              Container(width: 400.w, height: 440.h, child: Image.asset(data.imagePath, fit: BoxFit.contain)),
+              SizedBox(width: 400.w, height: 440.h, child: Image.asset(data.imagePath, fit: BoxFit.contain)),
               Positioned(
                 bottom: 20.h,
                 child: ElevatedButton(

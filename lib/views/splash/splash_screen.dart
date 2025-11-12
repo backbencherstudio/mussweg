@@ -21,10 +21,10 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     Future.delayed(const Duration(seconds: 2), () async {
       if (mounted) {
-        await context.read<GetMeViewmodel>().fetchUserData();
+        context.read<GetMeViewmodel>().fetchUserData();
         final token = await TokenStorage().getToken();
         if (token != null) {
-          await context.read<AllCategoryProvider>().getAllCategories();
+          context.read<AllCategoryProvider>().getAllCategories();
           context.read<ParentScreensProvider>().onSelectedIndex(0);
           Navigator.pushReplacementNamed(context, RouteNames.parentScreen);
         } else {
