@@ -111,6 +111,7 @@ class _BoughtItemsScreenState extends State<BoughtItemsScreen> {
                       itemCount: products.length,
                       itemBuilder: (context, index) {
                         final product = products[index];
+
                         final items = product.items ?? [];
                         final totalQty = items.fold(
                           0,
