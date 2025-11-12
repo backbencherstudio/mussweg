@@ -147,6 +147,8 @@ class CustomProductCard extends StatelessWidget {
                 )
                     : Text(
                   product.title ?? '',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700),
                 ),
                 // Size/Condition Text with shimmer effect for loading

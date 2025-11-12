@@ -19,7 +19,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
+  final _locationController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -31,7 +31,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _lastNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _confirmPasswordController.dispose();
+    _locationController.dispose();
   }
 
   @override
@@ -75,6 +75,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     SizedBox(height: 10.h),
                     _buildTextField(
+                      title: 'Location',
+                      controller: _locationController,
+                      hintText: 'Your Location',
+                    ),
+                    SizedBox(height: 10.h),
+                    _buildTextField(
                       title: 'Email',
                       controller: _emailController,
                       hintText: 'Your Email',
@@ -88,15 +94,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       hasIcon: true,
                       onTapSuffixIcon: provider.togglePassObscured
                     ),
-                    SizedBox(height: 10.h),
-                    _buildTextField(
-                      title: 'Confirm Password',
-                      controller: _confirmPasswordController,
-                      hintText: 'Confirm Password',
-                      obscureText: provider.isConfirmPassObscured,
-                      hasIcon: true,
-                      onTapSuffixIcon: provider.toggleConfirmPassObscured
-                    ),
                     SizedBox(height: 60.h),
                     provider.isLoading
                         ? const Center(child: CircularProgressIndicator())
@@ -105,13 +102,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             color: const Color(0xFFDE3526),
                             textColor: Colors.white,
                             onTap: () async {
-                              if (_passwordController.text == _confirmPasswordController.text) {
                                 if (_formKey.currentState!.validate()) {
                                   final success = await provider.registerUser(
                                     first_name: _firstNameController.text.trim(),
                                     last_name: _lastNameController.text.trim(),
                                     email: _emailController.text.trim(),
                                     password: _passwordController.text.trim(),
+                                    location: _locationController.text.trim()
                                   );
 
                                   if (success) {
@@ -132,18 +129,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     );
                                   }
                                 }
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Passwords don not match!!!'),
-                                  ),
-                                );
-                              }
                             },
                           ),
 
                     SizedBox(height: 40.h),
                     _buildSignUpLink(context),
+                    SizedBox(height: 40.h),
                   ],
                 ),
               ),

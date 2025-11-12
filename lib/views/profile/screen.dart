@@ -73,7 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                           child: Image.network(
-                            "${ApiEndpoints.baseUrl}/public/storage/avatar/${userVM.user!.avatar!}",
+                            "${ApiEndpoints.baseUrl}/public/storage/avatar/${userVM.user?.avatar}",
                             width: 90,
                             height: 90,
                             fit: BoxFit.cover,
@@ -206,9 +206,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Divider(color: Colors.grey[350]),
                     ProfileMenuItem(
                       image: 'assets/icons/border-all-01.png',
-                      title: 'Bid List',
+                      title: 'My Bid List',
                       onTap: () {
-                        Navigator.pushNamed(context, RouteNames.bidList);
+                        Navigator.pushNamed(context, RouteNames.bidForBuyerScreen);
+                      },
+                    ),
+                    Divider(color: Colors.grey[350]),
+                    ProfileMenuItem(
+                      image: 'assets/icons/border-all-01.png',
+                      title: 'Bids on My Items',
+                      onTap: () {
+                        Navigator.pushNamed(context, RouteNames.bidForSellerScreen);
                       },
                     ),
                     Divider(color: Colors.grey[350]),

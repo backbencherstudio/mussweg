@@ -1,6 +1,6 @@
 class ApiEndpoints {
   ApiEndpoints._();
-  static const String baseUrl = 'http://192.168.7.14:5005';
+  static const String baseUrl = 'https://bigger-emily-acc-served.trycloudflare.com';
 
   /// Auth
   static const String register = '$baseUrl/api/auth/register';
@@ -10,6 +10,7 @@ class ApiEndpoints {
       '$baseUrl/api/auth/resend-verification-email';
   static const String getMe = '$baseUrl/api/auth/me';
   static const String forgetPassword = '$baseUrl/api/auth/forgot-password';
+  static const String resetPassword = '$baseUrl/api/auth/reset-password';
 
   /// Home
   static const String getAllCategory = '$baseUrl/api/category/allCategories';

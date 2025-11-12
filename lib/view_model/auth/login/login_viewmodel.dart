@@ -42,18 +42,15 @@ class LoginScreenProvider extends ChangeNotifier {
         final token = data['authorization']['access_token'];
         await _tokenStorage.saveToken(token);
         debugPrint("The authorization token is $token");
-        //another api call nested
-        // await getMe();
-        // _socketService.connect(token: token);
-        // socket Check if connected
-        // if (_socketService.isConnected) {
-        //   debugPrint(" Socket connection successful!");
-        // }
-        // _socketService.emit('create_room', {'roomName': 'user_support_room'});
         _errorMessage= data['message'];
         _isLoading = false;
         notifyListeners();
         return data['success'];
+      } else if (response.statusCode == 401){
+        _isLoading = false;
+        _errorMessage = 'Password or email was incorrect';
+        notifyListeners();
+        return false;
       } else {
         _isLoading = false;
         _errorMessage = 'Login failed: ${response.statusCode}';
@@ -62,7 +59,13 @@ class LoginScreenProvider extends ChangeNotifier {
       }
     } catch (error) {
       _isLoading = false;
-      _errorMessage = 'Error: $error';
+      if (error.toString().contains('401')) {
+        _errorMessage = 'Password or email was incorrect';
+        notifyListeners();
+        return false;
+      } else {
+        _errorMessage = 'Login failed: $error}';
+      }
       notifyListeners();
       return false;
     }
