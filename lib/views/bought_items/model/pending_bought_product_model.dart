@@ -4,7 +4,12 @@ class PendingBoughtProductModel {
   List<Data>? data;
   Pagination? pagination;
 
-  PendingBoughtProductModel({this.success, this.message, this.data, this.pagination});
+  PendingBoughtProductModel({
+    this.success,
+    this.message,
+    this.data,
+    this.pagination,
+  });
 
   PendingBoughtProductModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
@@ -15,20 +20,20 @@ class PendingBoughtProductModel {
         data!.add(Data.fromJson(v));
       });
     }
-    pagination = json['pagination'] != null ? Pagination.fromJson(json['pagination']) : null;
+    pagination = json['pagination'] != null
+        ? Pagination.fromJson(json['pagination'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> map = {};
-    map['success'] = success;
-    map['message'] = message;
-    if (data != null) {
-      map['data'] = data!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = {};
+    data['success'] = success;
+    data['message'] = message;
+    if (this.data != null) {
+      data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    if (pagination != null) {
-      map['pagination'] = pagination!.toJson();
-    }
-    return map;
+    if (pagination != null) data['pagination'] = pagination!.toJson();
+    return data;
   }
 }
 
@@ -42,28 +47,23 @@ class Data {
 
   Data.fromJson(Map<String, dynamic> json) {
     orderId = json['order_id']?.toString();
-    orderStatus = json['order_status'];
-    orderPartner = json['order_partner'] != null ? OrderPartner.fromJson(json['order_partner']) : null;
-
+    orderStatus = json['order_status']?.toString();
+    orderPartner = json['order_partner'] != null
+        ? OrderPartner.fromJson(json['order_partner'])
+        : null;
     if (json['items'] != null) {
       items = <Items>[];
-      json['items'].forEach((v) {
-        items!.add(Items.fromJson(v));
-      });
+      json['items'].forEach((v) => items!.add(Items.fromJson(v)));
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> map = {};
-    map['order_id'] = orderId;
-    map['order_status'] = orderStatus;
-    if (orderPartner != null) {
-      map['order_partner'] = orderPartner!.toJson();
-    }
-    if (items != null) {
-      map['items'] = items!.map((v) => v.toJson()).toList();
-    }
-    return map;
+    final Map<String, dynamic> data = {};
+    data['order_id'] = orderId;
+    data['order_status'] = orderStatus;
+    if (orderPartner != null) data['order_partner'] = orderPartner!.toJson();
+    if (items != null) data['items'] = items!.map((v) => v.toJson()).toList();
+    return data;
   }
 }
 
@@ -77,84 +77,111 @@ class OrderPartner {
 
   OrderPartner.fromJson(Map<String, dynamic> json) {
     id = json['id']?.toString();
-    name = json['name'];
-    email = json['email'];
-    avatar = json['avatar'];
+    name = json['name']?.toString();
+    email = json['email']?.toString();
+    avatar = json['avatar']?.toString();
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> map = {};
-    map['id'] = id;
-    map['name'] = name;
-    map['email'] = email;
-    map['avatar'] = avatar;
-    return map;
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['name'] = name;
+    data['email'] = email;
+    data['avatar'] = avatar;
+    return data;
   }
 }
 
 class Items {
-  int? quantity;
-  double? totalPrice;
+  int quantity;
+  double price;
+  double totalPrice;
   String? productId;
   String? productTitle;
-  double? price;
+  String? productOwnerId;
   List<String>? productPhoto;
 
-  Items({this.quantity, this.totalPrice, this.productId, this.productTitle, this.price, this.productPhoto});
+  Items({
+    required this.quantity,
+    required this.price,
+    required this.totalPrice,
+    this.productId,
+    this.productTitle,
+    this.productOwnerId,
+    this.productPhoto,
+  });
 
-  Items.fromJson(Map<String, dynamic> json) {
-    quantity = json['quantity'];
-    totalPrice = json['total_price'] != null ? double.tryParse(json['total_price'].toString()) : null;
-    productId = json['product_id']?.toString();
-    productTitle = json['product_title'];
-    price = json['price'] != null ? double.tryParse(json['price'].toString()) : null;
-
-    if (json['product_photo'] != null && json['product_photo'] is List) {
-      productPhoto = List<String>.from(json['product_photo'].map((x) => x.toString()));
-    } else {
-      productPhoto = [];
-    }
-  }
+  Items.fromJson(Map<String, dynamic> json)
+    : quantity = json['quantity'] is String
+          ? int.tryParse(json['quantity']) ?? 0
+          : json['quantity'] ?? 0,
+      price = json['price'] is String
+          ? double.tryParse(json['price']) ?? 0.0
+          : (json['price']?.toDouble() ?? 0.0),
+      totalPrice = json['total_price'] is String
+          ? double.tryParse(json['total_price']) ?? 0.0
+          : (json['total_price']?.toDouble() ?? 0.0),
+      productId = json['product_id']?.toString(),
+      productTitle = json['product_title']?.toString(),
+      productOwnerId = json['product_owner_id']?.toString(),
+      productPhoto = json['product_photo'] != null
+          ? List<String>.from(json['product_photo'])
+          : null;
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> map = {};
-    map['quantity'] = quantity;
-    map['total_price'] = totalPrice;
-    map['product_id'] = productId;
-    map['product_title'] = productTitle;
-    map['price'] = price;
-    map['product_photo'] = productPhoto ?? [];
-    return map;
+    final Map<String, dynamic> data = {};
+    data['quantity'] = quantity;
+    data['price'] = price;
+    data['total_price'] = totalPrice;
+    data['product_id'] = productId;
+    data['product_title'] = productTitle;
+    data['product_owner_id'] = productOwnerId;
+    data['product_photo'] = productPhoto;
+    return data;
   }
 }
 
 class Pagination {
-  int? total;
-  int? page;
-  int? perPage;
-  int? totalPages;
+  int total;
+  int page;
+  int perPage;
+  int totalPages;
   bool? hasNextPage;
   bool? hasPrevPage;
 
-  Pagination({this.total, this.page, this.perPage, this.totalPages, this.hasNextPage, this.hasPrevPage});
+  Pagination({
+    required this.total,
+    required this.page,
+    required this.perPage,
+    required this.totalPages,
+    this.hasNextPage,
+    this.hasPrevPage,
+  });
 
-  Pagination.fromJson(Map<String, dynamic> json) {
-    total = json['total'];
-    page = json['page'];
-    perPage = json['perPage'];
-    totalPages = json['totalPages'];
-    hasNextPage = json['hasNextPage'];
-    hasPrevPage = json['hasPrevPage'];
-  }
+  Pagination.fromJson(Map<String, dynamic> json)
+    : total = json['total'] is String
+          ? int.tryParse(json['total']) ?? 0
+          : json['total'] ?? 0,
+      page = json['page'] is String
+          ? int.tryParse(json['page']) ?? 0
+          : json['page'] ?? 0,
+      perPage = json['perPage'] is String
+          ? int.tryParse(json['perPage']) ?? 0
+          : json['perPage'] ?? 0,
+      totalPages = json['totalPages'] is String
+          ? int.tryParse(json['totalPages']) ?? 0
+          : json['totalPages'] ?? 0,
+      hasNextPage = json['hasNextPage'],
+      hasPrevPage = json['hasPrevPage'];
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> map = {};
-    map['total'] = total;
-    map['page'] = page;
-    map['perPage'] = perPage;
-    map['totalPages'] = totalPages;
-    map['hasNextPage'] = hasNextPage;
-    map['hasPrevPage'] = hasPrevPage;
-    return map;
+    final Map<String, dynamic> data = {};
+    data['total'] = total;
+    data['page'] = page;
+    data['perPage'] = perPage;
+    data['totalPages'] = totalPages;
+    data['hasNextPage'] = hasNextPage;
+    data['hasPrevPage'] = hasPrevPage;
+    return data;
   }
 }

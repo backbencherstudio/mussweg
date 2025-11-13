@@ -33,7 +33,6 @@ class ApiEndpoints {
       '$baseUrl/api/bid/singleproductbid/$id';
   static String createBid = '$baseUrl/api/bid/create';
 
-
   //  bought product
   static String totalBoughtProduct(int page, int limit) =>
       '$baseUrl/api/dashborad/total-brought-item/?page=$page&perPage=$limit';
@@ -43,4 +42,6 @@ class ApiEndpoints {
       '$baseUrl/api/dashborad/bought-delivered-item';
   static String boughtCancelProduct =
       '$baseUrl/api/dashborad/bought-cancelled-item';
+
+  static String createReview = '$baseUrl/api/review/create';
 }
