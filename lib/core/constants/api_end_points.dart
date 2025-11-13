@@ -10,6 +10,7 @@ class ApiEndpoints {
       '$baseUrl/api/auth/resend-verification-email';
   static const String getMe = '$baseUrl/api/auth/me';
   static const String forgetPassword = '$baseUrl/api/auth/forgot-password';
+  static const String resetPassword = '$baseUrl/api/auth/reset-password';
 
   /// Home
   static const String getAllCategory = '$baseUrl/api/category/allCategories';

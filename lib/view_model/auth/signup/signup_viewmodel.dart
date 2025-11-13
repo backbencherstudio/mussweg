@@ -57,6 +57,7 @@ class RegisterProvider extends ChangeNotifier {
     required String last_name,
     required String email,
     required String password,
+    required String location,
   }) async {
     _isLoading = true;
     notifyListeners();
@@ -66,6 +67,7 @@ class RegisterProvider extends ChangeNotifier {
       "last_name": last_name,
       "email": email,
       "password": password,
+      "location": location,
     };
 
     try {

@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
         context.read<GetMeViewmodel>().fetchUserData();
         final token = await TokenStorage().getToken();
         if (token != null) {
-          context.read<AllCategoryProvider>().getAllCategories();
+          await context.read<AllCategoryProvider>().getAllCategories();
           context.read<ParentScreensProvider>().onSelectedIndex(0);
           Navigator.pushReplacementNamed(context, RouteNames.parentScreen);
         } else {
