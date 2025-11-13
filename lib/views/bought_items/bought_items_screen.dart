@@ -113,6 +113,8 @@ class _BoughtItemsScreenState extends State<BoughtItemsScreen> {
                         final product = products[index];
 
                         final items = product.items ?? [];
+                        final orderId = product.orderId ?? [];
+
                         final totalQty = items.fold(
                           0,
                           (sum, item) => sum + (item.quantity ?? 0),
@@ -122,6 +124,9 @@ class _BoughtItemsScreenState extends State<BoughtItemsScreen> {
                           (sum, item) =>
                               sum + (item.price ?? 0) * (item.quantity ?? 0),
                         );
+                        final productOwnerId = items.isNotEmpty
+                            ? (items.first.productOwnerId ?? "")
+                            : "";
 
                         return Padding(
                           padding: EdgeInsets.only(bottom: 8.h),
@@ -154,6 +159,7 @@ class _BoughtItemsScreenState extends State<BoughtItemsScreen> {
                                           item.productTitle,
                                           item.price ?? 0,
                                           item.quantity ?? 0,
+                                          item.productOwnerId ?? "",
                                         ),
                                       ),
                                       SizedBox(height: 8.h),
@@ -166,8 +172,12 @@ class _BoughtItemsScreenState extends State<BoughtItemsScreen> {
                                       SizedBox(height: 8.h),
                                       CustomPrimaryButton(
                                         title: 'Leave Review',
-                                        onTap: () => ReviewDialog()
-                                            .showReviewDialog(context),
+                                        onTap: () =>
+                                            ReviewDialog().showReviewDialog(
+                                              context,
+                                              productOwnerId,
+                                              orderId,
+                                            ),
                                       ),
                                     ],
                                   ),
@@ -185,7 +195,12 @@ class _BoughtItemsScreenState extends State<BoughtItemsScreen> {
     );
   }
 
-  Widget buildItemRow(String? name, double price, int quantity) {
+  Widget buildItemRow(
+    String? name,
+    double price,
+    int quantity,
+    String productOwnerId,
+  ) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 4.h),
       child: Row(
@@ -275,6 +290,14 @@ class ItemCard extends StatelessWidget {
                   Text(
                     'Qty: $quantity',
                     style: TextStyle(fontSize: 13.sp, color: Colors.grey[600]),
+                  ),
+                  Text(
+                    '\$${price.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
                   ),
                   Text(
                     '\$${price.toStringAsFixed(2)}',
