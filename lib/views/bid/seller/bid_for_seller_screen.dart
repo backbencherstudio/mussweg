@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
+import 'package:provider/provider.dart';
+
+import '../../../core/constants/api_end_points.dart';
+import '../../../view_model/bid/bid_for_seller_provider.dart';
+import '../../../view_model/bid/place_a_bid_provider.dart';
 
 class BidForSellerScreen extends StatefulWidget {
   const BidForSellerScreen({super.key});
@@ -9,22 +15,19 @@ class BidForSellerScreen extends StatefulWidget {
   State<BidForSellerScreen> createState() => _BidForSellerScreenState();
 }
 
-class _BidForSellerScreenState extends State<BidForSellerScreen> with TickerProviderStateMixin {
+class _BidForSellerScreenState extends State<BidForSellerScreen>
+    with TickerProviderStateMixin {
   late TabController _tabController;
-
-  final List<Map<String, dynamic>> items = List.generate(4, (index) {
-    return {
-      'title': 'Man Exclusive T-Shirt',
-      'subtitle': 'Size XL (New Condition)',
-      'price': 20.00,
-      'image': 'assets/images/dress.png', // Replace with your asset
-    };
-  });
 
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await context.read<BidForSellerProvider>().getRequestedBidsForSeller();
+      await context.read<BidForSellerProvider>().getAcceptedBidsForSeller();
+    });
   }
 
   @override
@@ -48,10 +51,7 @@ class _BidForSellerScreenState extends State<BidForSellerScreen> with TickerProv
         ),
         title: const Text(
           'Bid List',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         ),
         centerTitle: true,
         bottom: TabBar(
@@ -60,40 +60,110 @@ class _BidForSellerScreenState extends State<BidForSellerScreen> with TickerProv
           indicatorSize: TabBarIndicatorSize.tab,
           labelColor: Colors.red,
           unselectedLabelColor: Colors.grey,
-          tabs: const [
-            Tab(text: 'Request Bid'),
-            Tab(text: 'Accept bid'),
-          ],
+          tabs: const [Tab(text: 'Request Bid'), Tab(text: 'Accept bid')],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
         children: [
-          _buildRequestedBidList(),
-          _buildAcceptedBidList(),
+          _buildRequestedBidListWithRefresh(),
+          _buildAcceptedBidListWithRefresh(),
         ],
       ),
     );
   }
 
+  /// RefreshIndicator for Requested Bids
+  Widget _buildRequestedBidListWithRefresh() {
+    return Consumer<BidForSellerProvider>(
+      builder: (_, bidSellerProvider, __) {
+        return RefreshIndicator(
+          onRefresh: () async {
+            await bidSellerProvider.getRequestedBidsForSeller();
+            await bidSellerProvider.getAcceptedBidsForSeller();
+          },
+          child: _buildRequestedBidList(),
+        );
+      },
+    );
+  }
+
+  /// RefreshIndicator for Accepted Bids
+  Widget _buildAcceptedBidListWithRefresh() {
+    return Consumer<BidForSellerProvider>(
+      builder: (_, bidSellerProvider, __) {
+        return RefreshIndicator(
+          onRefresh: () async {
+            await bidSellerProvider.getRequestedBidsForSeller();
+            await bidSellerProvider.getAcceptedBidsForSeller();
+          },
+          child: _buildAcceptedBidList(),
+        );
+      },
+    );
+  }
+
   Widget _buildAcceptedBidList() {
-    return ListView.builder(
-      padding: const EdgeInsets.all(12),
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        final item = items[index];
-        return BidCardForSeller(item: item, isAccepted: true,);
+    return Consumer<BidForSellerProvider>(
+      builder: (_, bidSellerProvider, __) {
+        if (bidSellerProvider.isLoading2) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (bidSellerProvider.acceptedBidForSellerResponseModel?.data.data.isEmpty ??
+            true) {
+          return const Center(child: Text('No bids found'));
+        }
+        return ListView.builder(
+          padding: const EdgeInsets.all(12),
+          itemCount:
+          bidSellerProvider.acceptedBidForSellerResponseModel?.data.data.length,
+          itemBuilder: (context, index) {
+            final item =
+            bidSellerProvider.acceptedBidForSellerResponseModel?.data.data[index];
+            return BidCardForSeller(
+              productId: item?.product.id ?? '',
+              productTitle: item?.product.title ?? '',
+              size: item?.product.size ?? '',
+              condition: item?.product.condition ?? '',
+              price: item?.product.price ?? '',
+              photo: item?.product.photo ?? '',
+              bidAmount: item?.bidAmount ?? '',
+              isAccepted: true,
+            );
+          },
+        );
       },
     );
   }
 
   Widget _buildRequestedBidList() {
-    return ListView.builder(
-      padding: const EdgeInsets.all(12),
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        final item = items[index];
-        return BidCardForSeller(item: item, isAccepted: false,);
+    return Consumer<BidForSellerProvider>(
+      builder: (_, bidSellerProvider, __) {
+        if (bidSellerProvider.isLoading1) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (bidSellerProvider.requestBidForSellerResponseModel?.data.data.isEmpty ??
+            true) {
+          return const Center(child: Text('No bids found'));
+        }
+        return ListView.builder(
+          padding: const EdgeInsets.all(12),
+          itemCount:
+          bidSellerProvider.requestBidForSellerResponseModel?.data.data.length,
+          itemBuilder: (context, index) {
+            final item =
+            bidSellerProvider.requestBidForSellerResponseModel?.data.data[index];
+            return BidCardForSeller(
+              productId: item?.product.id ?? '',
+              productTitle: item?.product.title ?? '',
+              size: item?.product.size ?? '',
+              condition: item?.product.condition ?? '',
+              price: item?.product.price ?? '',
+              photo: item?.product.photo ?? '',
+              isAccepted: false,
+            );
+          },
+        );
       },
     );
   }
@@ -102,10 +172,23 @@ class _BidForSellerScreenState extends State<BidForSellerScreen> with TickerProv
 class BidCardForSeller extends StatelessWidget {
   const BidCardForSeller({
     super.key,
-    required this.item, required this.isAccepted,
+    required this.isAccepted,
+    required this.productTitle,
+    required this.productId,
+    required this.size,
+    required this.condition,
+    required this.price,
+    required this.photo,
+    this.bidAmount,
   });
 
-  final Map<String, dynamic> item;
+  final String productTitle;
+  final String productId;
+  final String size;
+  final String condition;
+  final String price;
+  final String photo;
+  final String? bidAmount;
   final bool isAccepted;
 
   @override
@@ -133,11 +216,19 @@ class BidCardForSeller extends StatelessWidget {
             // Product Image
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
-                item['image'],
-                width: 80,
-                height: 80,
+              child: Image.network(
+                '${ApiEndpoints.baseUrl}${photo.replaceAll('http://localhost:5005', '')}',
+                width: 80.w,
+                height: 60.h,
                 fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) {
+                  return Image.asset(
+                    'assets/images/placeholder.jpg',
+                    width: 80.w,
+                    height: 60.h,
+                    fit: BoxFit.cover,
+                  );
+                },
               ),
             ),
             const SizedBox(width: 12),
@@ -146,19 +237,24 @@ class BidCardForSeller extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    item['title'],
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    child: Text(
+                      productTitle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    item['subtitle'],
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontSize: 13,
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    child: Text(
+                      'Size $size ($condition condition)',
+                      style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -170,7 +266,7 @@ class BidCardForSeller extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  '\$${item['price'].toStringAsFixed(2)}',
+                  isAccepted ? '\$$bidAmount' : '\$$price',
                   style: const TextStyle(
                     color: Colors.red,
                     fontWeight: FontWeight.bold,
@@ -178,7 +274,9 @@ class BidCardForSeller extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                isAccepted ? SizedBox() : ElevatedButton(
+                isAccepted
+                    ? SizedBox()
+                    : ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                     minimumSize: const Size(80, 32),
@@ -187,14 +285,12 @@ class BidCardForSeller extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
+                    context.read<PlaceABidProvider>().getAllBidsForProduct(productId ?? '');
                     Navigator.pushNamed(context, RouteNames.bidList);
                   },
                   child: const Text(
                     'View Bid',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                    ),
+                    style: TextStyle(color: Colors.white, fontSize: 13),
                   ),
                 ),
               ],

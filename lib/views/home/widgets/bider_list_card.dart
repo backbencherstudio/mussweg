@@ -21,20 +21,22 @@ class BiderListCard extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(90.r),
           child: Image.network(
-            "${ApiEndpoints.baseUrl}/public/storage/avatar/${bid?.biderAvatar.replaceAll('http://localhost:5005/public/storage/product/', '')}",
+            "${ApiEndpoints.baseUrl}${bid?.biderAvatar.replaceAll('http://localhost:5005', '')}",
             height: 44.w,
             width: 44.w,
             fit: BoxFit.cover,
             errorBuilder: (_, __, ___) {
-              return Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
-                  border: Border.all(color: Colors.grey.shade200),
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12.r),
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(90.r),
+                child: Container(
+                  height: 44.w,
+                  width: 44.w,
+                  padding: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    border: Border.all(color: Colors.grey.shade200),
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
                   child: Image.asset(
                     'assets/icons/user.png',
                     fit: BoxFit.cover,

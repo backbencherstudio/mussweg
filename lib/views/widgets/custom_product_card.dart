@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:mussweg/core/constants/api_end_points.dart';
 import 'package:provider/provider.dart';
 import 'package:redacted/redacted.dart';
@@ -184,7 +185,7 @@ class CustomProductCard extends StatelessWidget {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: product.createdTime ?? '',
+                        text: DateFormat("dd MMM, yy h:mm a").format(DateTime.parse(product.createdTime)) ?? '',
                         style: TextStyle(
                           color: const Color(0xff777980),
                           fontSize: 13.sp,

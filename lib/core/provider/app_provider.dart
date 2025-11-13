@@ -1,3 +1,4 @@
+import 'package:mussweg/view_model/bid/bid_for_buyer_provider.dart';
 import 'package:mussweg/view_model/bid/place_a_bid_provider.dart';
 import 'package:mussweg/view_model/home_provider/all_category_provider.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
@@ -11,6 +12,7 @@ import 'package:mussweg/view_model/home_provider/home_screen_provider.dart';
 import '../../view_model/auth/forget_password/forget_password_provider.dart';
 import '../../view_model/auth/login/get_me_viewmodel.dart';
 import '../../view_model/auth/login/login_viewmodel.dart';
+import '../../view_model/bid/bid_for_seller_provider.dart';
 import '../../view_model/boost_product/boost_product_create_provider.dart';
 import '../../view_model/home_provider/home_nav/electronic_category_based_provider.dart';
 import '../../view_model/home_provider/home_nav/fashion_category_based_product_provider.dart';
@@ -46,6 +48,8 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => RegisterProvider()),
     ChangeNotifierProvider(create: (_) => FavoriteProvider()),
     ChangeNotifierProvider(create: (_) => LoginScreenProvider()),
+    ChangeNotifierProvider(create: (_) => BidForSellerProvider()),
+    ChangeNotifierProvider(create: (_) => BidForBuyerProvider()),
     ChangeNotifierProvider(create: (_) => ForgetPasswordProvider()),
     ChangeNotifierProvider(create: (_) => AllCategoryProvider()),
     ChangeNotifierProvider(create: (_) => GetMeViewmodel()),

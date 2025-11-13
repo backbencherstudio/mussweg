@@ -3,6 +3,7 @@ import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/views/auth/forget_pass/forget_pass_screen.dart';
 import 'package:mussweg/views/auth/forget_pass_otp_verify/forget_pass_otp_screen.dart';
 import 'package:mussweg/views/auth/reset_pass/reset_pass_screen.dart';
+import 'package:mussweg/views/bid/buyer/bid_for_buyer_screen.dart';
 import 'package:mussweg/views/bid/seller/bid_for_seller_screen.dart';
 import 'package:mussweg/views/bought_items/bought_items_screen.dart';
 import 'package:mussweg/views/cart/cart_screen.dart';
@@ -74,6 +75,7 @@ class AppRoutes {
     RouteNames.forgetPassOtpScreen: (context) => const ForgetPassOtpScreen(),
     RouteNames.resetPassScreen: (context) => const ResetPassScreen(),
     RouteNames.bidForSellerScreen: (context) => const BidForSellerScreen(),
+    RouteNames.bidForBuyerScreen: (context) => const BidForBuyerScreen(),
 
     RouteNames.checkoutScreen:(context) => const CheckoutScreen(),
     RouteNames.stripeCheckoutScreen:(context) => const StripeCheckoutScreen(),

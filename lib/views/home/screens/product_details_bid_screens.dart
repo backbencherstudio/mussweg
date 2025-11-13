@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:mussweg/core/constants/api_end_points.dart';
 import 'package:mussweg/view_model/bid/place_a_bid_provider.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
@@ -49,29 +50,34 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
       );
     }
 
-    return Scaffold(
-      appBar: SimpleApppbar(title: 'Product Details'),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // PageView for images
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12.r),
-                child: SizedBox(
-                  height: 200.h, // Set the height for the PageView
-                  width: double.infinity,
-                  child: PageView.builder(
-                    controller: _pageController,
-                    itemCount:
-                        product?.productPhoto?.length ??
-                        0, // Use the length of the images list
-                    itemBuilder: (context, index) {
-                      return Image.network(
-                        "${ApiEndpoints.baseUrl}${product?.productPhoto?[index].replaceAll('http://localhost:5005', '')}",
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) {
+    return PopScope(
+      onPopInvokedWithResult: (_, __) async {
+        await context.read<PlaceABidProvider>().setIsBidding(false);
+      },
+      child: Scaffold(
+        appBar: SimpleApppbar(title: 'Product Details', onBack: () async {
+          await context.read<PlaceABidProvider>().setIsBidding(false);
+          Navigator.pop(context);
+        },),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              // PageView for images
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12.r),
+                  child: SizedBox(
+                    height: 200.h,
+                    width: double.infinity,
+                    child: PageView.builder(
+                      controller: _pageController,
+                      itemCount:
+                      (product?.productPhoto?.isNotEmpty ?? false)
+                          ? product!.productPhoto!.length
+                          : 1,
+                      itemBuilder: (context, index) {
+                        if (product?.productPhoto == null || product!.productPhoto!.isEmpty) {
                           return Container(
                             decoration: BoxDecoration(
                               color: Colors.grey.shade50,
@@ -86,261 +92,232 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                               ),
                             ),
                           );
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
-
-            // Page Indicator (optional)
-            SizedBox(height: 8),
-            CustomPageIndicator(
-              controller: _pageController,
-              count: product?.productPhoto?.length ?? 0,
-              activeColor: Colors.red,
-              inactiveColor: Colors.grey.shade300,
-              activeSize: 10,
-              inactiveSize: 10,
-              spacing: 8,
-            ),
-
-            SizedBox(height: 16),
-
-            // Seller Info Section
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(90.r),
-                    child: Image.network(
-                      "${ApiEndpoints.baseUrl}${product?.sellerInfo?.profilePhoto?.replaceAll('http://localhost:5005', '')}",
-                      height: 60.w,
-                      width: 60.w,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) {
-                        return Container(
-                          padding: EdgeInsets.all(8.w),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade50,
-                            border: Border.all(color: Colors.grey.shade200),
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12.r),
-                            child: Image.asset(
-                              'assets/icons/user.png',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        );
+                        } else {
+                          return Image.network(
+                            "${ApiEndpoints.baseUrl}${product.productPhoto?[index].replaceAll('http://localhost:5005', '')}",
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade50,
+                                  border: Border.all(color: Colors.grey.shade200),
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12.r),
+                                  child: Image.asset(
+                                    'assets/images/placeholder.jpg',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        }
                       },
                     ),
                   ),
-                  SizedBox(width: 6),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        product?.sellerInfo?.name ?? '',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                ),
+              ),
+
+              // Page Indicator (optional)
+              SizedBox(height: 8),
+              CustomPageIndicator(
+                controller: _pageController,
+                count: product?.productPhoto?.length ?? 0,
+                activeColor: Colors.red,
+                inactiveColor: Colors.grey.shade300,
+                activeSize: 10,
+                inactiveSize: 10,
+                spacing: 8,
+              ),
+
+              SizedBox(height: 16),
+
+              // Seller Info Section
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(90.r),
+                      child: Image.network(
+                        "${ApiEndpoints.baseUrl}${product?.sellerInfo?.profilePhoto?.replaceAll('http://localhost:5005', '')}",
+                        height: 60.w,
+                        width: 60.w,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) {
+                          return Container(
+                            padding: EdgeInsets.all(8.w),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade50,
+                              border: Border.all(color: Colors.grey.shade200),
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12.r),
+                              child: Image.asset(
+                                'assets/icons/user.png',
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(width: 6),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          product?.sellerInfo?.name ?? '',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        Text(
+                          "${product?.sellerInfo?.totalItems} items",
+                          style: TextStyle(color: Colors.grey, fontSize: 14),
+                        ),
+                      ],
+                    ),
+                    Spacer(),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, RouteNames.chatScreen);
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(99),
+                        ),
+                        child: Text(
+                          "Message seller",
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
-                      Text(
-                        "${product?.sellerInfo?.totalItems} items",
-                        style: TextStyle(color: Colors.grey, fontSize: 14),
-                      ),
-                    ],
-                  ),
-                  Spacer(),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, RouteNames.chatScreen);
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 16),
+
+              // Category
+              Align(
+                alignment: Alignment.topLeft,
+                child: Row(
+                  children: [
+                    SizedBox(width: 15.w),
+                    Container(
+                      height: 22.h,
+                      padding: EdgeInsets.symmetric(horizontal: 8.w),
                       decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(99),
+                        color: Color(0xffEEFAF6),
+                        borderRadius: BorderRadius.circular(30),
                       ),
-                      child: Text(
-                        "Message seller",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 16),
-
-            // Category
-            Align(
-              alignment: Alignment.topLeft,
-              child: Row(
-                children: [
-                  SizedBox(width: 15.w),
-                  Container(
-                    height: 22.h,
-                    padding: EdgeInsets.symmetric(horizontal: 8.w),
-                    decoration: BoxDecoration(
-                      color: Color(0xffEEFAF6),
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Center(
-                      child: Text(
-                        product?.category?.categoryName ?? '',
-                        style: TextStyle(
-                          color: Color(0xff3A9B7A),
-                          fontWeight: FontWeight.w700,
+                      child: Center(
+                        child: Text(
+                          product?.category?.categoryName ?? '',
+                          style: TextStyle(
+                            color: Color(0xff3A9B7A),
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 8.h),
+              SizedBox(height: 8.h),
 
-            // Product Details
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    product?.title ?? 'Unknown',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.black,
-                    ),
-                  ),
-                  Row(
-                    spacing: 2,
-                    children: [
-                      Icon(
-                        Icons.location_on_outlined,
-                        color: Color(0xffA5A5AB),
-                        size: 20,
+              // Product Details
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      product?.title ?? 'Unknown',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.black,
                       ),
-                      Text(
-                        product?.location ?? 'unknown',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
+                    ),
+                    Row(
+                      spacing: 2,
+                      children: [
+                        Icon(
+                          Icons.location_on_outlined,
                           color: Color(0xffA5A5AB),
+                          size: 20,
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    '\$${product?.price ?? '0.00'}',
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.bold,
+                        Text(
+                          product?.location ?? 'unknown',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            color: Color(0xffA5A5AB),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  Divider(),
-                  SizedBox(height: 4.h),
-                  isBidingProvider.isBidding == false
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Product Description",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: Colors.black,
+                    SizedBox(height: 4.h),
+                    Text(
+                      '\$${product?.price ?? '0.00'}',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Divider(),
+                    SizedBox(height: 4.h),
+                    isBidingProvider.isBidding == false
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Product Description",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              product?.description ?? '',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.black87,
+                              SizedBox(height: 4),
+                              Text(
+                                product?.description ?? '',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black87,
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 16),
-                            // Condition, Size, Color, etc.
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 20,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Color(0xffFDF3F2),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Row(
-                                children: [
-                                  Column(
-                                    spacing: 4,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Condition",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        "Size",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        "Color",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        "Uploaded",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        "Remaining Time",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Spacer(),
-                                  SizedBox(
-                                    width: 140.w,
-                                    child: Column(
+                              SizedBox(height: 16),
+                              // Condition, Size, Color, etc.
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 20,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Color(0xffFDF3F2),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Column(
                                       spacing: 4,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          ": ${product?.condition ?? ''}",
+                                          "Condition",
                                           style: TextStyle(
                                             fontSize: 14,
                                             color: Colors.black87,
@@ -348,7 +325,7 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                         ),
                                         SizedBox(height: 4),
                                         Text(
-                                          ": ${product?.size ?? ''}",
+                                          "Size",
                                           style: TextStyle(
                                             fontSize: 14,
                                             color: Colors.black87,
@@ -356,7 +333,7 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                         ),
                                         SizedBox(height: 4),
                                         Text(
-                                          ": ${product?.color ?? ''}",
+                                          "Color",
                                           style: TextStyle(
                                             fontSize: 14,
                                             color: Colors.black87,
@@ -364,7 +341,7 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                         ),
                                         SizedBox(height: 4),
                                         Text(
-                                          ": ${product?.uploaded ?? ''}",
+                                          "Uploaded",
                                           style: TextStyle(
                                             fontSize: 14,
                                             color: Colors.black87,
@@ -372,183 +349,239 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                         ),
                                         SizedBox(height: 4),
                                         Text(
-                                          ": ${product?.remainingTime ?? '00h : 00m : 00s'}",
+                                          "Remaining Time",
                                           style: TextStyle(
                                             fontSize: 14,
-                                            color: Color(0xff1A9882),
+                                            color: Colors.black87,
                                           ),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            Center(
-                              child: Container(
-                                width: 320.w,
-                                height: 25.h,
-                                decoration: BoxDecoration(
-                                  color: Color(0xffF4FCF8),
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                child: Row(
-                                  children: [
-                                    SizedBox(width: 12),
-                                    Icon(
-                                      Icons.check_circle_outline,
-                                      color: Color(0Xff1DBF73),
-                                    ),
-                                    SizedBox(width: 12.w),
-                                    Text(
-                                      "If a scam occurs, their money is protected.",
-                                      style: TextStyle(
-                                        color: Color(0xff1DBF73),
+                                    Spacer(),
+                                    SizedBox(
+                                      width: 140.w,
+                                      child: Column(
+                                        spacing: 4,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            ": ${product?.condition ?? ''}",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                          SizedBox(height: 4),
+                                          Text(
+                                            ": ${product?.size ?? ''}",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                          SizedBox(height: 4),
+                                          Text(
+                                            ": ${product?.color ?? ''}",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                          SizedBox(height: 4),
+                                          Text(
+                                            ": ${DateFormat("dd MMM, yy h:mm a").format(DateTime.parse(product?.uploaded ?? '')) ?? ''}",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                          SizedBox(height: 4),
+                                          Text(
+                                            ": ${product?.remainingTime ?? '00h : 00m : 00s'}",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Color(0xff1A9882),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
-                            SizedBox(height: 25),
-                            Text(
-                              'Market Price: \$${product?.price ?? '0.00'} ',
-                              style: TextStyle(
-                                color: Color(0xff4A4C56),
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              "Last bid Price: \$${product?.minimumBid ?? '0.00'}  ",
-                              style: TextStyle(
-                                color: Color(0xff4A4C56),
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(height: 36.h),
-                            SizedBox(
-                              height: 60.h,
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Consumer<PlaceABidProvider>(
-                                      builder: (_, provider, __) {
-                                        return CustomMainButton(
-                                          onTap: () async {
-                                            context.read<PlaceABidProvider>().getAllBidsForProduct(product?.productId ?? '');
-                                            await provider.setIsBidding(true);
-                                          },
-                                          title: 'Place a Bid',
-                                        );
-                                      },
-                                    ),
+                              SizedBox(height: 20),
+                              Center(
+                                child: Container(
+                                  width: 320.w,
+                                  height: 25.h,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xffF4FCF8),
+                                    borderRadius: BorderRadius.circular(50),
                                   ),
-                                  SizedBox(width: 12.w),
-                                  Expanded(
-                                    child: CustomMainButton(
-                                      onTap: () {
-                                        context
-                                            .read<ParentScreensProvider>()
-                                            .onSelectedIndex(2);
-                                        Navigator.pushNamed(
-                                          context,
-                                          RouteNames.parentScreen,
-                                        );
-                                      },
-                                      title: 'Buy Now',
-                                    ),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(width: 12),
+                                      Icon(
+                                        Icons.check_circle_outline,
+                                        color: Color(0Xff1DBF73),
+                                      ),
+                                      SizedBox(width: 12.w),
+                                      Text(
+                                        "If a scam occurs, their money is protected.",
+                                        style: TextStyle(
+                                          color: Color(0xff1DBF73),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
-                          ],
-                        )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Total bid",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: Colors.black,
+                              SizedBox(height: 25),
+                              Text(
+                                'Market Price: \$${product?.price ?? '0.00'} ',
+                                style: TextStyle(
+                                  color: Color(0xff4A4C56),
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 4),
-                            Consumer<PlaceABidProvider>(
-                              builder: (_, bidListProvider, __) {
-                                final bids = bidListProvider.bidsResponse?.bids;
-                                return Column(
-                                  spacing: 16.h,
-                                  children: List.generate(bids?.length ?? 0, (
-                                    index,
-                                  ) {
-                                    final bid = bids?[index];
-                                    return BiderListCard(bid: bid);
-                                  }),
-                                );
-                              },
-                            ),
-                            CustomTextField(
-                              title: '',
-                              hintText: 'Enter your bid price',
-                              controller: _bidController,
-                            ),
-                            Consumer<PlaceABidProvider>(
-                              builder: (_, pro, __) {
-                                return Visibility(
-                                  visible: !pro.isCreateBidLoading,
-                                  replacement: const Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                  child: PrimaryButton(
-                                    onTap: () async {
-                                      if (_bidController.text.isNotEmpty) {
-                                        final result = await pro
-                                            .createBidByProductId(
-                                              product?.productId ?? '',
-                                              _bidController.text,
-                                            );
-                                        if (result) {
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            SnackBar(
-                                              content: Text(pro.message),
-                                            ),
+                              SizedBox(height: 4),
+                              Text(
+                                "Last bid Price: \$${product?.minimumBid ?? '0.00'}  ",
+                                style: TextStyle(
+                                  color: Color(0xff4A4C56),
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              SizedBox(height: 36.h),
+                              SizedBox(
+                                height: 60.h,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Consumer<PlaceABidProvider>(
+                                        builder: (_, provider, __) {
+                                          return CustomMainButton(
+                                            onTap: () async {
+                                              context.read<PlaceABidProvider>().getAllBidsForProduct(product?.productId ?? '');
+                                              await provider.setIsBidding(true);
+                                            },
+                                            title: 'Place a Bid',
                                           );
+                                        },
+                                      ),
+                                    ),
+                                    SizedBox(width: 12.w),
+                                    Expanded(
+                                      child: CustomMainButton(
+                                        onTap: () {
+                                          context
+                                              .read<ParentScreensProvider>()
+                                              .onSelectedIndex(2);
                                           Navigator.pushNamed(
                                             context,
-                                            RouteNames.bidSuccessScreen,
+                                            RouteNames.parentScreen,
                                           );
-                                        } else {
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            SnackBar(
-                                              content: Text(pro.message),
-                                            ),
+                                        },
+                                        title: 'Buy Now',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Total bid",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Consumer<PlaceABidProvider>(
+                                builder: (_, bidListProvider, __) {
+                                  print("Bids count: ${bidListProvider.bidsResponse?.bids.length}");
+                                  final bids = bidListProvider.bidsResponse?.bids ?? [];
+                                  if (bids.isEmpty) {
+                                    return const Text("No bids yet");
+                                  }
+                                  return Column(
+                                    spacing: 16.h,
+                                    children: bids.map((bid) => BiderListCard(bid: bid)).toList(),
+                                  );
+                                },
+                              ),
+                              CustomTextField(
+                                title: '',
+                                hintText: 'Enter your bid price',
+                                controller: _bidController,
+                              ),
+                              Consumer<PlaceABidProvider>(
+                                builder: (_, pro, __) {
+                                  return Visibility(
+                                    visible: !pro.isCreateBidLoading,
+                                    replacement: const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                    child: PrimaryButton(
+                                      onTap: () async {
+                                        if (_bidController.text.isNotEmpty) {
+                                          final bidAmount = double.tryParse(_bidController.text.trim()) ?? 0.0;
+                                          final productPrice = double.tryParse(product?.price.toString() ?? '0') ?? 0.0;
+
+                                          if (bidAmount >= productPrice) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                  'Bid amount must be less than product price',
+                                                  style: TextStyle(color: Colors.white),
+                                                ),
+                                              ),
+                                            );
+                                            return;
+                                          }
+
+                                          final result = await pro.createBidByProductId(
+                                            product?.productId ?? '',
+                                            _bidController.text,
                                           );
+
+                                          if (result) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(content: Text(pro.message)),
+                                            );
+                                            Navigator.pushReplacementNamed(
+                                              context,
+                                              RouteNames.bidSuccessScreen,
+                                            );
+                                          } else {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(content: Text(pro.message)),
+                                            );
+                                          }
                                         }
-                                      }
-                                    },
-                                    title: 'Bid Now',
-                                    color: Colors.red,
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                  SizedBox(height: 60.h),
-                ],
+                                      },
+                                      title: 'Bid Now',
+                                      color: Colors.red,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                    SizedBox(height: 60.h),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
