@@ -34,7 +34,6 @@ class ApiEndpoints {
       '$baseUrl/api/bid/singleproductbid/$id';
   static String createBid = '$baseUrl/api/bid/create';
 
-
   //  bought product
   static String totalBoughtProduct(int page, int limit) =>
       '$baseUrl/api/dashborad/total-brought-item/?page=$page&perPage=$limit';
@@ -44,4 +43,11 @@ class ApiEndpoints {
       '$baseUrl/api/dashborad/bought-delivered-item';
   static String boughtCancelProduct =
       '$baseUrl/api/dashborad/bought-cancelled-item';
+
+
+  static const String getRequestedBidsForSeller = '$baseUrl/api/bid/seller-product-bids';
+  static const String getAcceptedBidsForSeller = '$baseUrl/api/bid/seller-accepted-bids';
+  static String updateBidStatus(String productId) => '$baseUrl/api/bid/update-status/$productId';
+  static const String getOnProgressBidsForBuyer = '$baseUrl/api/bid/my-pending-bids';
+  static const String getAcceptedBidsForBuyer = '$baseUrl/api/bid/my-accepted-bids';
 }

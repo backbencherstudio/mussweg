@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:mussweg/core/constants/api_end_points.dart';
 import 'package:mussweg/view_model/product_item_list_provider/category_based_product_provider.dart';
 import 'package:mussweg/view_model/product_item_list_provider/get_product_details_provider.dart';
@@ -322,7 +323,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                               color: const Color(0xff777980), size: 16.h),
                                           SizedBox(width: 3.w),
                                           Text(
-                                            product.createdTime,
+                                            DateFormat("dd MMM, yy h:mm a").format(DateTime.parse(product.createdTime)),
                                             style: TextStyle(
                                               fontSize: 13.sp,
                                               color: const Color(0xff777980),

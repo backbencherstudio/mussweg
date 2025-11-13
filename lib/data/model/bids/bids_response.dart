@@ -23,15 +23,6 @@ class BidsResponse {
           : [],
     );
   }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'success': success,
-      'message': message,
-      'product': product?.toJson(),
-      'bids': bids.map((x) => x.toJson()).toList(),
-    };
-  }
 }
 
 class Product {
@@ -39,7 +30,7 @@ class Product {
   final String productTitle;
   final String location;
   final String price;
-  final String? photo;
+  final List<String>? photo;
   final String condition;
   final String size;
   final String? boostUntil;
@@ -61,24 +52,13 @@ class Product {
       productTitle: json['product_title'] ?? '',
       location: json['location'] ?? '',
       price: json['price'] ?? '',
-      photo: json['photo'],
+      photo: json['photo'] != null
+          ? List<String>.from(json['photo'].map((x) => x.toString()))
+          : [],
       condition: json['condition'] ?? '',
       size: json['size'] ?? '',
       boostUntil: json['boost_until'],
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'product_title': productTitle,
-      'location': location,
-      'price': price,
-      'photo': photo,
-      'condition': condition,
-      'size': size,
-      'boost_until': boostUntil,
-    };
   }
 }
 
@@ -86,6 +66,7 @@ class Bid {
   final String id;
   final String bidAmount;
   final String status;
+  final String lastUpdated;
   final String biderId;
   final String biderName;
   final String biderAvatar;
@@ -94,6 +75,7 @@ class Bid {
     required this.id,
     required this.bidAmount,
     required this.status,
+    required this.lastUpdated,
     required this.biderId,
     required this.biderName,
     required this.biderAvatar,
@@ -104,20 +86,10 @@ class Bid {
       id: json['id'] ?? '',
       bidAmount: json['bid_amount'] ?? '',
       status: json['status'] ?? '',
+      lastUpdated: json['last_updated'] ?? '',
       biderId: json['bider_id'] ?? '',
       biderName: json['bider_name'] ?? '',
       biderAvatar: json['bider_avatar'] ?? '',
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'bid_amount': bidAmount,
-      'status': status,
-      'bider_id': biderId,
-      'bider_name': biderName,
-      'bider_avatar': biderAvatar,
-    };
   }
 }

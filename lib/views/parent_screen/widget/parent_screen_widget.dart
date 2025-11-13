@@ -145,7 +145,7 @@ class _CenterTabButton extends StatelessWidget {
               color: const Color(0xffDE3526),
               border: Border.all(color: Colors.white, width: 5.w),
             ),
-            child: Image.asset('assets/icons/Frame.png',scale: 3,),
+            child: Icon(Icons.add, size: 32.h, color: Colors.white,),
           ),
         );
       },
