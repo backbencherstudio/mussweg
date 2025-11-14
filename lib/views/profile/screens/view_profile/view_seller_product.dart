@@ -326,6 +326,8 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                                   productId: userAllProducts?[index].id ?? '',
                                   productDate: userAllProducts?[index].uploaded ?? '',
                                   productBoostTime: userAllProducts?[index].remainingTime ?? '',
+                                  productSize: userAllProducts?[index].size ?? '',
+                                  condition: userAllProducts?[index].condition ?? '',
                                 );
                               },
                             );

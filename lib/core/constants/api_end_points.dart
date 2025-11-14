@@ -28,7 +28,7 @@ class ApiEndpoints {
   static String updateProductById(String id) =>
       '$baseUrl/api/products/updatebyid/$id';
 
-  static String createBoost(String id) => '$baseUrl/api/products/create-boost';
+  static String createBoost = '$baseUrl/api/products/create-boost';
 
   static String getProductBids(String id) =>
       '$baseUrl/api/bid/singleproductbid/$id';

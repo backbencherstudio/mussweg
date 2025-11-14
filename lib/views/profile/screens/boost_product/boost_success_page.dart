@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/core/routes/route_names.dart';
+import 'package:provider/provider.dart';
+
+import '../../../../view_model/profile/user_all_products/user_all_products_provider.dart';
 
 class BoostSuccessPage extends StatelessWidget {
   const BoostSuccessPage({super.key});
@@ -18,8 +21,7 @@ class BoostSuccessPage extends StatelessWidget {
         ),
         title: Text(
           'Boost Successfully',
-          style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 18.sp),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
         ),
         centerTitle: true,
       ),
@@ -35,8 +37,9 @@ class BoostSuccessPage extends StatelessWidget {
                 width: double.infinity.w,
                 child: Container(
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20.r),
-                      border: Border.all(color: Colors.grey.shade100)),
+                    borderRadius: BorderRadius.circular(20.r),
+                    border: Border.all(color: Colors.grey.shade100),
+                  ),
                   child: Card(
                     color: Colors.white,
                     elevation: 0,
@@ -87,13 +90,21 @@ class BoostSuccessPage extends StatelessWidget {
                           ),
                           SizedBox(height: 32.h),
                           ElevatedButton(
-                            onPressed: () {
-                           Navigator.pushReplacementNamed(context, RouteNames.sellerProfilePage);
+                            onPressed: () async {
+                              await context
+                                  .read<UserAllProductsProvider>()
+                                  .getAllUserProduct();
+                              Navigator.pushReplacementNamed(
+                                context,
+                                RouteNames.sellerProfilePage,
+                              );
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Color(0xffDE3526),
                               padding: EdgeInsets.symmetric(
-                                  horizontal: 40.w, vertical: 16.h),
+                                horizontal: 40.w,
+                                vertical: 16.h,
+                              ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10.r),
                               ),

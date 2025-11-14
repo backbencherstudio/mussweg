@@ -6,12 +6,14 @@ class CustomTextField extends StatelessWidget {
   final String hintText;
   final IconData? icon; // 👈 optional now
   final TextEditingController controller;
+  final bool? readOnly;
 
   const CustomTextField({
     super.key,
     required this.title,
     required this.hintText,
-    this.icon, required this.controller, // 👈 no longer required
+    this.icon,
+    required this.controller, this.readOnly, // 👈 no longer required
   });
 
   @override
@@ -23,13 +25,11 @@ class CustomTextField extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 14.sp,
-            ),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
           ),
           SizedBox(height: 8.h),
           TextField(
+            readOnly: readOnly ?? false,
             controller: controller,
             decoration: InputDecoration(
               hintText: hintText,
