@@ -168,14 +168,19 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.production_quantity_limits,
-                              color: Colors.grey.shade400,
-                              size: 40.h,
-                            ),
-                            SizedBox(height: 5.h),
+                            Image.asset('assets/images/noItem.png', height: 200.h, fit: BoxFit.fitHeight,),
+                            SizedBox(height: 8.h),
                             Text(
                               "No Products Found",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20.sp,
+                              ),
+                            ),
+                            SizedBox(height: 8.h),
+                            Text(
+                              "You don't have any active listing yet. Create your\nfirst listing to get started!",
+                              textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 14.sp,

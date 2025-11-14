@@ -1,5 +1,8 @@
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:mussweg/core/constants/api_end_points.dart';
 import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/view_model/boost_product/boost_product_create_provider.dart';
@@ -8,7 +11,6 @@ import 'package:mussweg/views/profile/widgets/pickup_option_widget.dart';
 import 'package:provider/provider.dart';
 import '../../../view_model/bid/place_a_bid_provider.dart';
 import '../../../view_model/product_item_list_provider/get_product_details_provider.dart';
-import '../../../view_model/profile/user_all_products/user_all_products_provider.dart';
 import '../screens/view_profile/edit_product_page.dart';
 
 class ProductCard extends StatelessWidget {
@@ -17,6 +19,8 @@ class ProductCard extends StatelessWidget {
   final String productName;
   final String price;
   final String productDate;
+  final String productSize;
+  final String condition;
   final String productBoostTime;
   final bool isBoosted;
 
@@ -29,6 +33,8 @@ class ProductCard extends StatelessWidget {
     required this.productId,
     required this.productDate,
     required this.productBoostTime,
+    required this.productSize,
+    required this.condition,
   });
 
   @override
@@ -37,10 +43,7 @@ class ProductCard extends StatelessWidget {
       onTap: () {
         context.read<GetProductDetailsProvider>().getProductDetails(productId);
         context.read<PlaceABidProvider>().getAllBidsForProduct(productId);
-        Navigator.pushNamed(
-          context,
-          RouteNames.productDetailsScreen,
-        );
+        Navigator.pushNamed(context, RouteNames.productDetailsScreen);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -65,30 +68,34 @@ class ProductCard extends StatelessWidget {
                   alignment: Alignment.topCenter,
                   child: SizedBox(
                     width: double.infinity,
-                    child: imageUrl != null || imageUrl != '' ? ClipRRect(
-                      borderRadius: BorderRadius.circular(8.r),
-                      child: Image.network(
-                        "${ApiEndpoints.baseUrl}${imageUrl?.replaceAll('http://localhost:5005', '')}",
-                        height: 110.h,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
-                          height: 110.h,
-                          color: Colors.grey[300],
-                          child: Image.asset(
-                            'assets/images/placeholder.jpg',
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                      ),
-                    ) : Container(
-                      height: 110.h,
-                      color: Colors.grey[300],
-                      child: Image.asset(
-                        'assets/images/placeholder.jpg',
-                        fit: BoxFit.fill,
-                      ),
-                    ),
+                    child:
+                        imageUrl != null || imageUrl != ''
+                            ? ClipRRect(
+                              borderRadius: BorderRadius.circular(8.r),
+                              child: Image.network(
+                                "${ApiEndpoints.baseUrl}${imageUrl?.replaceAll('http://localhost:5005', '')}",
+                                height: 110.h,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                                errorBuilder:
+                                    (_, __, ___) => Container(
+                                      height: 110.h,
+                                      color: Colors.grey[300],
+                                      child: Image.asset(
+                                        'assets/images/placeholder.jpg',
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                              ),
+                            )
+                            : Container(
+                              height: 110.h,
+                              color: Colors.grey[300],
+                              child: Image.asset(
+                                'assets/images/placeholder.jpg',
+                                fit: BoxFit.fill,
+                              ),
+                            ),
                   ),
                 ),
                 Positioned(
@@ -101,8 +108,12 @@ class ProductCard extends StatelessWidget {
                     ),
                     onSelected: (value) {
                       if (value == 'edit') {
-                        context.read<GetProductDetailsProvider>().getProductDetails(productId);
-                        context.read<PlaceABidProvider>().getAllBidsForProduct(productId);
+                        context
+                            .read<GetProductDetailsProvider>()
+                            .getProductDetails(productId);
+                        context.read<PlaceABidProvider>().getAllBidsForProduct(
+                          productId,
+                        );
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -110,115 +121,75 @@ class ProductCard extends StatelessWidget {
                           ),
                         );
                       } else if (value == 'boost_products') {
-                        showDialog(
-                          context: context,
-                          builder: (ctx) {
-                            return AlertDialog(
-                              title: const Text("Boost Products"),
-                              content: const Text(
-                                "Do you want to boost this product?",
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(ctx),
-                                  child: const Text("Cancel"),
-                                ),
-                                Consumer<BoostProductCreateProvider>(
-                                  builder: (_, boostProductCreateProvider, __) {
-                                    return ElevatedButton(
-                                      onPressed:
-                                          boostProductCreateProvider.isLoading
-                                          ? null
-                                          : () async {
-                                              bool success =
-                                                  await boostProductCreateProvider
-                                                      .createBoostProduct(
-                                                        productId,
-                                                      );
-
-                                              if (success) {
-                                                Navigator.pop(ctx);
-
-                                                ScaffoldMessenger.of(
-                                                  context,
-                                                ).showSnackBar(
-                                                  const SnackBar(
-                                                    content: Text(
-                                                      "Product Boosted Successfully",
-                                                    ),
-                                                  ),
-                                                );
-                                              } else {
-                                                ScaffoldMessenger.of(
-                                                  context,
-                                                ).showSnackBar(
-                                                  SnackBar(
-                                                    content: Text(
-                                                      boostProductCreateProvider
-                                                              .errorMessage
-                                                              .isNotEmpty
-                                                          ? boostProductCreateProvider
-                                                                .errorMessage
-                                                          : "Failed to boost product",
-                                                    ),
-                                                  ),
-                                                );
-                                              }
-                                            },
-                                      child: boostProductCreateProvider.isLoading
-                                          ? const SizedBox(
-                                              height: 20,
-                                              width: 20,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 2,
-                                              ),
-                                            )
-                                          : const Text("Boost"),
-                                    );
-                                  },
-                                ),
-                              ],
-                            );
-                          },
+                        context.read<BoostProductCreateProvider>().setProductId(
+                          productId,
+                        );
+                        context.read<BoostProductCreateProvider>().setImage(
+                          imageUrl ?? '',
+                        );
+                        context.read<BoostProductCreateProvider>().setTitle(
+                          productName,
+                        );
+                        context.read<BoostProductCreateProvider>().setSize(
+                          productSize,
+                        );
+                        context.read<BoostProductCreateProvider>().setCondition(
+                          condition,
+                        );
+                        context.read<BoostProductCreateProvider>().setPrice(
+                          price,
+                        );
+                        context.read<BoostProductCreateProvider>().setTime(
+                          productDate,
+                        );
+                        context.read<BoostProductCreateProvider>().setBoostTime(
+                          productBoostTime,
+                        );
+                        Navigator.pushNamed(
+                          context,
+                          RouteNames.boostProductPage,
                         );
                       } else if (value == 'delete') {
                         showDialog(
                           context: context,
-                          builder: (ctx) => AlertDialog(
-                            title: const Text("Delete Product"),
-                            content: const Text(
-                              "Are you sure you want to delete this product?",
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(ctx),
-                                child: const Text("Cancel"),
+                          builder:
+                              (ctx) => AlertDialog(
+                                title: const Text("Delete Product"),
+                                content: const Text(
+                                  "Are you sure you want to delete this product?",
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(ctx),
+                                    child: const Text("Cancel"),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pop(ctx);
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text("Product Deleted"),
+                                        ),
+                                      );
+                                    },
+                                    child: const Text("Delete"),
+                                  ),
+                                ],
                               ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.pop(ctx);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Product Deleted"),
-                                    ),
-                                  );
-                                },
-                                child: const Text("Delete"),
-                              ),
-                            ],
-                          ),
                         );
                       }
                     },
-                    itemBuilder: (BuildContext context) =>
-                        <PopupMenuEntry<String>>[
+                    itemBuilder:
+                        (BuildContext context) => <PopupMenuEntry<String>>[
                           const PopupMenuItem<String>(
                             value: 'edit',
                             child: Text('Edit'),
                           ),
                           const PopupMenuItem<String>(
                             value: 'boost_products',
-                            child: Text('Boost Products'),
+                            child: Text('Boost'),
                           ),
                           const PopupMenuItem<String>(
                             value: 'delete',
@@ -253,7 +224,9 @@ class ProductCard extends StatelessWidget {
                   ),
                   SizedBox(height: 5.h),
                   Text(
-                    productDate,
+                    DateFormat(
+                      "dd MMM, yy h:mm a",
+                    ).format(DateTime.parse(productDate)),
                     style: TextStyle(
                       fontSize: 11.sp,
                       fontWeight: FontWeight.w400,
@@ -261,14 +234,19 @@ class ProductCard extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 5.w),
-                  Text(
-                    productBoostTime,
-                    style: TextStyle(
-                      fontSize: 11.sp,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff1A9882),
-                    ),
-                  ),
+                  (productBoostTime != null && productBoostTime.isNotEmpty)
+                      ? Text(
+                        DateFormat(
+                          "dd MMM, yy h:mm a",
+                        ).format(DateTime.parse(productBoostTime)),
+                        style: TextStyle(
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xff1A9882),
+                        ),
+                      )
+                      : Text(''),
+
                   Divider(color: Color(0xffE9E9EA)),
                   Row(
                     children: [

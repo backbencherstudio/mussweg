@@ -293,5 +293,4 @@ class _BidListState extends State<BidList> {
       ),
     );
   }
-
 }
