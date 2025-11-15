@@ -9,6 +9,7 @@ class PickupOptionProvider extends ChangeNotifier {
 
   void selectOption(PickupOption option) {
     _selectedOption = option;
+    debugPrint("The mussweg type $_selectedOption");
     notifyListeners();
   }
 }

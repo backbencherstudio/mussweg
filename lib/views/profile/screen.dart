@@ -15,6 +15,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/constants/api_end_points.dart';
 import '../../view_model/auth/login/get_me_viewmodel.dart';
+import '../../view_model/auth/login/user_profile_get_me_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -31,6 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<GetMeViewmodel>().fetchUserData();
+      context.read<UserProfileGetMeProvider>().getUserProfileDetails();
       context.read<UserAllProductsProvider>().getAllUserProduct();
     });
   }
@@ -77,6 +79,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             width: 90,
                             height: 90,
                             fit: BoxFit.cover,
+                            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                      : null,
+                                ),
+                              );
+                            },
                             errorBuilder: (_, __, ___) {
                               return SizedBox(
                                 width: 90,

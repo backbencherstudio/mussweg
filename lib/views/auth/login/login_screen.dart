@@ -7,6 +7,7 @@ import 'package:mussweg/views/auth/sign_up/screen/sign_up_screen.dart';
 import 'package:provider/provider.dart';
 import '../../../view_model/auth/login/get_me_viewmodel.dart';
 import '../../../view_model/auth/login/login_viewmodel.dart';
+import '../../../view_model/auth/login/user_profile_get_me_provider.dart';
 import '../../../view_model/home_provider/all_category_provider.dart';
 import '../sign_up/widgets/buttons.dart';
 import '../sign_up/widgets/signup_form.dart';
@@ -191,6 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
             if (result) {
               await context.read<GetMeViewmodel>().fetchUserData();
+              await context.read<UserProfileGetMeProvider>().getUserProfileDetails();
               await context.read<AllCategoryProvider>().getAllCategories();
 
               if (!mounted) return;

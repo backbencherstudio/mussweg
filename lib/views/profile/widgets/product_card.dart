@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:mussweg/core/constants/api_end_points.dart';
 import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/view_model/boost_product/boost_product_create_provider.dart';
+import 'package:mussweg/view_model/mussweg/mussweg_product_screen_provider.dart';
 import 'package:mussweg/views/auth/sign_up/widgets/buttons.dart';
 import 'package:mussweg/views/profile/widgets/pickup_option_widget.dart';
 import 'package:provider/provider.dart';
@@ -77,6 +78,20 @@ class ProductCard extends StatelessWidget {
                                 height: 110.h,
                                 width: double.infinity,
                                 fit: BoxFit.cover,
+                                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return SizedBox(
+                                    height: 110.h,
+                                    width: double.infinity,
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        value: loadingProgress.expectedTotalBytes != null
+                                            ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                            : null,
+                                      ),
+                                    ),
+                                  );
+                                },
                                 errorBuilder:
                                     (_, __, ___) => Container(
                                       height: 110.h,
@@ -272,15 +287,8 @@ class ProductCard extends StatelessWidget {
                           width: 70.w,
                           child: PrimaryButton(
                             onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    backgroundColor: Colors.white,
-                                    content: PickupOptionWidget(),
-                                  );
-                                },
-                              );
+                              context.read<MusswegProductScreenProvider>().setProductId(productId);
+                              Navigator.pushNamed(context, RouteNames.musswegGuidelineScreen);
                             },
                             title: 'Muss Weg',
                             textSize: 12.sp,

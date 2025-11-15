@@ -42,6 +42,16 @@ class HomeScreen extends StatelessWidget {
                               fit: BoxFit.cover,
                               width: 50.w,
                               height: 50.h,
+                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          );
+                        },
                               errorBuilder: (_, __, ___) {
                                 return Container(
                                   height: 50.w,
@@ -277,6 +287,16 @@ class HomeScreen extends StatelessWidget {
                                         height: 45.h,
                                         width: 45.w,
                                         fit: BoxFit.cover,
+                                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                          if (loadingProgress == null) return child;
+                                          return Center(
+                                            child: CircularProgressIndicator(
+                                              value: loadingProgress.expectedTotalBytes != null
+                                                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                                  : null,
+                                            ),
+                                          );
+                                        },
                                         errorBuilder: (_, __, ___) {
                                           return Icon(
                                             Icons.error,

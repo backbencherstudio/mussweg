@@ -7,6 +7,8 @@ import 'package:mussweg/views/auth/sign_up/widgets/buttons.dart';
 import 'package:mussweg/views/widgets/simple_apppbar.dart';
 import 'package:provider/provider.dart';
 
+import '../../../view_model/auth/login/user_profile_get_me_provider.dart';
+
 class AccountSettingsPage extends StatefulWidget {
   const AccountSettingsPage({super.key});
 
@@ -190,6 +192,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                             }
 
                             await context.read<GetMeViewmodel>().fetchUserData();
+                            await context.read<UserProfileGetMeProvider>().getUserProfileDetails();
                           },
                           title: 'Update',
                           color: Colors.red,
