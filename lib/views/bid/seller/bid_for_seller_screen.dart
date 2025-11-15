@@ -221,6 +221,20 @@ class BidCardForSeller extends StatelessWidget {
                 width: 80.w,
                 height: 60.h,
                 fit: BoxFit.cover,
+                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return SizedBox(
+                    width: 80.w,
+                    height: 60.h,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    ),
+                  );
+                },
                 errorBuilder: (_, __, ___) {
                   return Image.asset(
                     'assets/images/placeholder.jpg',

@@ -9,6 +9,10 @@ import 'package:mussweg/views/bought_items/bought_items_screen.dart';
 import 'package:mussweg/views/cart/cart_screen.dart';
 import 'package:mussweg/views/checkout/screen/checkout_cart_list_screen.dart';
 import 'package:mussweg/views/home/screens/bid_success_screen.dart';
+import 'package:mussweg/views/mussweg/screens/location_pick_screen.dart';
+import 'package:mussweg/views/mussweg/screens/mussweg_guideline_screen.dart';
+import 'package:mussweg/views/mussweg/screens/mussweg_product_screen.dart';
+import 'package:mussweg/views/mussweg/screens/schedule_pick_up_screen.dart';
 
 import 'package:mussweg/views/onboarding/screen/onboarding_screen.dart';
 import 'package:mussweg/views/order_placed/screen/weg_success_screen.dart';
@@ -85,5 +89,9 @@ class AppRoutes {
     RouteNames.cartScreen:(context) => const CartScreen(),
     RouteNames.loginScreen:(context) => const LoginScreen(),
     RouteNames.trackProgressScreen:(context) => const TrackProgressScreen(),
+    RouteNames.musswegGuidelineScreen:(context) => const MusswegGuidelineScreen(),
+    RouteNames.musswegProductScreen:(context) => const MusswegProductScreen(),
+    RouteNames.schedulePickUpScreen:(context) => const SchedulePickUpScreen(),
+    RouteNames.locationPickScreen:(context) => const LocationPickerScreen(),
   };
 }

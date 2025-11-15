@@ -26,34 +26,28 @@ class SuccessScreen extends StatelessWidget {
             Card(
               color: Colors.white,
               margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
-                child: Column(
-                  children: [
-                    SizedBox(height: 20.h),
-                    Image.asset('assets/icons/success-icon.png'),
-                    SizedBox(height: 10.h),
-                    Text(
-                      'Congratulations, your\nitem is weg!',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 24.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF4A4C56),
+              child: SizedBox(
+                width: double.infinity,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 20.h),
+                      Image.asset('assets/icons/success-icon.png'),
+                      SizedBox(height: 10.h),
+                      Text(
+                        'Congratulations, your\nitem is weg!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF4A4C56),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10.h),
-
-                    CustomButton(
-                      text: 'Track Your Order',
-                      textColor: Colors.white,
-                      buttonColor: Colors.red,
-                      onPressed: () {
-                        Navigator.pushReplacementNamed(context, RouteNames.trackProgressScreen);
-                      },
-                    ),
-                    SizedBox(height: 10.h),
-                  ],
+                      SizedBox(height: 10.h),
+                      SizedBox(height: 10.h),
+                    ],
+                  ),
                 ),
               ),
             ),

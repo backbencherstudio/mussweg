@@ -37,6 +37,16 @@ class ViewProfileScreen extends StatelessWidget {
                       fit: BoxFit.cover,
                       width: 80.w,
                       height: 80.h,
+                      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        );
+                      },
                       errorBuilder: (context, error, stackTrace) {
                         return Image.asset(
                           'assets/icons/user.png',

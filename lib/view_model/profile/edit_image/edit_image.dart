@@ -14,6 +14,7 @@ class SellerProfileProvider extends ChangeNotifier {
   final tokenStorage = TokenStorage();
 
   File? profileImage;
+  File? coverImage;
   bool _isUploading = false;
   String? _uploadMessage;
 
@@ -66,6 +67,71 @@ class SellerProfileProvider extends ChangeNotifier {
         _uploadMessage = data['message'] ?? 'Profile updated successfully.';
         _isUploading = false;
         debugPrint('---- profile image updated ----');
+        notifyListeners();
+        return true;
+      } else {
+        debugPrint("Upload failed?? ${response.statusCode}");
+        debugPrint(responseBody);
+        _isUploading = false;
+        notifyListeners();
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Error uploading image: $e");
+      _isUploading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  ///===================================
+
+  Future<void> pickCoverImage() async {         //profile picture pick korbo
+    final picked = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
+    if (picked != null) {
+      coverImage = File(picked.path);
+      notifyListeners();
+    }
+  }
+
+  Future<bool> uploadCoverImage() async {       //selected picture upload korbo
+    if (coverImage == null) {
+      debugPrint("No image selected for upload.");
+      return false;
+    }
+
+    _isUploading = true;
+    notifyListeners();
+
+    final url = Uri.parse(ApiEndpoints.updateProfile);
+    try {
+      final accessToken = await tokenStorage.getToken();
+      if (accessToken == null) {
+        debugPrint("Access token missing.");
+        return false;
+      }
+
+      final request = http.MultipartRequest('PATCH', url);
+      request.headers['Authorization'] = 'Bearer $accessToken';
+
+      final mimeType = lookupMimeType(coverImage!.path);
+      final filename = path.basename(coverImage!.path);
+
+      request.files.add(await http.MultipartFile.fromPath(
+        'cover_image',
+        coverImage!.path,
+        filename: filename,
+        contentType: mimeType != null ? MediaType.parse(mimeType) : null,
+      ));
+
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(responseBody);
+        _uploadMessage = data['message'] ?? 'Profile updated successfully.';
+        _isUploading = false;
+        debugPrint('---- profile Cover Photo updated ----');
         notifyListeners();
         return true;
       } else {

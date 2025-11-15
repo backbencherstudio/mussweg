@@ -9,6 +9,7 @@ class ApiEndpoints {
   static const String resendCode =
       '$baseUrl/api/auth/resend-verification-email';
   static const String getMe = '$baseUrl/api/auth/me';
+  static const String getUserProfileDetails = '$baseUrl/api/profile/me';
   static const String forgetPassword = '$baseUrl/api/auth/forgot-password';
   static const String resetPassword = '$baseUrl/api/auth/reset-password';
 
@@ -52,4 +53,5 @@ class ApiEndpoints {
   static const String getAcceptedBidsForBuyer = '$baseUrl/api/bid/my-accepted-bids';
 
   static String createReview = '$baseUrl/api/review/create';
+  static String createMusswegDisposal(String productId) => '$baseUrl/api/disposal/create/$productId';
 }

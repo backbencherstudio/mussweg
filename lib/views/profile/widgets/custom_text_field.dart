@@ -7,13 +7,14 @@ class CustomTextField extends StatelessWidget {
   final IconData? icon; // 👈 optional now
   final TextEditingController controller;
   final bool? readOnly;
+  final int? maxLine;
 
   const CustomTextField({
     super.key,
     required this.title,
     required this.hintText,
     this.icon,
-    required this.controller, this.readOnly, // 👈 no longer required
+    required this.controller, this.readOnly, this.maxLine, // 👈 no longer required
   });
 
   @override
@@ -31,6 +32,7 @@ class CustomTextField extends StatelessWidget {
           TextField(
             readOnly: readOnly ?? false,
             controller: controller,
+            maxLines: maxLine ?? 1,
             decoration: InputDecoration(
               hintText: hintText,
               suffixIcon: icon != null ? Icon(icon) : null,

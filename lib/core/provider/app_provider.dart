@@ -1,6 +1,8 @@
+import 'package:mussweg/view_model/auth/login/user_profile_get_me_provider.dart';
 import 'package:mussweg/view_model/bid/bid_for_buyer_provider.dart';
 import 'package:mussweg/view_model/bid/place_a_bid_provider.dart';
 import 'package:mussweg/view_model/home_provider/all_category_provider.dart';
+import 'package:mussweg/view_model/mussweg/mussweg_product_screen_provider.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:mussweg/view_model/pickup/pickup_option_provider.dart';
 import 'package:mussweg/view_model/profile/update_item_service.dart';
@@ -53,6 +55,7 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => ForgetPasswordProvider()),
     ChangeNotifierProvider(create: (_) => AllCategoryProvider()),
     ChangeNotifierProvider(create: (_) => GetMeViewmodel()),
+    ChangeNotifierProvider(create: (_) => UserProfileGetMeProvider()),
     ChangeNotifierProvider(create: (_) => PickupTimerProvider()),
     ChangeNotifierProvider(create: (_) => PickupOptionProvider()),
     ChangeNotifierProvider(create: (_) => FashionCategoryBasedProductProvider()),
@@ -62,6 +65,7 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => WhistlistProviderOfGetFavouriteProduct()),
     ChangeNotifierProvider(create: (_) => WishlistCreate()),
     ChangeNotifierProvider(create: (_) => SellerProfileProvider()),
+    ChangeNotifierProvider(create: (_) => MusswegProductScreenProvider()),
     ChangeNotifierProvider(create: (_) => BoostProductCreateProvider()),
     ChangeNotifierProvider(create: (_) => UserAllProductsProvider()),
     ChangeNotifierProvider(create: (_) => UpdateProfileDetailsProvider()),

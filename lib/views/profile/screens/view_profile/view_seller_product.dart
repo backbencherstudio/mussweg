@@ -7,6 +7,7 @@ import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/api_end_points.dart';
 import '../../../../view_model/auth/login/get_me_viewmodel.dart';
+import '../../../../view_model/auth/login/user_profile_get_me_provider.dart';
 import '../../../../view_model/profile/edit_image/edit_image.dart';
 import '../../widgets/product_card.dart';
 
@@ -36,24 +37,54 @@ class _SellerProfilePageState extends State<SellerProfilePage>
   @override
   Widget build(BuildContext context) {
     final userVM = Provider.of<GetMeViewmodel>(context);
+    final userProfileDetails =
+        context.watch<UserProfileGetMeProvider>().userProfileResponse?.data;
     final sellerVM = Provider.of<SellerProfileProvider>(context);
     final userProductVM = Provider.of<UserAllProductsProvider>(context);
-
 
     return Scaffold(
       appBar: SimpleApppbar(title: 'View Profile'),
       body: Column(
         children: [
           SizedBox(
-            height: 280.h,
+            height: 300.h,
             child: Stack(
               children: [
                 SizedBox(
                   height: 180.h,
                   width: double.infinity,
-                  child: Image.asset(
-                    'assets/images/cover.png',
-                    fit: BoxFit.cover,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12.r),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(
+                          color: Colors.grey.shade300,
+                          width: 1.w,
+                        ),
+                      ),
+                      child: Image.network(
+                        "${ApiEndpoints.baseUrl}/public/storage/coverPhoto/${userProfileDetails?.coverPhoto}",
+                        fit: BoxFit.cover,
+                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          );
+                        },
+                        errorBuilder: (_, __, ___) {
+                          return SizedBox(
+                            width: double.infinity,
+                            height: 180.h,
+                            child: Image.asset('assets/images/placeholder.jpg'),
+                          );
+                        },
+                      ),
+                    ),
                   ),
                 ),
 
@@ -64,17 +95,20 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                     onTap: () async {
                       await sellerVM.pickProfileImage();
                       if (sellerVM.profileImage != null) {
-                        final success = await sellerVM
-                            .uploadProfileImage();
+                        final success = await sellerVM.uploadProfileImage();
                         if (success) {
                           await context.read<GetMeViewmodel>().fetchUserData();
+                          await context
+                              .read<UserProfileGetMeProvider>()
+                              .getUserProfileDetails();
                         }
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
                                 success
-                                    ? sellerVM.uploadMessage ?? 'Profile updated'
+                                    ? sellerVM.uploadMessage ??
+                                        'Profile updated'
                                     : 'Upload failed',
                               ),
                             ),
@@ -103,11 +137,21 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                                 width: 90,
                                 height: 90,
                                 fit: BoxFit.cover,
+                                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      value: loadingProgress.expectedTotalBytes != null
+                                          ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                          : null,
+                                    ),
+                                  );
+                                },
                                 errorBuilder: (_, __, ___) {
                                   return SizedBox(
-                                      width: 90,
-                                      height: 90,
-                                      child: Image.asset('assets/icons/user.png',)
+                                    width: 90,
+                                    height: 90,
+                                    child: Image.asset('assets/icons/user.png'),
                                   );
                                 },
                               ),
@@ -134,10 +178,33 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                   ),
                 ),
                 Positioned(
-                  bottom: 120.h,
+                  bottom: 140.h,
                   right: 16.w,
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () async {
+                      await sellerVM.pickCoverImage();
+                      if (sellerVM.coverImage != null) {
+                        final success = await sellerVM.uploadCoverImage();
+                        if (success) {
+                          await context.read<GetMeViewmodel>().fetchUserData();
+                          await context
+                              .read<UserProfileGetMeProvider>()
+                              .getUserProfileDetails();
+                        }
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                success
+                                    ? sellerVM.uploadMessage ??
+                                        'Profile updated'
+                                    : 'Upload failed',
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                    },
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8.r),
                       child: BackdropFilter(
@@ -194,7 +261,9 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           ),
                           SizedBox(width: 4.w),
                           Text(
-                            '5.0',
+                            (userProfileDetails?.rating ?? 0).toStringAsFixed(
+                              1,
+                            ),
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               color: const Color(0xff777980),
@@ -202,7 +271,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                             ),
                           ),
                           Text(
-                            ' 86 Reviewers',
+                            ' - ${userProfileDetails?.reviewCount} Reviewers',
                             style: TextStyle(
                               color: const Color(0xff777980),
                               fontSize: 14.sp,
@@ -216,7 +285,40 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           Image.asset("assets/icons/location.png"),
                           SizedBox(width: 7.w),
                           Text(
-                            userVM.user?.address ?? 'unknown',
+                            '${userProfileDetails?.address}, ${userProfileDetails?.city}',
+                            style: TextStyle(
+                              color: const Color(0xff777980),
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.account_balance_wallet_outlined,
+                            size: 12.w,
+                            color: Colors.grey.shade500,
+                          ),
+                          SizedBox(width: 7.w),
+                          Text(
+                            userProfileDetails?.totalEarning ?? '',
+                            style: TextStyle(
+                              color: const Color(0xff777980),
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          SizedBox(width: 20.w),
+                          Icon(
+                            Icons.assignment_outlined,
+                            size: 12.w,
+                            color: Colors.grey.shade500,
+                          ),
+                          SizedBox(width: 7.w),
+                          Text(
+                            userProfileDetails?.totalEarning ?? '',
                             style: TextStyle(
                               color: const Color(0xff777980),
                               fontSize: 14.sp,
@@ -237,10 +339,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
             labelColor: Colors.red,
             unselectedLabelColor: Colors.grey,
             indicatorSize: TabBarIndicatorSize.tab,
-            tabs: const [
-              Tab(text: 'Offers'),
-              Tab(text: 'Reviews'),
-            ],
+            tabs: const [Tab(text: 'Offers'), Tab(text: 'Reviews')],
           ),
           Expanded(
             child: TabBarView(
@@ -253,9 +352,16 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                     children: [
                       Row(
                         children: [
-                          if (userProductVM.userAllProductsViewmodel?.data != null)
+                          if (userProductVM.userAllProductsViewmodel?.data !=
+                              null)
                             Text(
-                              userProductVM.userAllProductsViewmodel!.data.length > 50 ? '50+ products uploaded' : '${userProductVM.userAllProductsViewmodel?.data.length} products uploaded',
+                              userProductVM
+                                          .userAllProductsViewmodel!
+                                          .data
+                                          .length >
+                                      50
+                                  ? '50+ products uploaded'
+                                  : '${userProductVM.userAllProductsViewmodel?.data.length} products uploaded',
                               style: TextStyle(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w600,
@@ -285,7 +391,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                                     color: Colors.white,
                                     size: 16.w,
                                   ),
-                                  SizedBox(width: 4.w,),
+                                  SizedBox(width: 4.w),
                                   Text(
                                     'Sell',
                                     style: TextStyle(
@@ -304,7 +410,8 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                       Expanded(
                         child: Consumer<UserAllProductsProvider>(
                           builder: (_, provider, __) {
-                            final userAllProducts = provider.userAllProductsViewmodel?.data;
+                            final userAllProducts =
+                                provider.userAllProductsViewmodel?.data;
                             return GridView.builder(
                               itemCount: userAllProducts?.length ?? 0,
                               gridDelegate:
@@ -315,19 +422,33 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                                     childAspectRatio: .7,
                                   ),
                               itemBuilder: (context, index) {
-                                final image = (userAllProducts?[index].productPhotoUrl?.isNotEmpty ?? false)
-                                    ? userAllProducts![index].productPhotoUrl!.first
-                                    : null;
+                                final image =
+                                    (userAllProducts?[index]
+                                                .productPhotoUrl
+                                                ?.isNotEmpty ??
+                                            false)
+                                        ? userAllProducts![index]
+                                            .productPhotoUrl!
+                                            .first
+                                        : null;
                                 return ProductCard(
                                   imageUrl: image,
-                                  productName: userAllProducts?[index].title ?? '',
+                                  productName:
+                                      userAllProducts?[index].title ?? '',
                                   price: userAllProducts?[index].price ?? '',
-                                  isBoosted: userAllProducts?[index].remainingTime != null,
+                                  isBoosted:
+                                      userAllProducts?[index].remainingTime !=
+                                      null,
                                   productId: userAllProducts?[index].id ?? '',
-                                  productDate: userAllProducts?[index].uploaded ?? '',
-                                  productBoostTime: userAllProducts?[index].remainingTime ?? '',
-                                  productSize: userAllProducts?[index].size ?? '',
-                                  condition: userAllProducts?[index].condition ?? '',
+                                  productDate:
+                                      userAllProducts?[index].uploaded ?? '',
+                                  productBoostTime:
+                                      userAllProducts?[index].remainingTime ??
+                                      '',
+                                  productSize:
+                                      userAllProducts?[index].size ?? '',
+                                  condition:
+                                      userAllProducts?[index].condition ?? '',
                                 );
                               },
                             );

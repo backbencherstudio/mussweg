@@ -25,6 +25,16 @@ class BiderListCard extends StatelessWidget {
             height: 44.w,
             width: 44.w,
             fit: BoxFit.cover,
+            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Center(
+                child: CircularProgressIndicator(
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                      : null,
+                ),
+              );
+            },
             errorBuilder: (_, __, ___) {
               return ClipRRect(
                 borderRadius: BorderRadius.circular(90.r),

@@ -96,6 +96,16 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                           return Image.network(
                             "${ApiEndpoints.baseUrl}${product.productPhoto?[index].replaceAll('http://localhost:5005', '')}",
                             fit: BoxFit.cover,
+                            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                      : null,
+                                ),
+                              );
+                            },
                             errorBuilder: (_, __, ___) {
                               return Container(
                                 decoration: BoxDecoration(
@@ -146,6 +156,16 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                         height: 60.w,
                         width: 60.w,
                         fit: BoxFit.cover,
+                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          );
+                        },
                         errorBuilder: (_, __, ___) {
                           return Container(
                             padding: EdgeInsets.all(8.w),

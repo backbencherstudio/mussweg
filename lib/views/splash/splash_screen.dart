@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mussweg/view_model/auth/login/user_profile_get_me_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/routes/route_names.dart';
@@ -22,6 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(seconds: 2), () async {
       if (mounted) {
         context.read<GetMeViewmodel>().fetchUserData();
+        context.read<UserProfileGetMeProvider>().getUserProfileDetails();
         final token = await TokenStorage().getToken();
         if (token != null) {
           await context.read<AllCategoryProvider>().getAllCategories();
@@ -30,7 +32,6 @@ class _SplashScreenState extends State<SplashScreen> {
         } else {
           Navigator.pushReplacementNamed(context, RouteNames.onboardingScreen);
         }
-
       }
     });
   }
@@ -39,12 +40,21 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFDE3526),
-      body: Center(
-        child: Image.asset(
-          'assets/images/logo.png',
-          width: 250.w,
-          height: 150.h,
-        ),
+      body: Stack(
+        alignment: AlignmentGeometry.center,
+        children: [
+          Center(
+            child: Image.asset(
+              'assets/images/logo.png',
+              width: 250.w,
+              height: 150.h,
+            ),
+          ),
+          Positioned(
+            bottom: 120.h,
+            child: CircularProgressIndicator(color: Colors.white),
+          ),
+        ],
       ),
     );
   }

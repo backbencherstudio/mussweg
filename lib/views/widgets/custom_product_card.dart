@@ -69,6 +69,20 @@ class CustomProductCard extends StatelessWidget {
                           fit: BoxFit.cover,
                           height: 120.h,
                           width: double.infinity,
+                          loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return SizedBox(
+                              height: 120.h,
+                              width: double.infinity,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                      : null,
+                                ),
+                              ),
+                            );
+                          },
                           errorBuilder: (_, __, ___) => Container(
                             height: 120.h,
                             width: double.infinity,

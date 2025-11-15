@@ -41,6 +41,10 @@ class RouteNames {
   static const String bidForSellerScreen = '/bidForSellerScreen';
   static const String bidForBuyerScreen = '/bidForBuyerScreen';
   static const String trackProgressScreen = '/trackProgressScreen';
+  static const String musswegGuidelineScreen = '/musswegGuidelineScreen';
+  static const String musswegProductScreen = '/musswegProductScreen';
+  static const String schedulePickUpScreen = '/schedulePickUpScreen';
+  static const String locationPickScreen = '/locationPickScreen';
 
 
 }
