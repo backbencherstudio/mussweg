@@ -206,6 +206,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     Divider(color: Colors.grey[350]),
                     ProfileMenuItem(
+                      image: 'assets/icons/border-all-01.png',
+                      title: 'Disposal Items',
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          RouteNames.disposalScreen,
+                        );
+                      },
+                    ),
+                    Divider(color: Colors.grey[350]),
+                    ProfileMenuItem(
                       image: 'assets/icons/notification.png',
                       title: 'Notifications',
                       onTap: () {

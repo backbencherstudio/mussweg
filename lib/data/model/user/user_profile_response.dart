@@ -29,6 +29,7 @@ class UserProfileData {
   final double? rating;
   final int? reviewCount;
   final String? totalEarning;
+  final String? totalPenalties;
 
   UserProfileData({
     required this.id,
@@ -44,6 +45,7 @@ class UserProfileData {
     this.rating,
     this.reviewCount,
     this.totalEarning,
+    this.totalPenalties
   });
 
   factory UserProfileData.fromJson(Map<String, dynamic> json) {
@@ -61,6 +63,7 @@ class UserProfileData {
       rating: (json['rating'] ?? 0).toDouble(),
       reviewCount: json['review_count'] ?? 0,
       totalEarning: json['total_earning'] ?? '0',
+      totalPenalties: json['total_penalties'] ?? '0',
     );
   }
 }
