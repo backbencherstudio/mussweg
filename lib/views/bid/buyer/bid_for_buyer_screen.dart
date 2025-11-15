@@ -250,7 +250,7 @@ class BidCardForBuyer extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Size $size ($condition condition)',
+                    'Size $size\n($condition condition)',
                     style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
                   ),
                 ],

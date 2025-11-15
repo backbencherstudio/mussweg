@@ -19,6 +19,7 @@ import 'package:mussweg/views/order_placed/screen/weg_success_screen.dart';
 
 import 'package:mussweg/views/parent_screen/screen/parent_screen.dart';
 import 'package:mussweg/views/profile/screens/bid_list/bid_list.dart';
+import 'package:mussweg/views/profile/screens/disposal/disposal_items_screen.dart';
 import 'package:mussweg/views/selling_items/selling_items_screen.dart';
 import 'package:mussweg/views/splash/splash_screen.dart';
 import 'package:mussweg/views/track_progress/track_progress_screen.dart';
@@ -93,5 +94,6 @@ class AppRoutes {
     RouteNames.musswegProductScreen:(context) => const MusswegProductScreen(),
     RouteNames.schedulePickUpScreen:(context) => const SchedulePickUpScreen(),
     RouteNames.locationPickScreen:(context) => const LocationPickerScreen(),
+    RouteNames.disposalScreen:(context) => const DisposalItemsScreen(),
   };
 }

@@ -318,7 +318,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           ),
                           SizedBox(width: 7.w),
                           Text(
-                            userProfileDetails?.totalEarning ?? '',
+                            userProfileDetails?.totalPenalties ?? '',
                             style: TextStyle(
                               color: const Color(0xff777980),
                               fontSize: 14.sp,

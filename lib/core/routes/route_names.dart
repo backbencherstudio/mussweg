@@ -45,6 +45,7 @@ class RouteNames {
   static const String musswegProductScreen = '/musswegProductScreen';
   static const String schedulePickUpScreen = '/schedulePickUpScreen';
   static const String locationPickScreen = '/locationPickScreen';
+  static const String disposalScreen = '/disposalScreen';
 
 
 }

@@ -267,7 +267,7 @@ class BidCardForSeller extends StatelessWidget {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.5,
                     child: Text(
-                      'Size $size ($condition condition)',
+                      'Size $size\n($condition condition)',
                       style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
                     ),
                   ),
