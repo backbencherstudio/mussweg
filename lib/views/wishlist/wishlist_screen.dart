@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:mussweg/core/constants/api_end_points.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:mussweg/views/widgets/simple_apppbar.dart';
@@ -173,14 +174,14 @@ class _WishlistScreenState extends State<WishlistScreen> {
                                       ],
                                     ),
                                     Text(
-                                      product?.productTitle ?? '',
+                                      product.productTitle ?? '',
                                       style: TextStyle(
                                         fontSize: 16.sp,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                     Text(
-                                      'Size ${product?.productSize ?? ''} (${product?.productCondition ?? ''} condition)',
+                                      'Size ${product.productSize ?? ''} (${product.productCondition ?? ''} condition)',
                                       style: TextStyle(
                                         fontSize: 14.sp,
                                         fontWeight: FontWeight.w500,
@@ -195,7 +196,10 @@ class _WishlistScreenState extends State<WishlistScreen> {
                                         ),
                                         children: [
                                           TextSpan(
-                                            text: "${product?.createdAt ?? ''}  " ,
+                                            text: DateFormat(
+                                              "dd MMM, yy h:mm a",
+                                            ).format(DateTime.parse(product.createdAt)) ??
+                                                '' ,
                                             style: TextStyle(
                                               fontSize: 14.sp,
                                               fontWeight: FontWeight.w500,
@@ -203,7 +207,10 @@ class _WishlistScreenState extends State<WishlistScreen> {
                                             ),
                                           ),
                                           TextSpan(
-                                            text: product?.boostTime ?? '',
+                                            text: product.boostTime == '' ||
+                                                product.boostTime == null
+                                                ? '\n'
+                                                : '\n${DateFormat("dd MMM, yy h:mm a").format(DateTime.parse(product.boostTime ?? ''))}',
                                             style: TextStyle(
                                               fontSize: 14.sp,
                                               fontWeight: FontWeight.w500,
@@ -227,7 +234,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                                         MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            '\$ ${product?.productPrice ?? ''}',
+                                            '\$ ${product.productPrice ?? ''}',
                                             style: TextStyle(
                                               color: Colors.red,
                                               fontSize: 18.sp,
@@ -255,7 +262,6 @@ class _WishlistScreenState extends State<WishlistScreen> {
                     },
                   ),
                 ),
-                // Display loading indicator at the bottom when loading more data
                 Consumer<WhistlistProviderOfGetFavouriteProduct>(
                   builder: (_, wishlistProvider, __) {
                     if (wishlistProvider.isPaginationLoading) {

@@ -348,9 +348,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                               color: const Color(0xff777980),
                                             ),
                                           ),
-                                          SizedBox(width: 8.w),
+                                          Spacer(),
                                           Text(
-                                            product.boostTimeLeft ?? '',
+                                            product.boostTimeLeft == '' ||
+                                                product.boostTimeLeft == null
+                                                ? ''
+                                                : DateFormat("dd MMM, yy h:mm a").format(DateTime.parse(product.boostTimeLeft ?? '')),
                                             style: TextStyle(
                                               fontSize: 13.sp,
                                               color: const Color(0xff1A9882),
