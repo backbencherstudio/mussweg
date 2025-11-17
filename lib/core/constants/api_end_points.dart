@@ -55,4 +55,5 @@ class ApiEndpoints {
   static String createReview = '$baseUrl/api/review/create';
   static String createMusswegDisposal(String productId) => '$baseUrl/api/disposal/create/$productId';
   static String getDisposalItems(String status) => '$baseUrl/api/disposal/my-disposal-requests/$status';
+  static String getSearchProducts(int page, String Q) => '$baseUrl/api/products/search?page=$page&perPage=10&search=$Q';
 }
