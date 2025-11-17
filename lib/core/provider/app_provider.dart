@@ -1,6 +1,7 @@
 import 'package:mussweg/view_model/auth/login/user_profile_get_me_provider.dart';
 import 'package:mussweg/view_model/bid/bid_for_buyer_provider.dart';
 import 'package:mussweg/view_model/bid/place_a_bid_provider.dart';
+import 'package:mussweg/view_model/client_dashboard/client_dashboard_details_provider.dart';
 import 'package:mussweg/view_model/home_provider/all_category_provider.dart';
 import 'package:mussweg/view_model/mussweg/mussweg_product_screen_provider.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
@@ -20,6 +21,7 @@ import '../../view_model/home_provider/home_nav/electronic_category_based_provid
 import '../../view_model/home_provider/home_nav/fashion_category_based_product_provider.dart';
 import '../../view_model/home_provider/favorite_icon_provider.dart';
 import '../../view_model/home_provider/home_nav/home_category_based_provider.dart';
+import '../../view_model/my_dashboard/my_dashboard_response_provider.dart';
 import '../../view_model/pickup/pickup_timer_provider.dart';
 import '../../view_model/product_item_list_provider/category_based_product_provider.dart';
 import '../../view_model/product_item_list_provider/get_product_details_provider.dart';
@@ -74,6 +76,8 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => PlaceABidProvider()),
     ChangeNotifierProvider(create: (_) => BoughtProductProvider()),
     ChangeNotifierProvider(create: (_) => ReviewProvider()),
+    ChangeNotifierProvider(create: (_) => ClientDashboardDetailsProvider()),
+    ChangeNotifierProvider(create: (_) => MyDashboardResponseProvider()),
     ChangeNotifierProvider(create: (_) => GetDisposalItemsProvider()),
   ];
 }

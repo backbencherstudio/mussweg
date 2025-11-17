@@ -9,6 +9,8 @@ class ApiEndpoints {
   static const String resendCode =
       '$baseUrl/api/auth/resend-verification-email';
   static const String getMe = '$baseUrl/api/auth/me';
+  static String getClientDetails(String id) => '$baseUrl/api/profile/client-deshborad/$id';
+  static String getMyDashboardDetails = '$baseUrl/api/profile/me/dashboard';
   static const String getUserProfileDetails = '$baseUrl/api/profile/me';
   static const String forgetPassword = '$baseUrl/api/auth/forgot-password';
   static const String resetPassword = '$baseUrl/api/auth/reset-password';
@@ -56,4 +58,5 @@ class ApiEndpoints {
   static String createMusswegDisposal(String productId) => '$baseUrl/api/disposal/create/$productId';
   static String getDisposalItems(String status) => '$baseUrl/api/disposal/my-disposal-requests/$status';
   static String getSearchProducts(int page, String Q) => '$baseUrl/api/products/search?page=$page&perPage=10&search=$Q';
+  static String filterProducts = '$baseUrl/api/products/filter';
 }
