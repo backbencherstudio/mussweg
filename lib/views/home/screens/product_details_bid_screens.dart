@@ -10,6 +10,7 @@ import 'package:mussweg/views/widgets/custom_text_field.dart';
 import 'package:mussweg/views/widgets/simple_apppbar.dart';
 import 'package:provider/provider.dart';
 import '../../../core/routes/route_names.dart';
+import '../../../view_model/client_dashboard/client_dashboard_details_provider.dart';
 import '../../widgets/custom_main_button.dart';
 
 import '../widgets/bider_list_card.dart';
@@ -149,58 +150,74 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(90.r),
-                      child: Image.network(
-                        "${ApiEndpoints.baseUrl}${product?.sellerInfo?.profilePhoto?.replaceAll('http://localhost:5005', '')}",
-                        height: 60.w,
-                        width: 60.w,
-                        fit: BoxFit.cover,
-                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                  : null,
-                            ),
-                          );
-                        },
-                        errorBuilder: (_, __, ___) {
-                          return Container(
-                            padding: EdgeInsets.all(8.w),
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade50,
-                              border: Border.all(color: Colors.grey.shade200),
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12.r),
-                              child: Image.asset(
-                                'assets/icons/user.png',
+                    GestureDetector(
+                      onTap: () {
+                        context.read<ClientDashboardDetailsProvider>().setClientId(product?.sellerInfo?.userId ?? '');
+                        Navigator.pushNamed(
+                          context,
+                          RouteNames.viewProfileScreen,
+                        );
+                      },
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.6,
+                        child: Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(90.r),
+                              child: Image.network(
+                                "${ApiEndpoints.baseUrl}${product?.sellerInfo?.profilePhoto?.replaceAll('http://localhost:5005', '')}",
+                                height: 60.w,
+                                width: 60.w,
                                 fit: BoxFit.cover,
+                                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      value: loadingProgress.expectedTotalBytes != null
+                                          ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                          : null,
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (_, __, ___) {
+                                  return Container(
+                                    padding: EdgeInsets.all(8.w),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade50,
+                                      border: Border.all(color: Colors.grey.shade200),
+                                      borderRadius: BorderRadius.circular(12.r),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(12.r),
+                                      child: Image.asset(
+                                        'assets/icons/user.png',
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                             ),
-                          );
-                        },
+                            SizedBox(width: 6),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  product?.sellerInfo?.name ?? '',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                Text(
+                                  "${product?.sellerInfo?.totalItems} items",
+                                  style: TextStyle(color: Colors.grey, fontSize: 14),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    SizedBox(width: 6),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          product?.sellerInfo?.name ?? '',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                        Text(
-                          "${product?.sellerInfo?.totalItems} items",
-                          style: TextStyle(color: Colors.grey, fontSize: 14),
-                        ),
-                      ],
                     ),
                     Spacer(),
                     GestureDetector(
@@ -217,7 +234,7 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                           borderRadius: BorderRadius.circular(99),
                         ),
                         child: Text(
-                          "Message seller",
+                          "Message",
                           style: TextStyle(color: Colors.white),
                         ),
                       ),

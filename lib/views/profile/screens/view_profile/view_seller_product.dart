@@ -8,7 +8,9 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/api_end_points.dart';
 import '../../../../view_model/auth/login/get_me_viewmodel.dart';
 import '../../../../view_model/auth/login/user_profile_get_me_provider.dart';
+import '../../../../view_model/my_dashboard/my_dashboard_response_provider.dart';
 import '../../../../view_model/profile/edit_image/edit_image.dart';
+import '../../../widgets/seller_profile_refresh.dart';
 import '../../widgets/product_card.dart';
 
 class SellerProfilePage extends StatefulWidget {
@@ -26,6 +28,9 @@ class _SellerProfilePageState extends State<SellerProfilePage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await context.read<MyDashboardResponseProvider>().fetchMyDashboardData();
+    });
   }
 
   @override
@@ -41,6 +46,8 @@ class _SellerProfilePageState extends State<SellerProfilePage>
         context.watch<UserProfileGetMeProvider>().userProfileResponse?.data;
     final sellerVM = Provider.of<SellerProfileProvider>(context);
     final userProductVM = Provider.of<UserAllProductsProvider>(context);
+
+    final reviews = context.watch<MyDashboardResponseProvider>().myDashboardResponseModel?.data.reviews;
 
     return Scaffold(
       appBar: SimpleApppbar(title: 'View Profile'),
@@ -458,7 +465,19 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                     ],
                   ),
                 ),
-                const Center(child: Text('Reviews Content')),
+                ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  itemCount: reviews?.data.length ?? 0,
+                  itemBuilder: (context, index) {
+                    return SellerProfileRefresh(
+                      title: reviews?.data[index].reviewerName ?? '',
+                      time: reviews?.data[index].createdAgo ?? '',
+                      avatarUrl: reviews?.data[index].reviewerAvatar ?? '',
+                      message: reviews?.data[index].comment ?? '',
+                      starCount: reviews?.data[index].rating ?? 0,
+                    );
+                  },
+                ),
               ],
             ),
           ),

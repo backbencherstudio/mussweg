@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mussweg/views/profile/widgets/custom_text_field.dart';
+import 'package:provider/provider.dart';
 
-import '../../../view_model/profile/sell_item_service_provider/sell_item_service.dart';
-import '../../profile/widgets/custom_dropdown_field.dart';
+import '../../../view_model/product_item_list_provider/category_based_product_provider.dart';
 
 class FilterPage extends StatefulWidget {
   const FilterPage({super.key});
@@ -12,26 +13,18 @@ class FilterPage extends StatefulWidget {
 }
 
 class _FilterPageState extends State<FilterPage> {
-  RangeValues _priceRange = const RangeValues(20, 80);
-  final List<String> _categories = [
-    'Dress',
-    'Shoes',
-    'Bag',
-    'Makeup',
-    'Sunglass',
-    'Men Clothes',
-    'Woman Clothes',
-  ];
-  final List<String> _conditions = const [
-    "New",
-    "Used",
-    "Refurbished",
-  ];
-  final List<String> _times = ['12hr', '20hr', '24hr', '30hr', '40hr', '48hr'];
-  final service = GetIt.instance<SellItemService>();
 
-  String? _selectedCategory;
-  String? _selectedTime;
+  final TextEditingController _minController = TextEditingController();
+  final TextEditingController _maxController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
+
+  @override
+  void dispose() {
+    _minController.dispose();
+    _maxController.dispose();
+    _timeController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,28 +38,7 @@ class _FilterPageState extends State<FilterPage> {
             const SizedBox(height: 10),
             _buildSectionTitle('Price Range'),
             _buildPriceSlider(),
-            _buildSectionTitle('Categories'),
-            _buildChipRow(_categories, _selectedCategory, (chip) {
-              setState(() {
-                _selectedCategory = chip;
-              });
-            }),
-            _buildSectionTitle('Time'),
-            _buildChipRow(_times, _selectedTime, (chip) {
-              setState(() {
-                _selectedTime = chip;
-              });
-            }),
-            CustomDropdownField(
-              title: 'Location',
-              hintText: 'St.Gallen & Eastern Switzerland',
-              items: _conditions,
-              value: service.categoryId,
-              onChanged: (value) {
-                service.setCategoryId(value ?? '');
-              }
-            ),
-            _buildCustomLocation(),
+            CustomTextField(title: 'Time', hintText: 'time (in hours)', controller: _timeController,),
             const SizedBox(height: 20),
             _buildButtons(),
           ],
@@ -97,83 +69,17 @@ class _FilterPageState extends State<FilterPage> {
     padding: const EdgeInsets.symmetric(vertical: 10.0),
     child: Text(
       title,
-      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
     ),
   );
 
   Widget _buildPriceSlider() {
-    return Column(
+    return Row(
       children: [
-        RangeSlider(
-          values: _priceRange,
-          min: 0,
-          max: 200,
-          divisions: 100,
-          labels: RangeLabels(
-            '\$${_priceRange.start.round()}',
-            '\$${_priceRange.end.round()}',
-          ),
-          activeColor: Colors.red,
-          onChanged: (RangeValues values) {
-            setState(() {
-              _priceRange = values;
-            });
-          },
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('\$${_priceRange.start.round()}'),
-            Text('\$${_priceRange.end.round()}'),
-          ],
-        ),
+        Expanded(child: CustomTextField(title: 'Min Price', hintText: 'min', controller: _minController)),
+        SizedBox(width: 12.w,),
+        Expanded(child: CustomTextField(title: 'Max Price', hintText: 'max', controller: _maxController)),
       ],
-    );
-  }
-
-  Widget _buildChipRow(
-      List<String> items,
-      String? selected,
-      Function(String) onSelected,
-      ) {
-    return Wrap(
-      spacing: 8.0,
-      runSpacing: 8.0,
-      children: items.map((chip) {
-        return FilterChip(
-          label: Text(chip),
-          selected: selected == chip,
-          selectedColor: Colors.red[100],
-          checkmarkColor: Colors.red,
-          labelStyle: TextStyle(
-            color: selected == chip ? Colors.red : Colors.grey,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-            side: BorderSide(
-              color: selected == chip ? Colors.red : Colors.grey,
-            ),
-          ),
-          backgroundColor: Colors.transparent,
-          onSelected: (_) => onSelected(chip),
-        );
-      }).toList(),
-    );
-  }
-
-  Widget _buildCustomLocation() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16.0),
-      child: Row(
-        children: const [
-          Icon(Icons.add, color: Colors.red),
-          SizedBox(width: 8),
-          Text(
-            'Custom Location',
-            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold,fontSize: 15),
-          ),
-        ],
-      ),
     );
   }
 
@@ -199,7 +105,13 @@ class _FilterPageState extends State<FilterPage> {
         const SizedBox(width: 16),
         Expanded(
           child: ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
+              await context.read<CategoryBasedProductProvider>().filterProducts(
+                minPrice: _minController.text.isEmpty ? null : _minController.text,
+                maxPrice: _maxController.text.isEmpty ? null : _maxController.text,
+                hours: _timeController.text.isEmpty ? null : _timeController.text,
+              );
+
               Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(

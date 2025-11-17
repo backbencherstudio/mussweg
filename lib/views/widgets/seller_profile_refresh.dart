@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
+
+import '../../core/constants/api_end_points.dart';
 
 class SellerProfileRefresh extends StatelessWidget {
   final String title;
   final String message;
   final String time;
   final String avatarUrl;
-  final bool isInteractive;
-  final VoidCallback? onYes;
-  final VoidCallback? onNo;
-
+final int starCount;
 
   const SellerProfileRefresh({
     super.key,
     required this.message,
     required this.time,
     required this.avatarUrl,
-    this.isInteractive = false,
-    this.onYes,
-    this.onNo,
-    required this.title,
+    required this.title, required this.starCount,
   });
 
   @override
@@ -29,9 +26,44 @@ class SellerProfileRefresh extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
-            radius: 24.r,
-            backgroundImage: AssetImage(avatarUrl),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(90.r),
+            child: Image.network(
+              "${ApiEndpoints.baseUrl}${avatarUrl.replaceAll('http://localhost:5005', '')}",
+              fit: BoxFit.cover,
+              width: 50.w,
+              height: 50.h,
+              loadingBuilder: (
+                  BuildContext context,
+                  Widget child,
+                  ImageChunkEvent? loadingProgress,
+                  ) {
+                if (loadingProgress == null) return child;
+                return Center(
+                  child: CircularProgressIndicator(
+                    value:
+                    loadingProgress.expectedTotalBytes !=
+                        null
+                        ? loadingProgress
+                        .cumulativeBytesLoaded /
+                        loadingProgress
+                            .expectedTotalBytes!
+                        : null,
+                  ),
+                );
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Image.asset(
+                    'assets/icons/user.png',
+                    fit: BoxFit.cover,
+                    width: 30.w,
+                    height: 30.h,
+                  ),
+                );
+              },
+            ),
           ),
           SizedBox(width: 16.w),
           Expanded(
@@ -48,7 +80,7 @@ class SellerProfileRefresh extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      time,
+                      DateFormat("dd MMM, yy h:mm a").format(DateTime.parse(time ?? '')),
                       style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
                     ),
                   ],
@@ -57,7 +89,7 @@ class SellerProfileRefresh extends StatelessWidget {
                   height: 30,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: 5,
+                    itemCount: starCount,
                     itemBuilder: (context, index) {
                       return Icon(
                         Icons.star,
