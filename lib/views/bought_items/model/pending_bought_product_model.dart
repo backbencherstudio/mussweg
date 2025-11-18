@@ -20,9 +20,10 @@ class PendingBoughtProductModel {
         data!.add(Data.fromJson(v));
       });
     }
-    pagination = json['pagination'] != null
-        ? Pagination.fromJson(json['pagination'])
-        : null;
+    pagination =
+        json['pagination'] != null
+            ? Pagination.fromJson(json['pagination'])
+            : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -48,9 +49,10 @@ class Data {
   Data.fromJson(Map<String, dynamic> json) {
     orderId = json['order_id']?.toString();
     orderStatus = json['order_status']?.toString();
-    orderPartner = json['order_partner'] != null
-        ? OrderPartner.fromJson(json['order_partner'])
-        : null;
+    orderPartner =
+        json['order_partner'] != null
+            ? OrderPartner.fromJson(json['order_partner'])
+            : null;
     if (json['items'] != null) {
       items = <Items>[];
       json['items'].forEach((v) => items!.add(Items.fromJson(v)));
@@ -112,21 +114,25 @@ class Items {
   });
 
   Items.fromJson(Map<String, dynamic> json)
-    : quantity = json['quantity'] is String
-          ? int.tryParse(json['quantity']) ?? 0
-          : json['quantity'] ?? 0,
-      price = json['price'] is String
-          ? double.tryParse(json['price']) ?? 0.0
-          : (json['price']?.toDouble() ?? 0.0),
-      totalPrice = json['total_price'] is String
-          ? double.tryParse(json['total_price']) ?? 0.0
-          : (json['total_price']?.toDouble() ?? 0.0),
+    : quantity =
+          json['quantity'] is String
+              ? int.tryParse(json['quantity']) ?? 0
+              : json['quantity'] ?? 0,
+      price =
+          json['price'] is String
+              ? double.tryParse(json['price']) ?? 0.0
+              : (json['price']?.toDouble() ?? 0.0),
+      totalPrice =
+          json['total_price'] is String
+              ? double.tryParse(json['total_price']) ?? 0.0
+              : (json['total_price']?.toDouble() ?? 0.0),
       productId = json['product_id']?.toString(),
       productTitle = json['product_title']?.toString(),
       productOwnerId = json['product_owner_id']?.toString(),
-      productPhoto = json['product_photo'] != null
-          ? List<String>.from(json['product_photo'])
-          : null;
+      productPhoto =
+          json['product_photo'] != null
+              ? List<String>.from(json['product_photo'])
+              : null;
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
@@ -159,18 +165,22 @@ class Pagination {
   });
 
   Pagination.fromJson(Map<String, dynamic> json)
-    : total = json['total'] is String
-          ? int.tryParse(json['total']) ?? 0
-          : json['total'] ?? 0,
-      page = json['page'] is String
-          ? int.tryParse(json['page']) ?? 0
-          : json['page'] ?? 0,
-      perPage = json['perPage'] is String
-          ? int.tryParse(json['perPage']) ?? 0
-          : json['perPage'] ?? 0,
-      totalPages = json['totalPages'] is String
-          ? int.tryParse(json['totalPages']) ?? 0
-          : json['totalPages'] ?? 0,
+    : total =
+          json['total'] is String
+              ? int.tryParse(json['total']) ?? 0
+              : json['total'] ?? 0,
+      page =
+          json['page'] is String
+              ? int.tryParse(json['page']) ?? 0
+              : json['page'] ?? 0,
+      perPage =
+          json['perPage'] is String
+              ? int.tryParse(json['perPage']) ?? 0
+              : json['perPage'] ?? 0,
+      totalPages =
+          json['totalPages'] is String
+              ? int.tryParse(json['totalPages']) ?? 0
+              : json['totalPages'] ?? 0,
       hasNextPage = json['hasNextPage'],
       hasPrevPage = json['hasPrevPage'];
 
