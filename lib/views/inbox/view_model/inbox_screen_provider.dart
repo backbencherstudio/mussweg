@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:mussweg/core/services/user_id_storage.dart';
 import 'package:mussweg/views/inbox/model/inbox_model.dart';
 
+import '../model/all_message_model.dart';
+
 class InboxScreenProvider extends ChangeNotifier {
   InboxScreenProvider() {
     getChatList();
@@ -16,6 +18,9 @@ class InboxScreenProvider extends ChangeNotifier {
 
   InboxModel? _inboxModel;
   InboxModel? get inboxModel => _inboxModel;
+
+  AllMessageModel? _allMessageModel;
+  AllMessageModel? get allMessageModel => _allMessageModel;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -41,11 +46,40 @@ class InboxScreenProvider extends ChangeNotifier {
       );
 
       final decodeData = jsonDecode(response.body);
-
-      // Always decode safely
       _inboxModel = InboxModel.fromJson(decodeData);
 
       debugPrint("Chat list loaded: ${decodeData['message']}");
+    } catch (error) {
+      debugPrint("Chat fetch error: $error");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getAllMessage(String conversationId) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      final url = Uri.parse(ApiEndpoints.getAllMessage(conversationId));
+
+      debugPrint("URL: $url");
+
+      final token = await _tokenStorage.getToken();
+
+      final response = await http.get(
+        url,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Accept": "application/json",
+        },
+      );
+
+      final decodeData = jsonDecode(response.body);
+      _allMessageModel = AllMessageModel.fromJson(decodeData);
+
+      debugPrint("Chat message all loaded: ${decodeData['message']}");
     } catch (error) {
       debugPrint("Chat fetch error: $error");
     } finally {
