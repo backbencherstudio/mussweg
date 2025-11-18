@@ -11,7 +11,7 @@ class LoginScreenProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
   final TokenStorage _tokenStorage = TokenStorage();
-  // final UserIdStorage _userIdStorage = UserIdStorage();
+  final UserIdStorage _userIdStorage = UserIdStorage();
   // final SocketService _socketService = SocketService();
 
   bool _isObscured = true;
@@ -28,25 +28,34 @@ class LoginScreenProvider extends ChangeNotifier {
   // UserModel? _user;
   // UserModel? get user => _user;
 
-  Future<bool> login({required String email,required String password}) async {
+  Future<bool> login({required String email, required String password}) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
     try {
       final response = await _apiService.post(
-          ApiEndpoints.login,
+        ApiEndpoints.login,
         data: {'email': email, 'password': password},
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data;
         final token = data['authorization']['access_token'];
         await _tokenStorage.saveToken(token);
+
+        if(data['userid'] != null){
+          await _userIdStorage.saveUserId(data['userid']);
+          debugPrint("The authorization token is${data['userid']}");
+
+        }else{
+          debugPrint("user Id Not found");
+        }
+
         debugPrint("The authorization token is $token");
-        _errorMessage= data['message'];
+        _errorMessage = data['message'];
         _isLoading = false;
         notifyListeners();
         return data['success'];
-      } else if (response.statusCode == 401){
+      } else if (response.statusCode == 401) {
         _isLoading = false;
         _errorMessage = 'Password or email was incorrect';
         notifyListeners();
