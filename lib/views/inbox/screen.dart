@@ -54,8 +54,15 @@ class _InboxPageState extends State<InboxPage> {
                         onTap: () async {
                           await inboxProvider.getAllMessage(item.id ?? "");
                           if (item.id != null) {
-                            Navigator.pushNamed(context, RouteNames.chatScreen);
-                          } else {
+                            Navigator.pushNamed(
+                              context,
+                              RouteNames.chatScreen,
+                              arguments: {
+                                'conversationId': conversations[index].id, // <-- Use a string key
+                              },
+                            );
+                          }
+                          else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text("User Id Not Found")),
                             );
