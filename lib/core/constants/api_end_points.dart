@@ -74,4 +74,7 @@ class ApiEndpoints {
 
   static String getAllMessage(conversationId) =>
       "$baseUrl/api/chat/message/all-message/$conversationId";
+
+  static String sendMessage=
+      "$baseUrl/api/chat/message/send-message";
 }
