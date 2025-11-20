@@ -72,8 +72,9 @@ class ApiEndpoints {
   static String getChatList(userId) =>
       "$baseUrl/api/chat/conversation/conversation-list/$userId";
 
-  static String getAllMessage(conversationId) =>
-      "$baseUrl/api/chat/message/all-message/$conversationId";
+  static String getAllMessage(String conversationId, int page, int limit) =>
+      "$baseUrl/api/chat/message/all-message/$conversationId?page=$page&perPage=$limit";
+
 
   static String sendMessage=
       "$baseUrl/api/chat/message/send-message";
