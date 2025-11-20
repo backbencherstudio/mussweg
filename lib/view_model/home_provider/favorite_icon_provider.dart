@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 class FavoriteProvider extends ChangeNotifier {
-  bool _isFavorite = false;
+  final Map<String, bool> _favoriteStatus = {};
 
-  bool get isFavorite => _isFavorite;
+  bool isFavorite(String productId) {
+    return _favoriteStatus[productId] ?? false;
+  }
 
-  void toggleFavorite() {
-    _isFavorite = !_isFavorite;
+  void toggleFavorite(String productId, bool value) {
+    _favoriteStatus[productId] = value;
     notifyListeners();
   }
 }

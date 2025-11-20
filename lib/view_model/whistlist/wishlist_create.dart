@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import '../../core/constants/api_end_points.dart';
 import '../../core/services/api_service.dart';
@@ -35,7 +36,14 @@ class WishlistCreate extends ChangeNotifier {
         notifyListeners();
         return false;
       }
-    } catch (e) {
+    } on DioException catch (e) {
+      final serverMessage = e.response?.data['message']['message'] ?? "Unauthorized: Please check your credentials.";
+      _errorMessage = serverMessage;
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+    catch (e) {
       debugPrint("Error for fetching category based product: $e");
       _errorMessage = e.toString();
       _isLoading = false;
