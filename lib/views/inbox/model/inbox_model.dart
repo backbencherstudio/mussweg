@@ -30,19 +30,16 @@ class InboxModel {
 
 class Conversations {
   String? id;
-  List<Participants>? participants;
+  Opponent? opponent;
   LastMessage? lastMessage;
 
-  Conversations({this.id, this.participants, this.lastMessage});
+  Conversations({this.id, this.opponent, this.lastMessage});
 
   Conversations.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    if (json['participants'] != null) {
-      participants = <Participants>[];
-      json['participants'].forEach((v) {
-        participants!.add(new Participants.fromJson(v));
-      });
-    }
+    opponent = json['opponent'] != null
+        ? new Opponent.fromJson(json['opponent'])
+        : null;
     lastMessage = json['lastMessage'] != null
         ? new LastMessage.fromJson(json['lastMessage'])
         : null;
@@ -51,8 +48,8 @@ class Conversations {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    if (this.participants != null) {
-      data['participants'] = this.participants!.map((v) => v.toJson()).toList();
+    if (this.opponent != null) {
+      data['opponent'] = this.opponent!.toJson();
     }
     if (this.lastMessage != null) {
       data['lastMessage'] = this.lastMessage!.toJson();
@@ -61,45 +58,45 @@ class Conversations {
   }
 }
 
-class Participants {
+class Opponent {
   String? userId;
   String? name;
-  String? avatar;
+  String? avater;
+  String? avatarUrl;
 
-  Participants({this.userId, this.name, this.avatar});
+  Opponent({this.userId, this.name, this.avater, this.avatarUrl});
 
-  Participants.fromJson(Map<String, dynamic> json) {
+  Opponent.fromJson(Map<String, dynamic> json) {
     userId = json['userId'];
     name = json['name'];
-    avatar = json['avatar'];
+    avater = json['avater'];
+    avatarUrl = json['avatar_url'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['userId'] = this.userId;
     data['name'] = this.name;
-    data['avatar'] = this.avatar;
+    data['avater'] = this.avater;
+    data['avatar_url'] = this.avatarUrl;
     return data;
   }
 }
 
 class LastMessage {
   String? text;
-  String? attachments;
   String? createdAt;
 
-  LastMessage({this.text, this.attachments, this.createdAt});
+  LastMessage({this.text, this.createdAt});
 
   LastMessage.fromJson(Map<String, dynamic> json) {
     text = json['text'];
-    attachments = json['attachments'];
     createdAt = json['createdAt'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['text'] = this.text;
-    data['attachments'] = this.attachments;
     data['createdAt'] = this.createdAt;
     return data;
   }

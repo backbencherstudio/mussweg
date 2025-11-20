@@ -32,13 +32,47 @@ class InboxScreenProvider extends ChangeNotifier {
   bool hasNextPage = false;
   bool isMoreLoading = false;
 
+  Future<void> createConversation(String participantId) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      final userId = await _userIdStorage.getUserId();
+      final url = Uri.parse(ApiEndpoints.createConversation);
+      final token = await _tokenStorage.getToken();
+
+      final response = await http.post(
+        url,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Accept": "application/json",
+        },
+        body: jsonEncode({"participant_id": participantId}),
+      );
+
+      final decodeData = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        debugPrint("THe success message ${decodeData['message']}");
+      } else {
+        debugPrint("THe failed message ${decodeData['message']}");
+      }
+      _inboxModel = InboxModel.fromJson(decodeData);
+    } catch (error) {
+      debugPrint("Chat fetch error: $error");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> getChatList() async {
     try {
       _isLoading = true;
       notifyListeners();
 
       final userId = await _userIdStorage.getUserId();
-      final url = Uri.parse(ApiEndpoints.getChatList(userId));
+      final url = Uri.parse(ApiEndpoints.getChatList);
       final token = await _tokenStorage.getToken();
 
       final response = await http.get(
@@ -71,7 +105,7 @@ class InboxScreenProvider extends ChangeNotifier {
     } else {
       _isLoading = true;
       currentPage = 1;
-      notifyListeners();
+      // notifyListeners();
     }
 
     try {
@@ -101,7 +135,7 @@ class InboxScreenProvider extends ChangeNotifier {
         _allMessageModel = newData;
       }
 
-      // ✅ Correct pagination logic
+      //  Correct pagination logic
       hasNextPage = newData.pagination?.hasNextPage ?? false;
     } catch (error) {
       debugPrint("Error loading messages: $error");

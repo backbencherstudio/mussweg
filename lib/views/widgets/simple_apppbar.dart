@@ -5,16 +5,14 @@ class SimpleApppbar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onBack;
   final VoidCallback? onMore;
 
-  const SimpleApppbar({
-    Key? key,
-    required this.title,
-    this.onBack,
-    this.onMore,
-  }) : super(key: key);
+  const SimpleApppbar({Key? key, required this.title, this.onBack, this.onMore})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
+
+      automaticallyImplyLeading: false,
       backgroundColor: Colors.white,
       centerTitle: true,
       title: Text(
@@ -24,10 +22,10 @@ class SimpleApppbar extends StatelessWidget implements PreferredSizeWidget {
           fontWeight: FontWeight.w600,
         ),
       ),
-      leading: IconButton(
-        onPressed: onBack ?? () => Navigator.pop(context),
-        icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-      ),
+      // leading: IconButton(
+      //   onPressed: onBack ?? () => Navigator.pop(context),
+      //   icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+      // ),
       actions: [
         IconButton(
           onPressed: onMore ?? () {},

@@ -12,23 +12,23 @@ class AllMessageModel {
     if (json['data'] != null) {
       data = <Data>[];
       json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
+        data!.add(Data.fromJson(v));
       });
     }
     pagination = json['pagination'] != null
-        ? new Pagination.fromJson(json['pagination'])
+        ? Pagination.fromJson(json['pagination'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['message'] = this.message;
-    data['success'] = this.success;
+    final Map<String, dynamic> data = {};
+    data['message'] = message;
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    if (this.pagination != null) {
-      data['pagination'] = this.pagination!.toJson();
+    if (pagination != null) {
+      data['pagination'] = pagination!.toJson();
     }
     return data;
   }
@@ -38,29 +38,45 @@ class Data {
   String? id;
   String? text;
   List<String>? attachments;
+  List<String>? attachmentsUrl;
   String? createdAt;
   Sender? sender;
+  Sender? receiver;
 
-  Data({this.id, this.text, this.attachments, this.createdAt, this.sender});
+  Data({
+    this.id,
+    this.text,
+    this.attachments,
+    this.attachmentsUrl,
+    this.createdAt,
+    this.sender,
+    this.receiver,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     text = json['text'];
-    attachments = json['attachments'].cast<String>();
+    attachments = json['attachments'] != null
+        ? List<String>.from(json['attachments'])
+        : null;
+    attachmentsUrl = json['attachments_url'] != null
+        ? List<String>.from(json['attachments_url'])
+        : null;
     createdAt = json['createdAt'];
-    sender =
-    json['sender'] != null ? new Sender.fromJson(json['sender']) : null;
+    sender = json['sender'] != null ? Sender.fromJson(json['sender']) : null;
+    receiver =
+    json['receiver'] != null ? Sender.fromJson(json['receiver']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['text'] = this.text;
-    data['attachments'] = this.attachments;
-    data['createdAt'] = this.createdAt;
-    if (this.sender != null) {
-      data['sender'] = this.sender!.toJson();
-    }
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['text'] = text;
+    if (attachments != null) data['attachments'] = attachments;
+    if (attachmentsUrl != null) data['attachments_url'] = attachmentsUrl;
+    data['createdAt'] = createdAt;
+    if (sender != null) data['sender'] = sender!.toJson();
+    if (receiver != null) data['receiver'] = receiver!.toJson();
     return data;
   }
 }
@@ -69,8 +85,8 @@ class Sender {
   String? id;
   String? name;
   String? email;
-  String? avater;
-  String? avatarUrl;
+  String? avater;      // <-- corrected type
+  String? avatarUrl;   // <-- corrected type
 
   Sender({this.id, this.name, this.email, this.avater, this.avatarUrl});
 
@@ -83,12 +99,12 @@ class Sender {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['email'] = this.email;
-    data['avater'] = this.avater;
-    data['avatar_url'] = this.avatarUrl;
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['name'] = name;
+    data['email'] = email;
+    data['avater'] = avater;
+    data['avatar_url'] = avatarUrl;
     return data;
   }
 }
@@ -119,13 +135,13 @@ class Pagination {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['total'] = this.total;
-    data['page'] = this.page;
-    data['perPage'] = this.perPage;
-    data['totalPages'] = this.totalPages;
-    data['hasNextPage'] = this.hasNextPage;
-    data['hasPrevPage'] = this.hasPrevPage;
+    final Map<String, dynamic> data = {};
+    data['total'] = total;
+    data['page'] = page;
+    data['perPage'] = perPage;
+    data['totalPages'] = totalPages;
+    data['hasNextPage'] = hasNextPage;
+    data['hasPrevPage'] = hasPrevPage;
     return data;
   }
 }

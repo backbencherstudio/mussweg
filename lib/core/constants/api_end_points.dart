@@ -48,6 +48,18 @@ class ApiEndpoints {
   static String boughtCancelProduct =
       '$baseUrl/api/dashborad/bought-cancelled-item';
 
+  //  Sell product
+  static String totalSellProduct(int page, int limit) =>
+      '$baseUrl/api//dashborad/total-selling-item/?page=$page&perPage=$limit';
+  static String sellPendingProduct =
+      '$baseUrl/api/dashborad/selling-pending-item';
+  static String sellDeliveredProduct =
+      '$baseUrl/api/dashborad/selling-delivered-item';
+  static String sellCancelProduct =
+      '$baseUrl/api/dashborad/selling-cancelled-item';
+
+
+  //
   static const String getRequestedBidsForSeller =
       '$baseUrl/api/bid/seller-product-bids';
   static const String getAcceptedBidsForSeller =
@@ -68,14 +80,15 @@ class ApiEndpoints {
       '$baseUrl/api/products/search?page=$page&perPage=10&search=$Q';
   static String filterProducts = '$baseUrl/api/products/filter';
 
-  //chat
-  static String getChatList(userId) =>
-      "$baseUrl/api/chat/conversation/conversation-list/$userId";
 
+  //chat
+  static String getChatList =
+      "$baseUrl/api/chat/conversation/conversation-list";
   static String getAllMessage(String conversationId, int page, int limit) =>
       "$baseUrl/api/chat/message/all-message/$conversationId?page=$page&perPage=$limit";
-
-
   static String sendMessage=
       "$baseUrl/api/chat/message/send-message";
+
+  static String createConversation=
+      "$baseUrl/api/chat/conversation/create-conversation";
 }
