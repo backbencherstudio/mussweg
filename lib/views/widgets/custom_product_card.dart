@@ -10,6 +10,8 @@ import '../../data/model/home/category_based_product_model.dart';
 import '../../view_model/bid/place_a_bid_provider.dart';
 import '../../view_model/home_provider/favorite_icon_provider.dart';
 import '../../view_model/product_item_list_provider/get_product_details_provider.dart';
+import '../../view_model/whistlist/whistlist_provider_of_get_favourite_product.dart';
+import '../../view_model/whistlist/wishlist_create.dart';
 
 class CustomProductCard extends StatelessWidget {
   final ProductData product;
@@ -18,12 +20,7 @@ class CustomProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final favoriteProvider = Provider.of<FavoriteProvider>(context);
-
-    // Check if the product data is still loading
-    bool isLoading =
-        product.title ==
-        null; // Assuming title is a required field for validation
+    bool isLoading = product.title == null;
 
     return GestureDetector(
       onTap: () {
@@ -135,8 +132,24 @@ class CustomProductCard extends StatelessWidget {
                                 ),
                               )
                               : GestureDetector(
-                                onTap: () {
-                                  favoriteProvider.toggleFavorite();
+                                onTap: () async {
+                                  final provider = context.read<FavoriteProvider>();
+
+                                  provider.toggleFavorite(product.id, !provider.isFavorite(product.id));
+
+                                  final result = await context.read<WishlistCreate>().createWishListProduct(product.id);
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(context.read<WishlistCreate>().errorMessage),
+                                    ),
+                                  );
+
+                                  if (!result) {
+                                    provider.toggleFavorite(product.id, !provider.isFavorite(product.id));
+                                  } else {
+                                    await context.read<WhistlistProviderOfGetFavouriteProduct>().getWishlistProduct();
+                                  }
                                 },
                                 child: Container(
                                   height: 36.h,
@@ -148,12 +161,13 @@ class CustomProductCard extends StatelessWidget {
                                   ),
                                   child: Center(
                                     child: Icon(
-                                      product.isInWishlist
+                                      context.watch<FavoriteProvider>().isFavorite(product.id) || product.isInWishlist
+
                                           ? Icons.favorite
                                           : Icons.favorite_border,
                                       color:
-                                          product.isInWishlist
-                                              ? Colors.red
+                                      context.watch<FavoriteProvider>().isFavorite(product.id) || product.isInWishlist
+                                          ? Colors.red
                                               : Colors.white,
                                       size: 20.h,
                                     ),

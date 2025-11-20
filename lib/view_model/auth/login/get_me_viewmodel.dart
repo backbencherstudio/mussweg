@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mussweg/core/constants/api_end_points.dart';
+import 'package:mussweg/core/services/user_id_storage.dart';
 import '../../../core/services/api_service.dart';
 import '../../../data/model/user/user_model.dart';
 
@@ -27,6 +28,7 @@ class GetMeViewmodel extends ChangeNotifier {
 
         if (userResponse.success && userResponse.data != null) {
           _user = userResponse.data!;
+          await UserIdStorage().saveUserId(_user?.id ?? '');
           _error = null;
         } else {
           _error = "Failed to load user data";

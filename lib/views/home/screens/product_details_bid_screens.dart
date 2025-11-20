@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:mussweg/core/constants/api_end_points.dart';
+import 'package:mussweg/core/services/user_id_storage.dart';
 import 'package:mussweg/view_model/bid/place_a_bid_provider.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:mussweg/view_model/product_item_list_provider/get_product_details_provider.dart';
@@ -151,12 +152,21 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                 child: Row(
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        context.read<ClientDashboardDetailsProvider>().setClientId(product?.sellerInfo?.userId ?? '');
-                        Navigator.pushNamed(
-                          context,
-                          RouteNames.viewProfileScreen,
-                        );
+                      onTap: () async {
+
+                        final userId = await UserIdStorage().getUserId();
+                        if (userId == product?.sellerInfo?.userId) {
+                          Navigator.pushNamed(
+                            context,
+                            RouteNames.sellerProfilePage,
+                          );
+                        } else {
+                          context.read<ClientDashboardDetailsProvider>().setClientId(product?.sellerInfo?.userId ?? '');
+                          Navigator.pushNamed(
+                            context,
+                            RouteNames.viewProfileScreen,
+                          );
+                        }
                       },
                       child: SizedBox(
                         width: MediaQuery.of(context).size.width * 0.6,
@@ -434,8 +444,8 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                             ),
                                           ),
                                           SizedBox(height: 4),
-                                          Text(
-                                            ": ${product?.remainingTime ?? '00h : 00m : 00s'}",
+                                          Text(product?.remainingTime == null || product?.remainingTime == '' ?
+                                            ": 00h : 00m : 00s" : ": ${DateFormat("dd MMM, yy h:mm a").format(DateTime.parse(product?.remainingTime ?? '')) ?? ''}",
                                             style: TextStyle(
                                               fontSize: 14,
                                               color: Color(0xff1A9882),
