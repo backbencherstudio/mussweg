@@ -7,6 +7,7 @@ import 'package:mussweg/view_model/product_item_list_provider/get_product_detail
 import 'package:provider/provider.dart';
 import '../../../core/routes/route_names.dart';
 import '../../../view_model/bid/place_a_bid_provider.dart';
+import '../../../view_model/home_provider/favorite_icon_provider.dart';
 import '../../../view_model/whistlist/whistlist_provider_of_get_favourite_product.dart';
 import '../../../view_model/whistlist/wishlist_create.dart';
 import '../../profile/widgets/simple_apppbar.dart';
@@ -258,22 +259,22 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                       left: 8.w,
                                       child: GestureDetector(
                                         onTap: () async {
-                                          final result = await context
-                                              .read<WishlistCreate>()
-                                              .createWishListProduct(product.id);
+                                          final provider = context.read<FavoriteProvider>();
+
+                                          provider.toggleFavorite(product.id, !provider.isFavorite(product.id));
+
+                                          final result = await context.read<WishlistCreate>().createWishListProduct(product.id);
 
                                           ScaffoldMessenger.of(context).showSnackBar(
                                             SnackBar(
-                                              content: Text(
-                                                context.read<WishlistCreate>().errorMessage,
-                                              ),
+                                              content: Text(context.read<WishlistCreate>().errorMessage),
                                             ),
                                           );
 
-                                          if (result) {
-                                            await context
-                                                .read<WhistlistProviderOfGetFavouriteProduct>()
-                                                .getWishlistProduct();
+                                          if (!result) {
+                                            provider.toggleFavorite(product.id, !provider.isFavorite(product.id));
+                                          } else {
+                                            await context.read<WhistlistProviderOfGetFavouriteProduct>().getWishlistProduct();
                                           }
                                         },
                                         child: Container(
@@ -285,10 +286,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                             color: Color(0xffC7C8C8),
                                           ),
                                           child: Icon(
-                                            product.isInWishlist
+                                            context.watch<FavoriteProvider>().isFavorite(product.id) || product.isInWishlist
                                                 ? Icons.favorite
                                                 : Icons.favorite_border,
-                                            color: product.isInWishlist
+                                            color: context.watch<FavoriteProvider>().isFavorite(product.id) || product.isInWishlist
                                                 ? Colors.red
                                                 : Colors.white,
                                             size: 20.h,
