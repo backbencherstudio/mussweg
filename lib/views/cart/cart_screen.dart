@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/core/routes/route_names.dart';
+import 'package:mussweg/views/cart/view_model/payment_screen_provider.dart';
 import 'package:mussweg/views/widgets/custom_primary_button.dart';
 import 'package:provider/provider.dart';
-
 import '../../view_model/parent_provider/parent_screen_provider.dart';
-import 'package:mussweg/views/profile/widgets/simple_apppbar.dart'; // Ensure this path is correct
+import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -15,10 +15,25 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  List<bool> isSelectedList = List.generate(4, (index) => false);
+  List<bool> isSelectedList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      context.read<PaymentScreenProvider>().getMyCart();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final paymentProvider = Provider.of<PaymentScreenProvider>(context);
+    final cart = paymentProvider.cartModel?.data?.items ?? [];
+
+    if (isSelectedList.length != cart.length) {
+      isSelectedList = List.generate(cart.length, (index) => false);
+    }
+
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (didPop, result) {
@@ -27,201 +42,189 @@ class _CartScreenState extends State<CartScreen> {
       child: Scaffold(
         appBar: SimpleApppbar(
           title: 'Cart',
-          onBack: () {
-            context.read<ParentScreensProvider>().onSelectedIndex(0);
-          },
+          onBack:
+              () => context.read<ParentScreensProvider>().onSelectedIndex(0),
         ),
         body: Column(
           children: [
-            Expanded(
-              child: ListView.builder(
-                  itemCount: 4, itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            isSelectedList[index] = !isSelectedList[index];
-                          });
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade50,
-                            borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(
-                                color: isSelectedList[index] ? Colors.red : Colors.transparent,
-                                width: 1.w),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(16.w),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              spacing: 8.w,
-                              children: [
-                                Row(
-                                  children: [
-                                    Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        Container(
-                                          height: 24.w,
-                                          width: 24.w,
-                                          decoration: BoxDecoration(
-                                            color: isSelectedList[index] ? Colors.red : Colors.grey,
-                                            shape: BoxShape.circle,
-                                          ),
-                                        ),
-                                        Container(
-                                          height: 20.w,
-                                          width: 20.w,
-                                          decoration: BoxDecoration(
-                                            color: isSelectedList[index] ? Colors.red : Colors.white,
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color: Colors.white,
-                                              width: 3.w,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(width: 8.w),
-                                    Text(
-                                      'Cameron Williamson',
-                                      style: TextStyle(
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.w600,
+            cart.isEmpty
+                ? const Expanded(
+                  child: Center(child: CircularProgressIndicator()),
+                )
+                : Expanded(
+                  child: ListView.builder(
+                    itemCount: cart.length,
+                    itemBuilder: (context, index) {
+                      final cartData = cart[index];
+
+                      return Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              isSelectedList[index] = !isSelectedList[index];
+                            });
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade50,
+                              borderRadius: BorderRadius.circular(12.r),
+                              border: Border.all(
+                                color:
+                                    isSelectedList[index]
+                                        ? Colors.red
+                                        : Colors.transparent,
+                                width: 1.w,
+                              ),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(16.w),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8.r),
+                                    child: Container(
+                                      height: 80.h,
+                                      width: 100.w,
+                                      color: Colors.grey.shade200,
+                                      child: Image.asset(
+                                        'assets/images/post_card.png',
+                                        fit: BoxFit.fill,
                                       ),
                                     ),
-                                    Spacer(),
-                                    Icon(
-                                      Icons.more_horiz_outlined,
-                                      size: 20.w,
-                                      color: Colors.black,
-                                    ),
-                                  ],
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(8.w),
                                   ),
-                                  child: Row(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(8.r),
-                                        child: Container(
-                                          height: 80.h,
-                                          width: 100.w,
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey,
-                                            borderRadius: BorderRadius.circular(8.r),
-                                          ),
-                                          child: Image.asset(
-                                            'assets/images/post_card.png',
-                                            fit: BoxFit.fill,
+                                  SizedBox(width: 12.w),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          cartData.productTitle ?? "",
+                                          style: TextStyle(
+                                            fontSize: 16.sp,
+                                            fontWeight: FontWeight.w600,
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(width: 8.w),
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                        SizedBox(height: 8.h),
+                                        Text(
+                                          cartData.size ?? "",
+                                          style: TextStyle(
+                                            fontSize: 13.sp,
+                                            color: Colors.grey.shade600,
+                                          ),
+                                        ),
+                                        SizedBox(height: 16.h),
+                                        Row(
                                           children: [
                                             Text(
-                                              'Men Exclusive T-Shirt',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
+                                              "\$${((cartData.price ?? 0) * (cartData.quantity ?? 0)).toStringAsFixed(2)}",
+                                              style: TextStyle(
+                                                fontSize: 17.sp,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.red,
+                                              ),
+                                            ),
+
+                                            const Spacer(),
+                                            _quantityButton(
+                                              false,
+                                              cartData,
+                                              paymentProvider,
+                                            ),
+                                            SizedBox(width: 8.w),
+                                            Text(
+                                              cartData.quantity.toString(),
                                               style: TextStyle(
                                                 fontSize: 16.sp,
                                                 fontWeight: FontWeight.w600,
                                               ),
                                             ),
-                                            SizedBox(height: 8.h),
-                                            Text(
-                                              'Size XL (New Condition)',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                fontSize: 13.sp,
-                                                fontWeight: FontWeight.w400,
-                                                color: Colors.grey.shade600,
-                                              ),
-                                            ),
-                                            SizedBox(height: 16.h),
-                                            Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Text(
-                                                  '\$200',
-                                                  style: TextStyle(
-                                                    fontSize: 17.sp,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.red,
-                                                  ),
-                                                ),
-                                                Spacer(),
-                                                _incAndDecButton(isIncrement: false),
-                                                SizedBox(width: 8.w),
-                                                Text(
-                                                  '1',
-                                                  style: TextStyle(
-                                                    fontSize: 16.sp,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-                                                SizedBox(width: 8.w),
-                                                _incAndDecButton(isIncrement: true),
-                                              ],
+                                            SizedBox(width: 8.w),
+                                            _quantityButton(
+                                              true,
+                                              cartData,
+                                              paymentProvider,
                                             ),
                                           ],
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(height: 16.h,),
-                    ],
+                      );
+                    },
                   ),
-                );
-              }),
-            ),
-            SizedBox(height: 16.h,),
+                ),
+
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: Row(
                 children: [
-                  Text('\$ 60.76', style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w600),),
+                  Text(
+                    '\$ ${paymentProvider.cartModel?.data?.grandTotal ?? "0.00"}',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   Spacer(),
-                  SizedBox(height: 60.h, width: 160.w, child: CustomPrimaryButton(title: 'Checkout', textStyleSize: 18.sp, onTap: () => Navigator.pushNamed(context, RouteNames.checkoutScreen)))
+                  SizedBox(
+                    height: 60.h,
+                    width: 160.w,
+                    child: CustomPrimaryButton(
+                      title: 'Checkout',
+                      textStyleSize: 18.sp,
+                      onTap:
+                          () => Navigator.pushNamed(
+                            context,
+                            RouteNames.checkoutScreen,
+                          ),
+                    ),
+                  ),
                 ],
               ),
             ),
-            SizedBox(height: 100.h,),
+            SizedBox(height: 60.h),
           ],
         ),
       ),
     );
   }
 
-  Widget _incAndDecButton({required bool isIncrement}) {
-    return Container(
-      height: 28.w,
-      width: 28.w,
-      decoration: BoxDecoration(
-        color: isIncrement ? Colors.red.shade100 : Colors.red.shade50,
-        shape: BoxShape.circle,
+  Widget _quantityButton(
+    bool isIncrement,
+    dynamic cartData,
+    PaymentScreenProvider provider,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        int qty = cartData.quantity ?? 1;
+
+        if (!isIncrement && qty <= 1) return;
+
+        int newQty = isIncrement ? qty + 1 : qty - 1;
+
+        provider.updateCart(cartData.cartItemId.toString(), newQty.toString());
+      },
+      child: Container(
+        height: 28.w,
+        width: 28.w,
+        decoration: BoxDecoration(
+          color: isIncrement ? Colors.red.shade100 : Colors.red.shade50,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          isIncrement ? Icons.add : Icons.remove,
+          color: Colors.red,
+          size: 18,
+        ),
       ),
-      child: Icon(isIncrement ? Icons.add : Icons.remove, color: Colors.red),
     );
   }
 }

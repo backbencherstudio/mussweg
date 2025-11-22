@@ -25,10 +25,18 @@ class _ParentScreensState extends State<ParentScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final allCategoryProvider = context.read<AllCategoryProvider>();
-      context.read<FashionCategoryBasedProductProvider>().getCategoryBasedProduct(allCategoryProvider.fashionCategoryId);
-      context.read<HomeCategoryBasedProvider>().getCategoryBasedProduct(allCategoryProvider.homeCategoryId);
-      context.read<ElectronicCategoryBasedProvider>().getCategoryBasedProduct(allCategoryProvider.electronicsCategoryId);
-      context.read<WhistlistProviderOfGetFavouriteProduct>().getWishlistProduct();
+      context
+          .read<FashionCategoryBasedProductProvider>()
+          .getCategoryBasedProduct(allCategoryProvider.fashionCategoryId);
+      context.read<HomeCategoryBasedProvider>().getCategoryBasedProduct(
+        allCategoryProvider.homeCategoryId,
+      );
+      context.read<ElectronicCategoryBasedProvider>().getCategoryBasedProduct(
+        allCategoryProvider.electronicsCategoryId,
+      );
+      context
+          .read<WhistlistProviderOfGetFavouriteProduct>()
+          .getWishlistProduct();
     });
   }
 
@@ -93,12 +101,13 @@ class _ParentScreensState extends State<ParentScreen> {
                           parentScreenProvider.screens.length) {
                     return const Center(child: Text('No screens available'));
                   }
-                  final validScreens = parentScreenProvider.screens
-                      .asMap()
-                      .entries
-                      .where((entry) => entry.value != null)
-                      .map((entry) => entry.value!)
-                      .toList();
+                  final validScreens =
+                      parentScreenProvider.screens
+                          .asMap()
+                          .entries
+                          .where((entry) => entry.value != null)
+                          .map((entry) => entry.value!)
+                          .toList();
 
                   if (validScreens.isEmpty) {
                     return const Center(
@@ -106,10 +115,8 @@ class _ParentScreensState extends State<ParentScreen> {
                     );
                   }
 
-                  final adjustedIndex = parentScreenProvider.selectedIndex.clamp(
-                    0,
-                    validScreens.length - 1,
-                  );
+                  final adjustedIndex = parentScreenProvider.selectedIndex
+                      .clamp(0, validScreens.length - 1);
 
                   return IndexedStack(
                     index: adjustedIndex,
@@ -117,14 +124,11 @@ class _ParentScreensState extends State<ParentScreen> {
                   );
                 },
               ),
-              Transform.translate(
-                offset: const Offset(0, -15),
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: const ParentScreenWidget(),
-                  ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: const ParentScreenWidget(),
                 ),
               ),
             ],
