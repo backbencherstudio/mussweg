@@ -7,6 +7,7 @@ import 'package:mussweg/view_model/bid/place_a_bid_provider.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:mussweg/view_model/product_item_list_provider/get_product_details_provider.dart';
 import 'package:mussweg/views/auth/sign_up/widgets/buttons.dart';
+import 'package:mussweg/views/cart/view_model/payment_screen_provider.dart';
 import 'package:mussweg/views/inbox/view_model/inbox_screen_provider.dart';
 import 'package:mussweg/views/widgets/custom_text_field.dart';
 import 'package:mussweg/views/widgets/simple_apppbar.dart';
@@ -565,17 +566,28 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                   ),
                                   SizedBox(width: 12.w),
                                   Expanded(
-                                    child: CustomMainButton(
-                                      onTap: () {
-                                        context
-                                            .read<ParentScreensProvider>()
-                                            .onSelectedIndex(2);
-                                        Navigator.pushNamed(
-                                          context,
-                                          RouteNames.parentScreen,
+                                    child: Consumer<PaymentScreenProvider>(
+                                      builder: (
+                                        context,
+                                        paymentProvider,
+                                        child,
+                                      ) {
+                                        return CustomMainButton(
+                                          onTap: () async {
+                                            await paymentProvider.createCart(
+                                              product?.productId ?? '',
+                                            );
+                                            context
+                                                .read<ParentScreensProvider>()
+                                                .onSelectedIndex(2);
+                                            Navigator.pushNamed(
+                                              context,
+                                              RouteNames.parentScreen,
+                                            );
+                                          },
+                                          title: 'Buy Now',
                                         );
                                       },
-                                      title: 'Buy Now',
                                     ),
                                   ),
                                 ],
