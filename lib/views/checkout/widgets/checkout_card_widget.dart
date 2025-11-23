@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../cart/model/cart_model.dart';
 
 class CheckoutCartWidget extends StatelessWidget {
-  const CheckoutCartWidget({super.key});
+  final List<Items> selectedItems;
+
+  const CheckoutCartWidget({super.key, required this.selectedItems});
 
   @override
   Widget build(BuildContext context) {
+    final subtotal = selectedItems.fold<double>(
+        0.0, (sum, item) => sum + ((item.price ?? 0) * (item.quantity ?? 0)));
+
+    final shippingCharge = 10.0;
+    final total = subtotal + shippingCharge;
+
     return Card(
       color: Colors.white,
-      margin: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -17,25 +26,27 @@ class CheckoutCartWidget extends StatelessWidget {
             Text(
               'Order Summary',
               style: TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 16.sp,
-                color: Color(0xFF4A4C56),
-              ),
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16.sp,
+                  color: const Color(0xFF4A4C56)),
             ),
             SizedBox(height: 16.h),
 
             ListView.separated(
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: 2,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: selectedItems.length,
               itemBuilder: (context, index) {
+                final item = selectedItems[index];
                 return Row(
                   children: [
-                    Image.asset(
-                      'assets/images/card-image-1.png',
+                    Container(
                       height: 80.h,
                       width: 80.w,
-                      fit: BoxFit.contain,
+                      color: Colors.grey.shade200,
+                      child: item.photo != null
+                          ? Image.network(item.photo!, fit: BoxFit.cover)
+                          : const Icon(Icons.image, size: 40),
                     ),
                     SizedBox(width: 10.w),
                     Expanded(
@@ -43,40 +54,35 @@ class CheckoutCartWidget extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Man Exclusive T-Shirt',
+                            item.productTitle ?? '',
                             style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14.sp,
-                              color: Color(0xFF4A4C56),
-                            ),
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14.sp,
+                                color: const Color(0xFF4A4C56)),
                           ),
                           SizedBox(height: 6.h),
                           Text(
-                            'Size XL (New Condition)',
+                            'Size: ${item.size ?? '-'} (${item.condition ?? 'New'})',
                             style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Color(0xFF777980),
-                            ),
+                                fontSize: 12.sp, color: const Color(0xFF777980)),
                           ),
                           SizedBox(height: 6.h),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Quantity: 1',
+                                'Qty: ${item.quantity}',
                                 style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14.sp,
-                                  color: Color(0xFF4A4C56),
-                                ),
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14.sp,
+                                    color: const Color(0xFF4A4C56)),
                               ),
                               Text(
-                                '\$ 20.00',
+                                '\$${((item.price ?? 0) * (item.quantity ?? 0)).toStringAsFixed(2)}',
                                 style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14.sp,
-                                  color: Color(0xFF4A4C56),
-                                ),
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14.sp,
+                                    color: const Color(0xFF4A4C56)),
                               ),
                             ],
                           ),
@@ -86,84 +92,39 @@ class CheckoutCartWidget extends StatelessWidget {
                   ],
                 );
               },
-              separatorBuilder: (context, index) {
-                return Divider(height: 10.h,color: Color(0xFFE9E9EA));
-              },
+              separatorBuilder: (_, __) =>
+                  Divider(height: 10.h, color: const Color(0xFFE9E9EA)),
             ),
 
             SizedBox(height: 10.h),
-            Divider(color: Color(0xFFE9E9EA)),
+            Divider(color: const Color(0xFFE9E9EA)),
 
-            // Subtotal
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Subtotal',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14.sp,
-                    color: Color(0xFF4A4C56),
-                  ),
-                ),
-                Text(
-                  '\$40.00',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14.sp,
-                    color: Color(0xFF4A4C56),
-                  ),
-                ),
+                const Text('Subtotal', style: TextStyle(fontWeight: FontWeight.w500)),
+                Text('\$${subtotal.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.w500)),
               ],
             ),
             SizedBox(height: 10.h),
 
-            // Shipping
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Shipping Charge',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14.sp,
-                    color: Color(0xFF4A4C56),
-                  ),
-                ),
-                Text(
-                  '\$10.00',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14.sp,
-                    color: Color(0xFF4A4C56),
-                  ),
-                ),
+                const Text('Shipping Charge', style: TextStyle(fontWeight: FontWeight.w500)),
+                Text('\$${shippingCharge.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.w500)),
               ],
             ),
             SizedBox(height: 10.h),
-            Divider(color: Color(0xFFE9E9EA)),
+            Divider(color: const Color(0xFFE9E9EA)),
             SizedBox(height: 10.h),
 
-            // Total
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Total',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16.sp,
-                    color: Color(0xFF4A4C56),
-                  ),
-                ),
-                Text(
-                  '\$50.00',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16.sp,
-                    color: Colors.red,
-                  ),
-                ),
+                const Text('Total', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                Text('\$${total.toStringAsFixed(2)}',
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.sp, color: Colors.red)),
               ],
             ),
           ],

@@ -1,23 +1,48 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-
 import 'package:mussweg/core/constants/api_end_points.dart';
 import 'package:mussweg/core/services/token_storage.dart';
 import 'package:mussweg/views/cart/model/cart_model.dart';
 
-class PaymentScreenProvider extends ChangeNotifier {
-  final TokenStorage _tokenStorage = TokenStorage();
+import '../model/my_order_model.dart' hide Items;
 
+class PaymentScreenProvider extends ChangeNotifier {
+  String selectedOrderId = "";
+  int selectedIndex = -1;
+  selectOrder(String orderId, int index) {
+    selectedOrderId = orderId;
+    selectedIndex = index;
+
+    debugPrint("The selected index $orderId $index");
+    notifyListeners();
+  }
+
+  final TokenStorage _tokenStorage = TokenStorage();
+  MyOrderModel? _myOrderModel;
+  MyOrderModel? get myOrderModel => _myOrderModel;
   CartModel? _cartModel;
   CartModel? get cartModel => _cartModel;
+  List<Items> selectedCartItems = [];
 
-  //  CREATE CART
+  void toggleCartItemSelection(Items item, bool isSelected) {
+    if (isSelected) {
+      selectedCartItems.add(item);
+    } else {
+      selectedCartItems.removeWhere((e) => e.cartItemId == item.cartItemId);
+    }
+    notifyListeners();
+  }
+
+  void clearSelectedItems() {
+    selectedCartItems.clear();
+    notifyListeners();
+  }
+
   Future<void> createCart(String productId) async {
     try {
       final url = Uri.parse(ApiEndpoints.createCart);
       final token = await _tokenStorage.getToken();
-
       final response = await http.post(
         url,
         headers: {
@@ -26,20 +51,17 @@ class PaymentScreenProvider extends ChangeNotifier {
         },
         body: jsonEncode({"product_id": productId}),
       );
-
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print("Cart created successfully");
+        debugPrint("Cart created successfully");
       } else {
-        print("Create Cart Failed: ${response.statusCode}");
+        debugPrint("Create Cart Failed: ${response.statusCode}");
       }
     } catch (error) {
-      print("Create Cart Error: $error");
+      debugPrint("Create Cart Error: $error");
     }
   }
 
-  //  GET MY CART
   Future<void> getMyCart() async {
-    debugPrint("----------------------------  fetch ------------------");
     try {
       final url = Uri.parse(ApiEndpoints.getMyCart);
       final token = await _tokenStorage.getToken();
@@ -48,13 +70,9 @@ class PaymentScreenProvider extends ChangeNotifier {
         url,
         headers: {"Authorization": "Bearer $token"},
       );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final decodedData = jsonDecode(response.body);
-        _cartModel = CartModel.fromJson(decodedData);
-
-        notifyListeners(); // update UI
-        debugPrint("Cart Fetched");
+      if (response.statusCode == 200) {
+        _cartModel = CartModel.fromJson(jsonDecode(response.body));
+        notifyListeners();
       } else {
         debugPrint("Get Cart Failed: ${response.statusCode}");
       }
@@ -63,7 +81,6 @@ class PaymentScreenProvider extends ChangeNotifier {
     }
   }
 
-  // UPDATE CART
   Future<void> updateCart(String cartItemId, String quantity) async {
     try {
       final url = Uri.parse(ApiEndpoints.updateCart(cartItemId));
@@ -79,13 +96,62 @@ class PaymentScreenProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print("Cart Updated");
-        await getMyCart(); // refresh cart model
+        await getMyCart();
       } else {
-        print("Update Cart Failed: ${response.statusCode}");
+        debugPrint("Update Cart Failed: ${response.statusCode}");
       }
     } catch (error) {
-      print("Update Cart Error: $error");
+      debugPrint("Update Cart Error: $error");
+    }
+  }
+
+  Future<void> createOrder(Map<String, dynamic> shippingData) async {
+    try {
+      final token = await _tokenStorage.getToken();
+      final url = Uri.parse(ApiEndpoints.orderCreate);
+
+      final cartItemIds = selectedCartItems.map((e) => e.cartItemId).toList();
+
+      final response = await http.post(
+        url,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({"cartItemIds": cartItemIds, ...shippingData}),
+      );
+
+      final decodedData = jsonDecode(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        debugPrint("Order Success: ${decodedData['message']}");
+      } else {
+        debugPrint("Order Failed: ${decodedData['message']}");
+      }
+    } catch (error) {
+      debugPrint("Create Order Error: $error");
+    }
+  }
+
+  Future<void> getMyOrder() async {
+    try {
+      final token = await _tokenStorage.getToken();
+      final url = Uri.parse(ApiEndpoints.myOrderList);
+
+      final response = await http.get(
+        url,
+        headers: {"Authorization": "Bearer $token"},
+      );
+
+      final decodeData = jsonDecode(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _myOrderModel = MyOrderModel.fromJson(decodeData);
+
+        debugPrint("THe success message ${decodeData['message']}");
+      } else {
+        debugPrint("THe failed message ${decodeData['message']}");
+      }
+    } catch (error) {
+      debugPrint("THe failed message $error");
     }
   }
 }

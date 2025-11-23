@@ -46,6 +46,5 @@ class RouteNames {
   static const String schedulePickUpScreen = '/schedulePickUpScreen';
   static const String locationPickScreen = '/locationPickScreen';
   static const String disposalScreen = '/disposalScreen';
-
-
+  static const String orderIdWithPayment = '/orderIdWithPayment';
 }

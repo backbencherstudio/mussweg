@@ -9,6 +9,7 @@ import 'package:mussweg/core/services/user_name_storage.dart';
 import 'package:mussweg/data/user_all_products/user_all_products_viewmodel.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:mussweg/view_model/profile/user_all_products/user_all_products_provider.dart';
+import 'package:mussweg/views/cart/view_model/payment_screen_provider.dart';
 import 'package:mussweg/views/profile/widgets/profile_menu_item.dart';
 import 'package:mussweg/views/widgets/simple_apppbar.dart';
 import 'package:provider/provider.dart';
@@ -24,8 +25,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-
-
   @override
   void initState() {
     // TODO: implement initState
@@ -48,8 +47,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Scaffold(
         appBar: SimpleApppbar(
           title: 'Profile',
-          onBack: () =>
-              context.read<ParentScreensProvider>().onSelectedIndex(0),
+          onBack:
+              () => context.read<ParentScreensProvider>().onSelectedIndex(0),
         ),
         body: Padding(
           padding: EdgeInsets.all(8.0.sp),
@@ -79,13 +78,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             width: 90,
                             height: 90,
                             fit: BoxFit.cover,
-                            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                            loadingBuilder: (
+                              BuildContext context,
+                              Widget child,
+                              ImageChunkEvent? loadingProgress,
+                            ) {
                               if (loadingProgress == null) return child;
                               return Center(
                                 child: CircularProgressIndicator(
-                                  value: loadingProgress.expectedTotalBytes != null
-                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                      : null,
+                                  value:
+                                      loadingProgress.expectedTotalBytes != null
+                                          ? loadingProgress
+                                                  .cumulativeBytesLoaded /
+                                              loadingProgress
+                                                  .expectedTotalBytes!
+                                          : null,
                                 ),
                               );
                             },
@@ -93,7 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               return SizedBox(
                                 width: 90,
                                 height: 90,
-                                child: Image.asset('assets/icons/user.png',)
+                                child: Image.asset('assets/icons/user.png'),
                               );
                             },
                           ),
@@ -173,6 +180,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       },
                     ),
                     Divider(color: Colors.grey[350]),
+
+                    Consumer<PaymentScreenProvider>(
+                      builder: (context, provider, child) {
+                        return ProfileMenuItem(
+                          image: 'assets/icons/user.png',
+                          title: 'My Order',
+                          onTap: () async {
+                            await provider.getMyOrder();
+                            Navigator.pushNamed(
+                              context,
+                              RouteNames.orderIdWithPayment,
+                            );
+                          },
+                        );
+                      },
+                    ),
+                    Divider(color: Colors.grey[350]),
                     ProfileMenuItem(
                       image: 'assets/icons/love.png',
                       title: 'Favorite items',
@@ -209,10 +233,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       image: 'assets/icons/border-all-01.png',
                       title: 'Disposal Items',
                       onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          RouteNames.disposalScreen,
-                        );
+                        Navigator.pushNamed(context, RouteNames.disposalScreen);
                       },
                     ),
                     Divider(color: Colors.grey[350]),
@@ -231,7 +252,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       image: 'assets/icons/border-all-01.png',
                       title: 'My Bid List',
                       onTap: () {
-                        Navigator.pushNamed(context, RouteNames.bidForBuyerScreen);
+                        Navigator.pushNamed(
+                          context,
+                          RouteNames.bidForBuyerScreen,
+                        );
                       },
                     ),
                     Divider(color: Colors.grey[350]),
@@ -239,7 +263,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       image: 'assets/icons/border-all-01.png',
                       title: 'Bids on My Items',
                       onTap: () {
-                        Navigator.pushNamed(context, RouteNames.bidForSellerScreen);
+                        Navigator.pushNamed(
+                          context,
+                          RouteNames.bidForSellerScreen,
+                        );
                       },
                     ),
                     Divider(color: Colors.grey[350]),

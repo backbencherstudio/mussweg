@@ -94,4 +94,6 @@ class ApiEndpoints {
   static String createCart = "$baseUrl/api/cart/create";
   static String getMyCart = "$baseUrl/api/cart/my-cart";
   static String updateCart(String cartItem) => "$baseUrl/api/cart/update/$cartItem";
+  static String orderCreate = "$baseUrl/api/order/create";
+  static String myOrderList = "$baseUrl/api/order/my-orders";
 }
