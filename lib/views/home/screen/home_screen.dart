@@ -12,7 +12,6 @@ import '../../../view_model/auth/login/get_me_viewmodel.dart';
 import '../../../view_model/home_provider/all_category_provider.dart';
 import '../../../view_model/home_provider/home_screen_provider.dart';
 import '../../../view_model/product_item_list_provider/category_based_product_provider.dart';
-import '../../../view_model/product_item_list_provider/get_product_details_provider.dart';
 import '../../widgets/custom_product_card.dart';
 import '../../widgets/shimmer_card_widget.dart';
 
@@ -22,7 +21,6 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userVM = context.watch<GetMeViewmodel>();
-    final homScreenProvider = context.watch<HomeScreenProvider>();
 
     return SafeArea(
       child: Scaffold(
