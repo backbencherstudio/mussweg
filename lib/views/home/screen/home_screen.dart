@@ -36,57 +36,67 @@ class HomeScreen extends StatelessWidget {
                 Row(
                   children: [
                     ClipOval(
-                      child: userVM.user?.avatar != null
-                          ? Image.network(
-                              "${ApiEndpoints.baseUrl}/public/storage/avatar/${userVM.user!.avatar!}",
-                              fit: BoxFit.cover,
-                              width: 50.w,
-                              height: 50.h,
-                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                  : null,
-                            ),
-                          );
-                        },
-                              errorBuilder: (_, __, ___) {
-                                return Container(
-                                  height: 50.w,
-                                  width: 50.w,
-                                  padding: EdgeInsets.all(8.w),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: Colors.black12),
-                                  ),
-                                  child: Image.asset(
-                                    'assets/icons/user.png',
-                                    fit: BoxFit.cover,
-                                    width: 50.w,
-                                    height: 50.h,
-                                  ),
-                                );
-                              },
-                            )
-                          : Container(
-                              height: 50.w,
-                              width: 50.w,
-                              padding: EdgeInsets.all(8.w),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                border: Border.all(color: Colors.black12),
-                              ),
-                              child: Image.asset(
-                                'assets/icons/user.png',
+                      child:
+                          userVM.user?.avatar != null
+                              ? Image.network(
+                                "${ApiEndpoints.baseUrl}/public/storage/avatar/${userVM.user!.avatar!}",
                                 fit: BoxFit.cover,
                                 width: 50.w,
                                 height: 50.h,
+                                loadingBuilder: (
+                                  BuildContext context,
+                                  Widget child,
+                                  ImageChunkEvent? loadingProgress,
+                                ) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (_, __, ___) {
+                                  return Container(
+                                    height: 50.w,
+                                    width: 50.w,
+                                    padding: EdgeInsets.all(8.w),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(color: Colors.black12),
+                                    ),
+                                    child: Image.asset(
+                                      'assets/icons/user.png',
+                                      fit: BoxFit.cover,
+                                      width: 50.w,
+                                      height: 50.h,
+                                    ),
+                                  );
+                                },
+                              )
+                              : Container(
+                                height: 50.w,
+                                width: 50.w,
+                                padding: EdgeInsets.all(8.w),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: Colors.black12),
+                                ),
+                                child: Image.asset(
+                                  'assets/icons/user.png',
+                                  fit: BoxFit.cover,
+                                  width: 50.w,
+                                  height: 50.h,
+                                ),
                               ),
-                            ),
                     ),
                     SizedBox(width: 12.w),
                     Column(
@@ -132,7 +142,11 @@ class HomeScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                         color: Colors.white,
                       ),
-                      child: Icon(Icons.notifications_active_outlined, size: 27.w, color: Colors.grey.shade700,),
+                      child: Icon(
+                        Icons.notifications_active_outlined,
+                        size: 27.w,
+                        color: Colors.grey.shade700,
+                      ),
                     ),
                   ],
                 ),
@@ -245,8 +259,9 @@ class HomeScreen extends StatelessWidget {
                       child: ListView.builder(
                         itemCount:
                             categoryProvider.categoryModel!.data.length > 10
-                            ? 10
-                            : categoryProvider.categoryModel?.data.length ?? 0,
+                                ? 10
+                                : categoryProvider.categoryModel?.data.length ??
+                                    0,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
                           final category =
@@ -287,13 +302,24 @@ class HomeScreen extends StatelessWidget {
                                         height: 45.h,
                                         width: 45.w,
                                         fit: BoxFit.cover,
-                                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                                          if (loadingProgress == null) return child;
+                                        loadingBuilder: (
+                                          BuildContext context,
+                                          Widget child,
+                                          ImageChunkEvent? loadingProgress,
+                                        ) {
+                                          if (loadingProgress == null)
+                                            return child;
                                           return Center(
                                             child: CircularProgressIndicator(
-                                              value: loadingProgress.expectedTotalBytes != null
-                                                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                                  : null,
+                                              value:
+                                                  loadingProgress
+                                                              .expectedTotalBytes !=
+                                                          null
+                                                      ? loadingProgress
+                                                              .cumulativeBytesLoaded /
+                                                          loadingProgress
+                                                              .expectedTotalBytes!
+                                                      : null,
                                             ),
                                           );
                                         },
@@ -432,7 +458,7 @@ class HomeScreen extends StatelessWidget {
               );
             }
             return SizedBox(
-              height: 265.h,
+              height: 285.h,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: products.length > 10 ? 10 : products.length,
@@ -492,7 +518,7 @@ class HomeScreen extends StatelessWidget {
           builder: (_, provider, __) {
             if (provider.isLoading) {
               return SizedBox(
-                height: 265.h, // Adjust size to your design
+                height: 265.h,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: 4,
@@ -530,7 +556,7 @@ class HomeScreen extends StatelessWidget {
               );
             }
             return SizedBox(
-              height: 265.h,
+              height: 285.h,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: products.length > 10 ? 10 : products.length,
@@ -630,7 +656,7 @@ class HomeScreen extends StatelessWidget {
               );
             }
             return SizedBox(
-              height: 265.h,
+              height: 295.h,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: products.length > 10 ? 10 : products.length,

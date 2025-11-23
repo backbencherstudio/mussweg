@@ -61,13 +61,13 @@ class ShimmerCardWidget extends StatelessWidget {
     );
   }
 
-  Container _buildContainer(double height,double width) {
+  Container _buildContainer(double height, double width) {
     return Container(
       height: height.h,
       width: width.w,
       decoration: BoxDecoration(
         color: Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(12.r)
+        borderRadius: BorderRadius.circular(12.r),
       ),
     );
   }
