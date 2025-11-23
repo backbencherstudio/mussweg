@@ -20,6 +20,7 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
     'Delivered',
     'Cancelled',
   ];
+
   int selectedIndex = 0;
 
   @override
@@ -30,11 +31,11 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
       listen: false,
     );
 
-    // Fetch all product statuses
-    provider.allBoughtProduct();
-    provider.pendingBoughtProduct();
-    provider.confirmBoughtProduct();
-    provider.cancelBoughtProduct();
+    // Fetch all records on screen load
+    provider.allSelProduct();
+    provider.pendingSelProduct();
+    provider.confirmSelProduct();
+    provider.cancelSelProduct();
   }
 
   List<dynamic> getProducts(SellingItemScreenProvider provider) {
@@ -61,14 +62,15 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
         padding: EdgeInsets.all(16.0.w),
         child: Column(
           children: [
-            // Tabs
+            // ========================== TABS ==========================
             SizedBox(
               height: 35.h,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: tabs.length,
                 itemBuilder: (context, index) {
-                  bool isSelected = selectedIndex == index;
+                  final bool isSelected = selectedIndex == index;
+
                   return GestureDetector(
                     onTap: () => setState(() => selectedIndex = index),
                     child: Container(
@@ -86,7 +88,7 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
                           tabs[index],
                           style: TextStyle(
                             fontSize: 13.sp,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                             color:
                                 isSelected
                                     ? Colors.red.shade600
@@ -99,9 +101,10 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
                 },
               ),
             ),
+
             SizedBox(height: 16.h),
 
-            // Product list
+            // ======================= PRODUCT LIST ======================
             Expanded(
               child:
                   provider.allSellProductModel == null
@@ -117,19 +120,20 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
                         itemCount: products.length,
                         itemBuilder: (context, index) {
                           final product = products[index];
-
                           final items = product.items ?? [];
-                          final orderId = product.orderId ?? [];
 
                           final totalQty = items.fold(
                             0,
                             (sum, item) => sum + (item.quantity ?? 0),
                           );
+
                           final totalPrice = items.fold(
                             0.0,
                             (sum, item) =>
-                                sum + (item.price ?? 0) * (item.quantity ?? 0),
+                                sum +
+                                ((item.price ?? 0.0) * (item.quantity ?? 0)),
                           );
+
                           final productOwnerId =
                               items.isNotEmpty
                                   ? (items.first.productOwnerId ?? "")
@@ -160,32 +164,38 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
+
                                         SizedBox(height: 8.h),
+
+                                        // -------- ITEM ROWS --------
                                         ...items.map(
                                           (item) => buildItemRow(
                                             item.productTitle,
                                             item.price ?? 0,
                                             item.quantity ?? 0,
-                                            item.productOwnerId ?? "",
                                           ),
                                         ),
-                                        SizedBox(height: 8.h),
+
+                                        SizedBox(height: 10.h),
+
                                         Text(
                                           'Status: ${product.orderStatus ?? ''}',
                                           style: const TextStyle(
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
-                                        SizedBox(height: 8.h),
+
+                                        SizedBox(height: 10.h),
+
                                         CustomPrimaryButton(
                                           title: 'Leave Review',
-                                          onTap:
-                                              () => ReviewDialog()
-                                                  .showReviewDialog(
-                                                    context,
-                                                    productOwnerId,
-                                                    orderId,
-                                                  ),
+                                          onTap: () {
+                                            ReviewDialog().showReviewDialog(
+                                              context,
+                                              productOwnerId,
+                                              product.orderId,
+                                            );
+                                          },
                                         ),
                                       ],
                                     ),
@@ -203,27 +213,29 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
     );
   }
 
-  Widget buildItemRow(
-    String? name,
-    double price,
-    int quantity,
-    String productOwnerId,
-  ) {
+  // =====================================================
+  //                  ITEM ROW WIDGET
+  // =====================================================
+  Widget buildItemRow(String? name, double price, int quantity) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 4.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            name ?? '',
-            style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
+          Expanded(
+            child: Text(
+              name ?? '',
+              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
+            ),
           ),
+
           Text('Qty: $quantity'),
+
           Text(
             '\$${(price * quantity).toStringAsFixed(2)}',
             style: const TextStyle(
               color: Colors.red,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ],
@@ -232,6 +244,9 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
   }
 }
 
+// ======================================================
+//                   ITEM CARD WIDGET
+// ======================================================
 class ItemCard extends StatelessWidget {
   final String title;
   final int quantity;
@@ -254,23 +269,24 @@ class ItemCard extends StatelessWidget {
     switch (status.toLowerCase()) {
       case 'pending':
         bgColor = Colors.orange.shade100;
-        textColor = Colors.orange.shade600;
+        textColor = Colors.orange.shade700;
         break;
       case 'delivered':
         bgColor = Colors.green.shade100;
-        textColor = Colors.green.shade600;
+        textColor = Colors.green.shade700;
         break;
       case 'cancelled':
         bgColor = Colors.red.shade100;
-        textColor = Colors.red.shade600;
+        textColor = Colors.red.shade700;
         break;
       default:
-        bgColor = Colors.grey.shade200;
+        bgColor = Colors.grey.shade300;
         textColor = Colors.black87;
     }
 
     return Row(
       children: [
+        // ---- Image ----
         Container(
           height: 80.h,
           width: 80.w,
@@ -280,44 +296,47 @@ class ItemCard extends StatelessWidget {
           ),
           child: Image.asset('assets/images/post_card.png', fit: BoxFit.cover),
         ),
-        SizedBox(width: 8.w),
+
+        SizedBox(width: 10.w),
+
+        // ---- Details ----
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Title
               Text(
                 title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w600),
+                style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w700),
               ),
+
               SizedBox(height: 4.h),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     'Qty: $quantity',
-                    style: TextStyle(fontSize: 13.sp, color: Colors.grey[600]),
-                  ),
-                  Text(
-                    '\$${price.toStringAsFixed(2)}',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      color: Colors.grey.shade600,
                     ),
                   ),
                   Text(
                     '\$${price.toStringAsFixed(2)}',
                     style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
                       color: Colors.red,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
+
               SizedBox(height: 10.h),
+
+              // Status badge
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
                 decoration: BoxDecoration(
@@ -328,8 +347,8 @@ class ItemCard extends StatelessWidget {
                   status,
                   style: TextStyle(
                     color: textColor,
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
