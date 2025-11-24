@@ -18,7 +18,8 @@ class UserResponseModel {
 
 class UserData {
   final String id;
-  final String name;
+  final String firstName;
+  final String lastName;
   final String email;
   final String? avatar;
   final String? address;
@@ -27,9 +28,12 @@ class UserData {
   final String? gender;
   final String? dateOfBirth;
 
+  String get name => '$firstName $lastName';
+
   const UserData({
     required this.id,
-    required this.name,
+    required this.firstName,
+    required this.lastName,
     required this.email,
     this.avatar,
     this.address,
@@ -42,7 +46,8 @@ class UserData {
   factory UserData.fromJson(Map<String, dynamic> json) {
     return UserData(
       id: json['id'] ?? '',
-      name: json['name'] ?? '',
+      firstName: json['first_name'] ?? '',
+      lastName: json['last_name'] ?? '',
       email: json['email'] ?? '',
       avatar: json['avatar'],
       address: json['address'],

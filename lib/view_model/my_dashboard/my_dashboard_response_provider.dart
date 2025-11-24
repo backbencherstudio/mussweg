@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:mussweg/data/model/user/my_dashboard_response_model.dart';
 
@@ -22,15 +23,25 @@ class MyDashboardResponseProvider extends ChangeNotifier {
     try {
       final response = await _apiService.get(ApiEndpoints.getMyDashboardDetails);
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final userResponse = MyDashboardResponseModel.fromJson(response.data);
+      debugPrint('=== Raw Response Data: ${response.data}');
+      debugPrint('=== Response Status: ${response.statusCode}');
 
-        if (userResponse.success && userResponse.data != null) {
-          _myDashboardResponseModel = userResponse;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        try {
+          // Log parsing process
+          debugPrint('=== Parsing Response...');
+          _myDashboardResponseModel = MyDashboardResponseModel.fromJson(response.data);
+
+          debugPrint('=== Parsing Success: ${_myDashboardResponseModel?.success}');
+          debugPrint('=== Profile Name: ${_myDashboardResponseModel?.data.profile.name}');
+          debugPrint('=== Product Count: ${_myDashboardResponseModel?.data.products.data.length}');
+          debugPrint('=== First Product Title: ${_myDashboardResponseModel?.data.products.data[0].productTitle}');
+
           _error = null;
-        } else {
-          _error = "Failed to load My dashboard data";
+        } catch (e) {
+          debugPrint('Error parsing response: $e');
           _myDashboardResponseModel = null;
+          _error = 'Error parsing response: $e';
         }
       } else {
         _error = "Server error (${response.statusCode})";

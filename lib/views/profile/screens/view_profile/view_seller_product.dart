@@ -47,6 +47,8 @@ class _SellerProfilePageState extends State<SellerProfilePage>
     final sellerVM = Provider.of<SellerProfileProvider>(context);
     final userProductVM = Provider.of<UserAllProductsProvider>(context);
 
+    final myProfileDashboardDetails = context.watch<MyDashboardResponseProvider>().myDashboardResponseModel?.data;
+
     final reviews = context.watch<MyDashboardResponseProvider>().myDashboardResponseModel?.data.reviews;
 
     return Scaffold(
@@ -268,7 +270,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           ),
                           SizedBox(width: 4.w),
                           Text(
-                            (userProfileDetails?.rating ?? 0).toStringAsFixed(
+                            (myProfileDashboardDetails?.profile.rating ?? 0).toStringAsFixed(
                               1,
                             ),
                             style: TextStyle(
@@ -278,7 +280,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                             ),
                           ),
                           Text(
-                            ' - ${userProfileDetails?.reviewCount} Reviewers',
+                            ' - ${myProfileDashboardDetails?.profile.reviewCount} Reviewers',
                             style: TextStyle(
                               color: const Color(0xff777980),
                               fontSize: 14.sp,
@@ -292,7 +294,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           Image.asset("assets/icons/location.png"),
                           SizedBox(width: 7.w),
                           Text(
-                            '${userProfileDetails?.address}, ${userProfileDetails?.city}',
+                            '${myProfileDashboardDetails?.profile.address}, ${myProfileDashboardDetails?.profile.city}',
                             style: TextStyle(
                               color: const Color(0xff777980),
                               fontSize: 14.sp,
@@ -310,7 +312,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           ),
                           SizedBox(width: 7.w),
                           Text(
-                            userProfileDetails?.totalEarning ?? '',
+                            myProfileDashboardDetails?.profile.totalEarning ?? '',
                             style: TextStyle(
                               color: const Color(0xff777980),
                               fontSize: 14.sp,
@@ -325,7 +327,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           ),
                           SizedBox(width: 7.w),
                           Text(
-                            userProfileDetails?.totalPenalties ?? '',
+                            myProfileDashboardDetails?.profile.totalPenalties ?? '',
                             style: TextStyle(
                               color: const Color(0xff777980),
                               fontSize: 14.sp,
