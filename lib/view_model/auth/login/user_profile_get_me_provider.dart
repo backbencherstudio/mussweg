@@ -22,15 +22,33 @@ class UserProfileGetMeProvider extends ChangeNotifier {
     try {
       final response = await _apiService.get(ApiEndpoints.getUserProfileDetails);
 
+      debugPrint('=== response code : ${response.statusCode}');
+      debugPrint('=== response data : ${response.data}');
+
+      // Check if the response code is valid
       if (response.statusCode == 200 || response.statusCode == 201) {
-        // parse data
-        _userProfileResponse = UserProfileResponse.fromJson(response.data);
-        _message = 'Profile fetched successfully';
+
+        // Ensure response.data is a Map and parse it accordingly
+        if (response.data is Map<String, dynamic>) {
+          // If the response has the 'data' field, parse it
+          _userProfileResponse = UserProfileResponse.fromJson(response.data);
+
+          // Log user profile details
+          debugPrint(' --- boom : ${_userProfileResponse?.data.name} ---');
+          debugPrint(' --- boom : ${_userProfileResponse?.data.id} ---');
+          debugPrint(' --- boom : ${_userProfileResponse?.data.coverPhotoUrl} ---');
+          debugPrint(' --- boom : ${_userProfileResponse?.data.rating} ---');
+          debugPrint(' --- boom : ${_userProfileResponse?.data.reviewCount} ---');
+          _message = 'Profile fetched successfully';
+        } else {
+          _message = 'Invalid data format';
+        }
       } else {
         _message = response.data['message'] ?? 'Something went wrong';
       }
     } catch (e) {
-      _message = e.toString();
+      _message = 'Error: $e';
+      debugPrint('Error: $e');
     } finally {
       _isLoading = false;
       notifyListeners();

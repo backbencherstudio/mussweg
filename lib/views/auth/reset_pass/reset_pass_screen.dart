@@ -129,7 +129,7 @@ class _ResetPassScreenState extends State<ResetPassScreen> {
                         snack.closed.then((_) async {
                           if (mounted && success) {
                             await Future.delayed(
-                                const Duration(milliseconds: 100));
+                                const Duration(milliseconds: 50));
                             if (!mounted) return;
                             Navigator.pushNamedAndRemoveUntil(
                               context,

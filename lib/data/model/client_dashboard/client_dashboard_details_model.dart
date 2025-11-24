@@ -49,10 +49,10 @@ class Profile {
   final String? avatarUrl;
   final String? coverPhotoUrl;
   final String? location;
-  final double rating;
-  final int reviewCount;
-  final String totalEarning;
-  final num totalPenalties;
+  final double? rating;
+  final String? reviewCount;
+  final String? totalEarning;
+  final String? totalPenalties;
 
   Profile({
     required this.id,
@@ -65,10 +65,10 @@ class Profile {
     this.avatarUrl,
     this.coverPhotoUrl,
     this.location,
-    required this.rating,
-    required this.reviewCount,
-    required this.totalEarning,
-    required this.totalPenalties,
+    this.rating,
+    this.reviewCount,
+    this.totalEarning,
+    this.totalPenalties,
   });
 
   factory Profile.fromJson(Map<String, dynamic> json) {
@@ -84,9 +84,9 @@ class Profile {
       coverPhotoUrl: json["coverPhotoUrl"],
       location: json["location"],
       rating: (json["rating"] ?? 0).toDouble(),
-      reviewCount: json["review_count"] ?? 0,
-      totalEarning: json["total_earning"] ?? "0",
-      totalPenalties: json["total_penalties"] ?? 0,
+      reviewCount: (json["review_count"] ?? '0').toString(),  // Ensure it's a String
+      totalEarning: (json["total_earning"] ?? "0").toString(),  // Ensure it's a String
+      totalPenalties: (json["total_penalties"] ?? 0).toString(),  // Ensure it's a String
     );
   }
 }

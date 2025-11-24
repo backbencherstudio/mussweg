@@ -19,6 +19,8 @@ class GetMeViewmodel extends ChangeNotifier {
   Future<void> fetchUserData() async {
     _setLoading(true);
 
+    debugPrint('----- get user details -----');
+
     try {
       final response = await _apiService.get(ApiEndpoints.getMe);
 
@@ -26,8 +28,10 @@ class GetMeViewmodel extends ChangeNotifier {
         final jsonResponse = response.data as Map<String, dynamic>;
         final userResponse = UserResponseModel.fromJson(jsonResponse);
 
-        if (userResponse.success && userResponse.data != null) {
-          _user = userResponse.data!;
+        if (userResponse.success) {
+          _user = userResponse.data;
+          debugPrint('--- user data loaded ---');
+          debugPrint('--- ${userResponse.data?.name} ---');
           await UserIdStorage().saveUserId(_user?.id ?? '');
           _error = null;
         } else {

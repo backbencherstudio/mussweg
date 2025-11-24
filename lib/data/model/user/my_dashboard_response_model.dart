@@ -18,8 +18,6 @@ class MyDashboardResponseModel {
   }
 }
 
-// ------------------ MAIN DATA ------------------
-
 class DashboardData {
   final Profile profile;
   final ProductList products;
@@ -40,8 +38,6 @@ class DashboardData {
   }
 }
 
-// ------------------ PROFILE ------------------
-
 class Profile {
   final String id;
   final String name;
@@ -53,10 +49,10 @@ class Profile {
   final String? avatarUrl;
   final String? coverPhotoUrl;
   final String? location;
-  final double rating;
-  final int reviewCount;
-  final String totalEarning;
-  final String totalPenalties;
+  final double? rating;
+  final String? reviewCount;
+  final String? totalEarning;
+  final String? totalPenalties;
 
   Profile({
     required this.id,
@@ -69,10 +65,10 @@ class Profile {
     this.avatarUrl,
     this.coverPhotoUrl,
     this.location,
-    required this.rating,
-    required this.reviewCount,
-    required this.totalEarning,
-    required this.totalPenalties,
+    this.rating,
+    this.reviewCount,
+    this.totalEarning,
+    this.totalPenalties,
   });
 
   factory Profile.fromJson(Map<String, dynamic> json) {
@@ -88,14 +84,12 @@ class Profile {
       coverPhotoUrl: json["coverPhotoUrl"],
       location: json["location"],
       rating: (json["rating"] ?? 0).toDouble(),
-      reviewCount: json["review_count"] ?? 0,
-      totalEarning: json["total_earning"] ?? "0",
-      totalPenalties: json["total_penalties"] ?? "0",
+      reviewCount: (json["review_count"] ?? '0').toString(),  // Ensure it's a String
+      totalEarning: (json["total_earning"] ?? "0").toString(),  // Ensure it's a String
+      totalPenalties: (json["total_penalties"] ?? 0).toString(),  // Ensure it's a String
     );
   }
 }
-
-// ------------------ PRODUCT LIST ------------------
 
 class ProductList {
   final List<ProductData> data;
@@ -125,12 +119,10 @@ class ProductList {
   }
 }
 
-// ------------------ SINGLE PRODUCT ------------------
-
 class ProductData {
   final String id;
   final String productTitle;
-  final String price;
+  final double price;  // Updated to double
   final List<String> photo;
   final String status;
   final List<String> photoUrls;
@@ -148,17 +140,13 @@ class ProductData {
     return ProductData(
       id: json["id"] ?? "",
       productTitle: json["product_title"] ?? "",
-      price: json["price"] ?? "0",
-      photo:
-      (json["photo"] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
+      price: double.tryParse(json["price"].toString()) ?? 0.0,  // Parse price as double
+      photo: (json["photo"] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
       status: json["status"] ?? "",
-      photoUrls:
-      (json["photoUrls"] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
+      photoUrls: (json["photoUrls"] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
     );
   }
 }
-
-// ------------------ REVIEW LIST ------------------
 
 class ReviewList {
   final List<ReviewData> data;
@@ -187,8 +175,6 @@ class ReviewList {
     );
   }
 }
-
-// ------------------ SINGLE REVIEW ------------------
 
 class ReviewData {
   final String id;

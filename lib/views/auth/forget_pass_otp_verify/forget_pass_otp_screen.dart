@@ -41,7 +41,7 @@ class _ForgetPassOtpScreenState extends State<ForgetPassOtpScreen> {
               Center(child: Image.asset('assets/images/logo-1.png', height: 75.w, fit: BoxFit.fitHeight,)),
               SizedBox(height: 10.h),
               Text(
-                'Forget Password',
+                'Verify Code',
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 14.sp,
@@ -50,7 +50,7 @@ class _ForgetPassOtpScreenState extends State<ForgetPassOtpScreen> {
               ),
               SizedBox(height: 10.h),
               Text(
-                'Please enter your email to reset password',
+                'Please enter your OTP code to reset password',
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 12.sp,
@@ -62,21 +62,42 @@ class _ForgetPassOtpScreenState extends State<ForgetPassOtpScreen> {
               SizedBox(height: 20),
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.9,
-                child: PrimaryButton(
-                  title: 'Verify',
-                  color: const Color(0xFFDE3526),
-                  textColor: Colors.white,
-                  onTap: () async {
-                    await context.read<ForgetPasswordProvider>().setOtpToken(_otpController.text);
-                    Navigator.pushNamed(context, RouteNames.resetPassScreen);
-                  },
+                child: Consumer<ForgetPasswordProvider>(
+                  builder: (_, verifyOTPProvider, __) {
+                    return Visibility(
+                      visible: !verifyOTPProvider.isVOLoading,
+                      replacement: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      child: PrimaryButton(
+                        title: 'Verify',
+                        color: const Color(0xFFDE3526),
+                        textColor: Colors.white,
+                        onTap: () async {
+                          await verifyOTPProvider.setOtpToken(_otpController.text);
+
+                          final res = await verifyOTPProvider.verifyOTP();
+
+                          if (res) {
+                            Navigator.pushNamed(context, RouteNames.resetPassScreen);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(verifyOTPProvider.errorMessage),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    );
+                  }
                 ),
               ),
               SizedBox(height: 32),
 
               Align(
                 alignment: Alignment.center,
-                child: Consumer<RegisterProvider>(
+                child: Consumer<ForgetPasswordProvider>(
                   builder: (_, pro, __) {
                     return Visibility(
                       visible: !pro.isRCLoading,
