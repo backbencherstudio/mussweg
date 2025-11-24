@@ -38,7 +38,9 @@ import '../../view_model/whistlist/wishlist_create.dart';
 import '../../views/auth/disposal/get_disposal_items_provider.dart';
 import '../../views/bought_items/viewModel/bought_product/bought_product_provider.dart';
 import '../../views/bought_items/viewModel/bought_product/review_provider.dart';
+import '../../views/cart/view_model/payment_screen_provider.dart';
 import '../../views/inbox/view_model/inbox_screen_provider.dart';
+import '../../views/selling_items/model_view/selling_item_screen_provider.dart';
 
 class AppProviders {
   static final List<SingleChildWidget> providers = [
@@ -81,5 +83,7 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => MyDashboardResponseProvider()),
     ChangeNotifierProvider(create: (_) => GetDisposalItemsProvider()),
     ChangeNotifierProvider(create: (_) => InboxScreenProvider()),
+    ChangeNotifierProvider(create: (_) => SellingItemScreenProvider()),
+    ChangeNotifierProvider(create: (_) => PaymentScreenProvider()),
   ];
 }

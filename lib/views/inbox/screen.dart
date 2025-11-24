@@ -16,8 +16,6 @@ class InboxPage extends StatefulWidget {
 }
 
 class _InboxPageState extends State<InboxPage> {
-  final Map<int, int> _visibleCounts = {};
-
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -44,12 +42,6 @@ class _InboxPageState extends State<InboxPage> {
                     itemBuilder: (context, index) {
                       final item = conversations[index];
 
-                      final participants = item.participants ?? [];
-                      final participantName =
-                          participants.length > 1
-                              ? participants[1].name
-                              : "Unknown";
-
                       return GestureDetector(
                         onTap: () async {
                           await inboxProvider.getAllMessage(item.id ?? "");
@@ -58,11 +50,10 @@ class _InboxPageState extends State<InboxPage> {
                               context,
                               RouteNames.chatScreen,
                               arguments: {
-                                'conversationId': conversations[index].id, // <-- Use a string key
+                                'conversationId': conversations[index].id,
                               },
                             );
-                          }
-                          else {
+                          } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text("User Id Not Found")),
                             );
@@ -77,9 +68,9 @@ class _InboxPageState extends State<InboxPage> {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(100),
                                 child: Image.network(
-                                  (participants[1].avatar != null && participants[1].avatar!.isNotEmpty)
-                                      ?  "${ApiEndpoints.baseUrl}/public/storage/avatar/${participants[1].avatar}"
-                                      : "https://nftcalendar.io/storage/uploads/2022/02/21/image-not-found_0221202211372462137974b6c1a.png", // fallback image
+                                  (item.opponent?.avater != null)
+                                      ? "${ApiEndpoints.baseUrl}/public/storage/avatar/${item.opponent?.avater}"
+                                      : "https://nftcalendar.io/storage/uploads/2022/02/21/image-not-found_0221202211372462137974b6c1a.png",
                                   width: 45,
                                   height: 45,
                                   fit: BoxFit.cover,
@@ -92,7 +83,7 @@ class _InboxPageState extends State<InboxPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      participantName!,
+                                      "${item.opponent?.name!}",
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 16,

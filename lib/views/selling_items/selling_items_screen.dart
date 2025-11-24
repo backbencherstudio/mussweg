@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mussweg/views/selling_items/model_view/selling_item_screen_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
-
-import '../widgets/item_cards.dart';
+import '../widgets/custom_primary_button.dart';
+import 'package:mussweg/core/utils/dialogs/review_dialog.dart';
 
 class SellingItemsScreen extends StatefulWidget {
   const SellingItemsScreen({super.key});
@@ -12,94 +14,85 @@ class SellingItemsScreen extends StatefulWidget {
 }
 
 class _SellingItemsScreenState extends State<SellingItemsScreen> {
-  final List<String> _tabs = [
+  final List<String> tabs = [
     'All Products',
     'Pending',
     'Delivered',
     'Cancelled',
   ];
 
-  int _selectedIndex = 0;
+  int selectedIndex = 0;
 
-  // Dummy selling products data
-  final List<Map<String, dynamic>> allProducts = [
-    {
-      'title': 'Man Exclusive T-Shirt',
-      'status': 'Pending',
-      'quantity': 1,
-      'price': 200.0
-    },
-    {
-      'title': 'Cotton Hoodie',
-      'status': 'Delivered',
-      'quantity': 2,
-      'price': 150.0
-    },
-    {
-      'title': 'Formal Shirt',
-      'status': 'Cancelled',
-      'quantity': 1,
-      'price': 120.0
-    },
-    {
-      'title': 'Casual Polo',
-      'status': 'Pending',
-      'quantity': 3,
-      'price': 100.0
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    final provider = Provider.of<SellingItemScreenProvider>(
+      context,
+      listen: false,
+    );
 
-  List<Map<String, dynamic>> get filteredProducts {
-    if (_selectedIndex == 0) return allProducts;
-    if (_selectedIndex == 1) {
-      return allProducts.where((e) => e['status'] == 'Pending').toList();
-    } else if (_selectedIndex == 2) {
-      return allProducts.where((e) => e['status'] == 'Delivered').toList();
-    } else {
-      return allProducts.where((e) => e['status'] == 'Cancelled').toList();
+    // Fetch all records on screen load
+    provider.allSelProduct();
+    provider.pendingSelProduct();
+    provider.confirmSelProduct();
+    provider.cancelSelProduct();
+  }
+
+  List<dynamic> getProducts(SellingItemScreenProvider provider) {
+    switch (selectedIndex) {
+      case 1:
+        return provider.pendingSellProductModel?.data ?? [];
+      case 2:
+        return provider.confirmSellProductModel?.data ?? [];
+      case 3:
+        return provider.cancelSellProductModel?.data ?? [];
+      default:
+        return provider.allSellProductModel?.data ?? [];
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<SellingItemScreenProvider>(context);
+    final products = getProducts(provider);
+
     return Scaffold(
       appBar: const SimpleApppbar(title: 'Selling Items'),
       body: Padding(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.all(16.0.w),
         child: Column(
           children: [
-            // Tabs
+            // ========================== TABS ==========================
             SizedBox(
-              height: 30.h,
+              height: 35.h,
               child: ListView.builder(
-                itemCount: _tabs.length,
                 scrollDirection: Axis.horizontal,
+                itemCount: tabs.length,
                 itemBuilder: (context, index) {
-                  final isSelected = _selectedIndex == index;
+                  final bool isSelected = selectedIndex == index;
+
                   return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedIndex = index;
-                      });
-                    },
+                    onTap: () => setState(() => selectedIndex = index),
                     child: Container(
                       margin: EdgeInsets.only(right: 8.w),
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
                       decoration: BoxDecoration(
-                        color: isSelected
-                            ? Colors.red.shade100
-                            : Colors.grey.shade200,
+                        color:
+                            isSelected
+                                ? Colors.red.shade100
+                                : Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(16.r),
                       ),
                       child: Center(
                         child: Text(
-                          _tabs[index],
+                          tabs[index],
                           style: TextStyle(
-                            color: isSelected
-                                ? Colors.red.shade600
-                                : Colors.black,
                             fontSize: 13.sp,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
+                            color:
+                                isSelected
+                                    ? Colors.red.shade600
+                                    : Colors.black87,
                           ),
                         ),
                       ),
@@ -108,103 +101,101 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
                 },
               ),
             ),
+
             SizedBox(height: 16.h),
 
-            // Products list
+            // ======================= PRODUCT LIST ======================
             Expanded(
-              child: filteredProducts.isEmpty
-                  ? Center(
-                child: Text(
-                  "No products found",
-                  style: TextStyle(
-                    fontSize: 15.sp,
-                    color: Colors.grey,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              )
-                  : ListView.builder(
-                itemCount: filteredProducts.length,
-                itemBuilder: (context, index) {
-                  final product = filteredProducts[index];
-                  final double price =
-                  (product['price'] as num).toDouble();
-                  final int quantity = product['quantity'] as int;
+              child:
+                  provider.allSellProductModel == null
+                      ? const Center(child: CircularProgressIndicator())
+                      : products.isEmpty
+                      ? Center(
+                        child: Text(
+                          'No products found',
+                          style: TextStyle(fontSize: 15.sp, color: Colors.grey),
+                        ),
+                      )
+                      : ListView.builder(
+                        itemCount: products.length,
+                        itemBuilder: (context, index) {
+                          final product = products[index];
+                          final items = product.items ?? [];
 
-                  return Padding(
-                    padding: EdgeInsets.only(bottom: 8.h),
-                    child: Card(
-                      color: Colors.white,
-                      elevation: 1.w,
-                      child: ExpansionTile(
-                        tilePadding: EdgeInsets.zero,
-                        showTrailingIcon: false,
-                        title: ItemCards(
-                          title: product['title'],
-                          quantity: quantity,
-                          price: price,
-                          status: product['status'], // dynamic status
-                        ),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                        children: [
-                          Card(
-                            color: Colors.grey.shade50,
-                            elevation: 1.w,
-                            child: Padding(
-                              padding: EdgeInsets.all(8.w),
-                              child: Column(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
+                          final totalQty = items.fold(
+                            0,
+                            (sum, item) => sum + (item.quantity ?? 0),
+                          );
+
+                          final totalPrice = items.fold(
+                            0.0,
+                            (sum, item) =>
+                                sum +
+                                ((item.price ?? 0.0) * (item.quantity ?? 0)),
+                          );
+
+                          final productOwnerId =
+                              items.isNotEmpty
+                                  ? (items.first.productOwnerId ?? "")
+                                  : "";
+
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: 8.h),
+                            child: Card(
+                              elevation: 1,
+                              child: ExpansionTile(
+                                title: ItemCard(
+                                  title: product.orderId ?? '',
+                                  quantity: totalQty,
+                                  price: totalPrice,
+                                  status: product.orderStatus ?? '',
+                                ),
                                 children: [
-                                  Text(
-                                    'Order Summary',
-                                    style: TextStyle(
-                                      fontSize: 18.sp,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  SizedBox(height: 4.h),
                                   Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 10.w),
+                                    padding: EdgeInsets.all(12.w),
                                     child: Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        _buildInfoRow(
-                                          first: 'Client Name',
-                                          second: 'ABC',
+                                        Text(
+                                          'Order Details',
+                                          style: TextStyle(
+                                            fontSize: 16.sp,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
-                                        _buildInfoRow(
-                                          first: 'Email:',
-                                          second: 'abc@gmail.com',
+
+                                        SizedBox(height: 8.h),
+
+                                        // -------- ITEM ROWS --------
+                                        ...items.map(
+                                          (item) => buildItemRow(
+                                            item.productTitle,
+                                            item.price ?? 0,
+                                            item.quantity ?? 0,
+                                          ),
                                         ),
-                                        _buildInfoRow(
-                                          first: 'Address:',
-                                          second:
-                                          'St.Gallen & Eastern Switzerland',
+
+                                        SizedBox(height: 10.h),
+
+                                        Text(
+                                          'Status: ${product.orderStatus ?? ''}',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
-                                        _buildInfoRow(
-                                          first: 'Product:',
-                                          second: product['title'],
-                                        ),
-                                        _buildInfoRow(
-                                          first: 'Quantity:',
-                                          second: '$quantity',
-                                        ),
-                                        _buildInfoRow(
-                                          first: 'Amount:',
-                                          second: '\$${price * quantity}',
-                                        ),
-                                        _buildInfoRow(
-                                          first: 'Amount Paid:',
-                                          second: '\$${price * quantity}',
-                                        ),
-                                        _buildInfoRow(
-                                          first: 'Status:',
-                                          second: product['status'],
+
+                                        SizedBox(height: 10.h),
+
+                                        CustomPrimaryButton(
+                                          title: 'Leave Review',
+                                          onTap: () {
+                                            ReviewDialog().showReviewDialog(
+                                              context,
+                                              productOwnerId,
+                                              product.orderId,
+                                            );
+                                          },
                                         ),
                                       ],
                                     ),
@@ -212,13 +203,9 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
                                 ],
                               ),
                             ),
-                          ),
-                        ],
+                          );
+                        },
                       ),
-                    ),
-                  );
-                },
-              ),
             ),
           ],
         ),
@@ -226,45 +213,47 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
     );
   }
 
-  Widget _buildInfoRow(
-      {required String first, required String second}) {
-    return Row(
-      children: [
-        Text(
-          first,
-          style: TextStyle(
-            fontSize: 14.sp,
-            color: Colors.black54,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        Spacer(),
-        SizedBox(
-          width: 180.w,
-          child: Text(
-            second,
-            textAlign: TextAlign.end,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: Colors.black,
-              fontWeight: FontWeight.w400,
+  // =====================================================
+  //                  ITEM ROW WIDGET
+  // =====================================================
+  Widget buildItemRow(String? name, double price, int quantity) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 4.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Text(
+              name ?? '',
+              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
             ),
           ),
-        ),
-      ],
+
+          Text('Qty: $quantity'),
+
+          Text(
+            '\$${(price * quantity).toStringAsFixed(2)}',
+            style: const TextStyle(
+              color: Colors.red,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
-class ItemCards extends StatelessWidget {
+// ======================================================
+//                   ITEM CARD WIDGET
+// ======================================================
+class ItemCard extends StatelessWidget {
   final String title;
   final int quantity;
   final double price;
   final String status;
 
-  const ItemCards({
+  const ItemCard({
     super.key,
     required this.title,
     required this.quantity,
@@ -274,115 +263,99 @@ class ItemCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color statusColor;
-    if (status == 'Pending') {
-      statusColor = Colors.orange.shade100;
-    } else if (status == 'Delivered') {
-      statusColor = Colors.green.shade100;
-    } else {
-      statusColor = Colors.red.shade100;
+    Color bgColor;
+    Color textColor;
+
+    switch (status.toLowerCase()) {
+      case 'pending':
+        bgColor = Colors.orange.shade100;
+        textColor = Colors.orange.shade700;
+        break;
+      case 'delivered':
+        bgColor = Colors.green.shade100;
+        textColor = Colors.green.shade700;
+        break;
+      case 'cancelled':
+        bgColor = Colors.red.shade100;
+        textColor = Colors.red.shade700;
+        break;
+      default:
+        bgColor = Colors.grey.shade300;
+        textColor = Colors.black87;
     }
 
-    Color statusTextColor;
-    if (status == 'Pending') {
-      statusTextColor = Colors.orange.shade600;
-    } else if (status == 'Delivered') {
-      statusTextColor = Colors.green.shade600;
-    } else {
-      statusTextColor = Colors.red.shade600;
-    }
-
-    return Card(
-      color: Colors.white,
-      elevation: 0,
-      child: Row(
-        children: [
-          ClipRRect(
+    return Row(
+      children: [
+        // ---- Image ----
+        Container(
+          height: 80.h,
+          width: 80.w,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade300,
             borderRadius: BorderRadius.circular(8.r),
-            child: Container(
-              height: 80.h,
-              width: 100.w,
-              decoration: BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              child: Image.asset(
-                'assets/images/post_card.png',
-                fit: BoxFit.fill,
-              ),
-            ),
           ),
-          SizedBox(width: 8.w),
-          Expanded(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      width: 140.w,
-                      child: Text(
-                        title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+          child: Image.asset('assets/images/post_card.png', fit: BoxFit.cover),
+        ),
+
+        SizedBox(width: 10.w),
+
+        // ---- Details ----
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Title
+              Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w700),
+              ),
+
+              SizedBox(height: 4.h),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Qty: $quantity',
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      color: Colors.grey.shade600,
                     ),
-                    Spacer(),
-                    SizedBox(
-                      width: 50.w,
-                      child: Text(
-                        'Qty: $quantity',
-                        style: TextStyle(
-                          fontSize: 13.sp,
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
+                  ),
+                  Text(
+                    '\$${price.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 10.h),
+
+              // Status badge
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  color: bgColor,
+                  borderRadius: BorderRadius.circular(16.r),
                 ),
-                SizedBox(height: 16.h),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      '\$$price',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red,
-                      ),
-                    ),
-                    Spacer(),
-                    Container(
-                      height: 25.h,
-                      margin: EdgeInsets.only(right: 8.w),
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      decoration: BoxDecoration(
-                        color: statusColor,
-                        borderRadius: BorderRadius.circular(16.r),
-                      ),
-                      child: Center(
-                        child: Text(
-                          status,
-                          style: TextStyle(
-                            color: statusTextColor,
-                            fontSize: 13.sp,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
+                child: Text(
+                  status,
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

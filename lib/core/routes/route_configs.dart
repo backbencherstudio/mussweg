@@ -26,6 +26,7 @@ import 'package:mussweg/views/track_progress/track_progress_screen.dart';
 
 import '../../views/auth/sign_up/screen/sign_up_screen.dart';
 import '../../views/auth/otp_verify/otp_screen.dart';
+import '../../views/cart/orderId_with_payment.dart';
 import '../../views/checkout/screen/stripe_checkout_screen.dart';
 import '../../views/home/screens/chat_screen.dart';
 import '../../views/home/screens/product_details_bid_screens.dart';
@@ -95,5 +96,6 @@ class AppRoutes {
     RouteNames.schedulePickUpScreen:(context) => const SchedulePickUpScreen(),
     RouteNames.locationPickScreen:(context) => const LocationPickerScreen(),
     RouteNames.disposalScreen:(context) => const DisposalItemsScreen(),
+    RouteNames.orderIdWithPayment:(context) => const OrderIdWithPayment(),
   };
 }

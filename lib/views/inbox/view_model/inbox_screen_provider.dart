@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
+
 import 'package:mussweg/core/constants/api_end_points.dart';
 import 'package:mussweg/core/services/token_storage.dart';
-import 'package:http/http.dart' as http;
 import 'package:mussweg/core/services/user_id_storage.dart';
-import 'package:mussweg/views/inbox/model/inbox_model.dart';
 
+import 'package:mussweg/views/inbox/model/inbox_model.dart';
 import '../model/all_message_model.dart';
 
 class InboxScreenProvider extends ChangeNotifier {
@@ -26,16 +27,52 @@ class InboxScreenProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  int currentPage = 1;
+  final int perPage = 10;
+  bool hasNextPage = false;
+  bool isMoreLoading = false;
+
+  Future<void> createConversation(String participantId) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      final userId = await _userIdStorage.getUserId();
+      final url = Uri.parse(ApiEndpoints.createConversation);
+      final token = await _tokenStorage.getToken();
+
+      final response = await http.post(
+        url,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Accept": "application/json",
+        },
+        body: jsonEncode({"participant_id": participantId}),
+      );
+
+      final decodeData = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        debugPrint("THe success message ${decodeData['message']}");
+      } else {
+        debugPrint("THe failed message ${decodeData['message']}");
+      }
+      _inboxModel = InboxModel.fromJson(decodeData);
+    } catch (error) {
+      debugPrint("Chat fetch error: $error");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> getChatList() async {
     try {
       _isLoading = true;
       notifyListeners();
 
       final userId = await _userIdStorage.getUserId();
-      final url = Uri.parse(ApiEndpoints.getChatList(userId));
-
-      debugPrint("URL: $url");
-
+      final url = Uri.parse(ApiEndpoints.getChatList);
       final token = await _tokenStorage.getToken();
 
       final response = await http.get(
@@ -48,8 +85,6 @@ class InboxScreenProvider extends ChangeNotifier {
 
       final decodeData = jsonDecode(response.body);
       _inboxModel = InboxModel.fromJson(decodeData);
-
-      debugPrint("Chat list loaded: ${decodeData['message']}");
     } catch (error) {
       debugPrint("Chat fetch error: $error");
     } finally {
@@ -58,14 +93,23 @@ class InboxScreenProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getAllMessage(String conversationId) async {
-    try {
-      _isLoading = true;
+  Future<void> getAllMessage(
+    String conversationId, {
+    bool isLoadMore = false,
+  }) async {
+    if (isLoadMore) {
+      if (!hasNextPage || isMoreLoading) return;
+      isMoreLoading = true;
       notifyListeners();
+      currentPage++;
+    } else {
+      _isLoading = true;
+      currentPage = 1;
+      // notifyListeners();
+    }
 
-      final url = Uri.parse(ApiEndpoints.getAllMessage(conversationId));
-
-      debugPrint("URL: $url");
+    try {
+      final url = Uri.parse(ApiEndpoints.getAllMessage(conversationId, 1, 100));
 
       final token = await _tokenStorage.getToken();
 
@@ -78,28 +122,41 @@ class InboxScreenProvider extends ChangeNotifier {
       );
 
       final decodeData = jsonDecode(response.body);
-      _allMessageModel = AllMessageModel.fromJson(decodeData);
+      final newData = AllMessageModel.fromJson(decodeData);
 
-      debugPrint("Chat message all loaded: ${decodeData['message']}");
+      // 🔥 Reverse if API returns newest first
+      if (newData.data != null) {
+        newData.data = newData.data!.reversed.toList();
+      }
+
+      if (isLoadMore) {
+        _allMessageModel?.data?.insertAll(0, newData.data ?? []);
+      } else {
+        _allMessageModel = newData;
+      }
+
+      //  Correct pagination logic
+      hasNextPage = newData.pagination?.hasNextPage ?? false;
     } catch (error) {
-      debugPrint("Chat fetch error: $error");
+      debugPrint("Error loading messages: $error");
     } finally {
       _isLoading = false;
+      isMoreLoading = false;
       notifyListeners();
     }
   }
 
+  // ----------------------------
+  // Send Message
+  // ----------------------------
   Future<void> sendMessage(
-      String text,
-      String conversationId,
-      File? image,
-      ) async {
+    String text,
+    String conversationId,
+    File? image,
+  ) async {
     if (text.trim().isEmpty && image == null) return;
 
     try {
-      _isLoading = true;
-      notifyListeners();
-
       final url = Uri.parse(ApiEndpoints.sendMessage);
       final token = await _tokenStorage.getToken();
 
@@ -108,32 +165,22 @@ class InboxScreenProvider extends ChangeNotifier {
       request.headers['Accept'] = "application/json";
 
       request.fields['conversationId'] = conversationId;
-      if (text.trim().isNotEmpty) {
-        request.fields['text'] = text.trim();
-      }
+      if (text.trim().isNotEmpty) request.fields['text'] = text.trim();
 
       if (image != null) {
-        var file = await http.MultipartFile.fromPath("attachments[]", image.path);
+        var file = await http.MultipartFile.fromPath(
+          "attachments[]",
+          image.path,
+        );
         request.files.add(file);
       }
-
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
-
-      final decodeData = jsonDecode(response.body);
-
       if (response.statusCode == 200 || response.statusCode == 201) {
-        debugPrint("Message sent successfully: ${decodeData['message']}");
-      } else {
-        debugPrint("Send message failed: ${response.statusCode} - ${decodeData['message']}");
-        // Optionally show error to user
+        await getAllMessage(conversationId);
       }
     } catch (error) {
       debugPrint("Send message error: $error");
-      rethrow;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
     }
   }
 }

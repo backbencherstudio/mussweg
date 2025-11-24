@@ -1,9 +1,10 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mussweg/core/constants/api_end_points.dart';
 import 'package:provider/provider.dart';
+
 import 'package:mussweg/views/inbox/view_model/inbox_screen_provider.dart';
 import 'package:mussweg/views/widgets/simple_apppbar.dart';
 import 'package:mussweg/core/services/user_id_storage.dart';
@@ -26,6 +27,18 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
     loadUserId();
+
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 50) {
+      final provider = Provider.of<InboxScreenProvider>(context, listen: false);
+      if (conversationId != null) {
+        provider.getAllMessage(conversationId!, isLoadMore: true);
+      }
+    }
   }
 
   @override
@@ -33,6 +46,13 @@ class _ChatScreenState extends State<ChatScreen> {
     super.didChangeDependencies();
     final args = ModalRoute.of(context)?.settings.arguments as Map?;
     conversationId = args?['conversationId'];
+
+    if (conversationId != null) {
+      Provider.of<InboxScreenProvider>(
+        context,
+        listen: false,
+      ).getAllMessage(conversationId!);
+    }
   }
 
   Future<void> loadUserId() async {
@@ -43,9 +63,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<void> pickImage() async {
     final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (picked != null) {
-      setState(() {
-        image = File(picked.path);
-      });
+      setState(() => image = File(picked.path));
     }
   }
 
@@ -55,18 +73,13 @@ class _ChatScreenState extends State<ChatScreen> {
 
     provider.sendMessage(text, conversationId!, image);
     _controller.clear();
-    setState(() {
-      image = null;
-    });
+    setState(() => image = null);
 
-    // Reload messages
-    provider.getAllMessage(conversationId!);
-
-    // Scroll to bottom
-    Future.delayed(const Duration(milliseconds: 100), () {
+    // Scroll to top after sending message
+    Future.delayed(const Duration(milliseconds: 300), () {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
+          0,
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOut,
         );
@@ -87,23 +100,61 @@ class _ChatScreenState extends State<ChatScreen> {
     final messages = provider.allMessageModel?.data ?? [];
 
     return Scaffold(
-      appBar: SimpleApppbar(title: 'Chat'),
+      appBar: const SimpleApppbar(title: "Chat"),
       body:
           currentUserId == null
               ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                child: Column(
-                  children: [
-                    ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
+              : Column(
+                children: [
+                  if (messages.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 22.5,
+                            backgroundImage: NetworkImage(
+                              (messages[0].receiver?.avater != null &&
+                                      messages[0].receiver!.avater!.isNotEmpty)
+                                  ? "${ApiEndpoints.baseUrl}/public/storage/avatar/${messages[0].receiver!.avater}"
+                                  : "https://nftcalendar.io/storage/uploads/2022/02/21/image-not-found_0221202211372462137974b6c1a.png",
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              messages[0].receiver?.name ?? "Unknown",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  Expanded(
+                    child: ListView.builder(
                       controller: _scrollController,
                       padding: const EdgeInsets.all(16),
-                      itemCount: messages.length,
+                      reverse: true,
+                      itemCount:
+                          provider.isMoreLoading
+                              ? messages.length + 1
+                              : messages.length,
                       itemBuilder: (context, index) {
+                        if (provider.isMoreLoading &&
+                            index == messages.length) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        }
+
                         final msg = messages[index];
                         final isMe = msg.sender?.id == currentUserId;
-
                         final timestamp =
                             msg.createdAt != null
                                 ? DateTime.parse(msg.createdAt!)
@@ -116,69 +167,59 @@ class _ChatScreenState extends State<ChatScreen> {
                         );
                       },
                     ),
-
-                    // ---- Message Input ----
-                    if (image != null)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        child: Stack(
-                          alignment: Alignment.topRight,
-                          children: [
-                            Image.file(
-                              image!,
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.cover,
-                            ),
-                            GestureDetector(
-                              onTap: () => setState(() => image = null),
-                              child: const CircleAvatar(
-                                radius: 12,
-                                backgroundColor: Colors.black54,
-                                child: Icon(
-                                  Icons.close,
-                                  size: 16,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                  ),
+                  if (image != null)
                     Padding(
                       padding: const EdgeInsets.all(10),
-                      child: Row(
+                      child: Stack(
+                        alignment: Alignment.topRight,
                         children: [
-                          IconButton(
-                            icon: const Icon(Icons.image),
-                            onPressed: pickImage,
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.file(image!, width: 100, height: 100),
                           ),
-                          Expanded(
-                            child: TextField(
-                              controller: _controller,
-                              decoration: InputDecoration(
-                                hintText: "Write a message...",
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                ),
+                          GestureDetector(
+                            onTap: () => setState(() => image = null),
+                            child: const CircleAvatar(
+                              radius: 12,
+                              backgroundColor: Colors.black54,
+                              child: Icon(
+                                Icons.close,
+                                size: 16,
+                                color: Colors.white,
                               ),
                             ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.send),
-                            onPressed: () => sendMessage(provider),
                           ),
                         ],
                       ),
                     ),
-                  ],
-                ),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.image),
+                          onPressed: pickImage,
+                        ),
+                        Expanded(
+                          child: TextField(
+                            controller: _controller,
+                            decoration: InputDecoration(
+                              hintText: "Write a message...",
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.send),
+                          onPressed: () => sendMessage(provider),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
     );
   }
@@ -190,10 +231,10 @@ class MessageBubble extends StatelessWidget {
   final bool isSent;
 
   const MessageBubble({
+    super.key,
     required this.message,
     required this.timestamp,
     required this.isSent,
-    super.key,
   });
 
   @override
@@ -209,15 +250,12 @@ class MessageBubble extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             constraints: const BoxConstraints(maxWidth: 260),
             decoration: BoxDecoration(
-              color: isSent ? Colors.purple : Colors.grey.shade300,
+              color: isSent ? Colors.purple : Colors.grey[300],
               borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
               message,
-              style: TextStyle(
-                color: isSent ? Colors.white : Colors.black,
-                fontSize: 14,
-              ),
+              style: TextStyle(color: isSent ? Colors.white : Colors.black),
             ),
           ),
           Text(

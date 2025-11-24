@@ -43,7 +43,7 @@ class ParentScreenWidget extends StatelessWidget {
               children: List.generate(
                 _tabs.length,
                     (index) => index == 2
-                    ? const SizedBox(width: 60) // space for center button
+                    ? const SizedBox(width: 60)
                     : Expanded(
                   child: _TabButton(
                     index: index,
