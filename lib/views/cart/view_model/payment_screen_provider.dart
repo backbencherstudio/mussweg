@@ -154,4 +154,29 @@ class PaymentScreenProvider extends ChangeNotifier {
       debugPrint("THe failed message $error");
     }
   }
+
+  Future<String> stripPay() async {
+    try {
+      final token = await _tokenStorage.getToken();
+      final url = Uri.parse(ApiEndpoints.stripPayment(selectedOrderId));
+
+      final response = await http.post(
+        url,
+        headers: {"Authorization": "Bearer $token"},
+      );
+
+      final decodeData = jsonDecode(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        debugPrint("Stripe success message ${decodeData['message']}");
+        debugPrint("Stripe success message ${response.body}");
+        debugPrint("Stripe success message ${decodeData}");
+        return decodeData['clientSecret'];
+      } else {
+        debugPrint("Stripe failed message ${decodeData['message']}");
+        throw Exception(decodeData['message']);
+      }
+    } catch (error) {
+      throw Exception(error);
+    }
+  }
 }

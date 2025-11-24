@@ -97,4 +97,7 @@ class ApiEndpoints {
       "$baseUrl/api/cart/update/$cartItem";
   static String orderCreate = "$baseUrl/api/order/create";
   static String myOrderList = "$baseUrl/api/order/my-orders";
+  static String stripPayment(String orderId) => "$baseUrl/api/payment/stripe/pay/$orderId";
+
+
 }
