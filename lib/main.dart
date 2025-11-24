@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/core/provider/inject.dart'; // Import inject.dart
 import 'package:provider/provider.dart';
 import 'core/provider/app_provider.dart';
 import 'core/routes/route_configs.dart';
+import 'core/services/stripe_services.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize dependency injection BEFORE runApp
   setup();
-
+  await dotenv.load(fileName: '.env');
+  await StripeServices.instance.initialize();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await ScreenUtil.ensureScreenSize();
 

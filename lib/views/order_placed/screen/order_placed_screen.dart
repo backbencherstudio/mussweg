@@ -1,26 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/views/widgets/custom_button.dart';
 
 class OrderPlacedScreen extends StatelessWidget {
   const OrderPlacedScreen({super.key});
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        backgroundColor: Colors.white,
-      ),
       body: Padding(
         padding: EdgeInsets.symmetric(vertical: 16.h),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(height: 50.h),
             Card(
@@ -57,7 +50,9 @@ class OrderPlacedScreen extends StatelessWidget {
                       text: 'Track Your Order',
                       textColor: Colors.white,
                       buttonColor: Colors.red,
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, RouteNames.parentScreen);
+                      },
                     ),
                     SizedBox(height: 10.h),
                   ],
