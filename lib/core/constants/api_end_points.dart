@@ -14,6 +14,8 @@ class ApiEndpoints {
   static String getMyDashboardDetails = '$baseUrl/api/profile/me/dashboard';
   static const String getUserProfileDetails = '$baseUrl/api/profile/me';
   static const String forgetPassword = '$baseUrl/api/auth/forgot-password';
+  static const String verifyForgetPassOTP = '$baseUrl/api/auth/verify-token';
+  static const String resendForgetPassOTP = '$baseUrl/api/auth/resend-token';
   static const String resetPassword = '$baseUrl/api/auth/reset-password';
 
   /// Home

@@ -11,6 +11,12 @@ class ForgetPasswordProvider extends ChangeNotifier {
   bool _isRPLoading = false;
   bool get isRPLoading => _isRPLoading;
 
+  bool _isRCLoading = false;
+  bool get isRCLoading => _isRCLoading;
+
+  bool _isVOLoading = false;
+  bool get isVOLoading => _isVOLoading;
+
   String _errorMessage = '';
   String get errorMessage => _errorMessage;
 
@@ -88,6 +94,39 @@ class ForgetPasswordProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> verifyOTP() async {
+    _isVOLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _apiService.post(
+        ApiEndpoints.verifyForgetPassOTP,
+        data: {
+          "email": _email,
+          "token": _otpToken,
+        },
+      );
+      debugPrint("Response status: ${response.statusCode}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _isVOLoading = false;
+        _errorMessage = response.data['message'];
+        notifyListeners();
+        return response.data['success'];
+      } else {
+        _isVOLoading = false;
+        _errorMessage = response.data['message'];
+        notifyListeners();
+        return false;
+      }
+    } catch (error) {
+      print('Error during reset password: $error');
+      _isVOLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
   Future<bool> resetPassword({required String password}) async {
     _isRPLoading = true;
     notifyListeners();
@@ -117,6 +156,33 @@ class ForgetPasswordProvider extends ChangeNotifier {
     } catch (error) {
       print('Error during reset password: $error');
       _isRPLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> resendCode() async {
+    _isRCLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _apiService.post(ApiEndpoints.resendForgetPassOTP, data: {"email": _email});
+      print("Response status: ${response.statusCode}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _isRCLoading = false;
+        _errorMessage = response.data['message'];
+        notifyListeners();
+        return response.data['success'];
+      } else {
+        _isRCLoading = false;
+        _errorMessage = response.data['message'];
+        notifyListeners();
+        return false;
+      }
+    } catch (error) {
+      print('Error during Resend code: $error');
+      _isRCLoading = false;
       notifyListeners();
       return false;
     }

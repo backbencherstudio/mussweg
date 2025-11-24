@@ -143,16 +143,17 @@ class _LoginScreenState extends State<LoginScreen> {
             fillColor: const Color(0xFFF6F6F7),
             hintText: hintText,
             hintStyle: const TextStyle(fontSize: 16, color: Color(0xFF777980)),
-            suffixIcon: hasIcon
-                ? GestureDetector(
-              onTap: onTapSuffixIcon,
-              child: Icon(
-                obscureText
-                    ? Icons.visibility_outlined
-                    : Icons.visibility_off_outlined,
-              ),
-            )
-                : null,
+            suffixIcon:
+                hasIcon
+                    ? GestureDetector(
+                      onTap: onTapSuffixIcon,
+                      child: Icon(
+                        obscureText
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                      ),
+                    )
+                    : null,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
               borderSide: BorderSide.none,
@@ -169,63 +170,65 @@ class _LoginScreenState extends State<LoginScreen> {
         return viewModel.isLoading
             ? const Center(child: CircularProgressIndicator())
             : PrimaryButton(
-          title: 'Login',
-          color: const Color(0xFFDE3526),
-          textColor: Colors.white,
-          onTap: () async {
-            FocusScope.of(context).unfocus();
+              title: 'Login',
+              color: const Color(0xFFDE3526),
+              textColor: Colors.white,
+              onTap: () async {
+                FocusScope.of(context).unfocus();
 
-            if (_emailController.text.isEmpty ||
-                _passwordController.text.isEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Please fill all the fields")),
-              );
-              return;
-            }
+                if (_emailController.text.isEmpty ||
+                    _passwordController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Please fill all the fields")),
+                  );
+                  return;
+                }
 
-            final result = await viewModel.login(
-              email: _emailController.text.trim(),
-              password: _passwordController.text.trim(),
-            );
-
-            if (!mounted) return;
-
-            if (result) {
-              await context.read<GetMeViewmodel>().fetchUserData();
-              await context.read<UserProfileGetMeProvider>().getUserProfileDetails();
-              await context.read<AllCategoryProvider>().getAllCategories();
-
-              if (!mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    viewModel.errorMessage ?? "Login Successful",
-                  ),
-                ),
-              );
-
-              // Safe delay before navigation
-              await Future.delayed(const Duration(milliseconds: 100));
-              context.read<ParentScreensProvider>().onSelectedIndex(0);
-              if (mounted) {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  RouteNames.parentScreen,
-                      (_) => false,
+                final result = await viewModel.login(
+                  email: _emailController.text.trim(),
+                  password: _passwordController.text.trim(),
                 );
-              }
-            } else {
-              if (!mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    viewModel.errorMessage ?? "Invalid credentials",
-                  ),
-                ),
-              );
-            }
-          },
-        );
+
+                if (!mounted) return;
+
+                if (result) {
+                  // Fetch data first
+                  await Future.wait([
+                    context.read<GetMeViewmodel>().fetchUserData(),
+                    context
+                        .read<UserProfileGetMeProvider>()
+                        .getUserProfileDetails(),
+                    context.read<AllCategoryProvider>().getAllCategories(),
+                  ]);
+
+                  if (!mounted) return;
+
+                  // Navigate first
+                  context.read<ParentScreensProvider>().onSelectedIndex(0);
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    RouteNames.parentScreen,
+                    (_) => false,
+                  );
+
+                  // Then show SnackBar on the NEW screen
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Login Successful")),
+                    );
+                  });
+                } else {
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        viewModel.errorMessage ?? "Invalid credentials",
+                      ),
+                    ),
+                  );
+                }
+              },
+            );
       },
     );
   }
@@ -267,15 +270,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 color: Colors.red,
                 fontWeight: FontWeight.w600,
               ),
-              recognizer: TapGestureRecognizer()
-                ..onTap = () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const SignUpScreen(),
-                    ),
-                  );
-                },
+              recognizer:
+                  TapGestureRecognizer()
+                    ..onTap = () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SignUpScreen(),
+                        ),
+                      );
+                    },
             ),
           ],
         ),
