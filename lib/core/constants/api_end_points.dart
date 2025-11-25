@@ -40,7 +40,7 @@ class ApiEndpoints {
       '$baseUrl/api/bid/singleproductbid/$id';
   static String createBid = '$baseUrl/api/bid/create';
 
-  //  bought product
+  /// bought product
   static String totalBoughtProduct(int page, int limit) =>
       '$baseUrl/api/dashborad/total-brought-item/?page=$page&perPage=$limit';
   static String boughtPendingProduct =
@@ -50,9 +50,9 @@ class ApiEndpoints {
   static String boughtCancelProduct =
       '$baseUrl/api/dashborad/bought-cancelled-item';
 
-  //  Sell product
-  static String totalSellProduct(int page, int limit) =>
-      '$baseUrl/api//dashborad/total-selling-item/?page=$page&perPage=$limit';
+  ///  Sell product
+  static String totalSellProduct =
+      '$baseUrl/api/dashborad/total-selling-item';
   static String sellPendingProduct =
       '$baseUrl/api/dashborad/selling-pending-item';
   static String sellDeliveredProduct =
@@ -60,7 +60,7 @@ class ApiEndpoints {
   static String sellCancelProduct =
       '$baseUrl/api/dashborad/selling-cancelled-item';
 
-  //
+  ///
   static const String getRequestedBidsForSeller =
       '$baseUrl/api/bid/seller-product-bids';
   static const String getAcceptedBidsForSeller =
@@ -81,7 +81,7 @@ class ApiEndpoints {
       '$baseUrl/api/products/search?page=$page&perPage=10&search=$Q';
   static String filterProducts = '$baseUrl/api/products/filter';
 
-  //chat
+  ///chat
   static String getChatList =
       "$baseUrl/api/chat/conversation/conversation-list";
   static String getAllMessage(String conversationId, int page, int limit) =>
@@ -91,7 +91,7 @@ class ApiEndpoints {
   static String createConversation =
       "$baseUrl/api/chat/conversation/create-conversation";
 
-  // payment
+  /// payment
 
   static String createCart = "$baseUrl/api/cart/create";
   static String getMyCart = "$baseUrl/api/cart/my-cart";
@@ -99,7 +99,6 @@ class ApiEndpoints {
       "$baseUrl/api/cart/update/$cartItem";
   static String orderCreate = "$baseUrl/api/order/create";
   static String myOrderList = "$baseUrl/api/order/my-orders";
-  static String stripPayment(String orderId) => "$baseUrl/api/payment/stripe/pay/$orderId";
-
-
+  static String stripPayment(String orderId) =>
+      "$baseUrl/api/payment/stripe/pay/$orderId";
 }
