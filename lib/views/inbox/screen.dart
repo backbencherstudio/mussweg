@@ -78,8 +78,7 @@ class _InboxPageState extends State<InboxPage> {
                                       fit: BoxFit.cover,
                                     ),
                                   ),
-                                  SizedBox(width: 12),
-
+                                  SizedBox(width: 12.w),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
