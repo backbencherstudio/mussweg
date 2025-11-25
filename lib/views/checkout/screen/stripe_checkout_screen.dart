@@ -80,7 +80,6 @@ class _StripeCheckoutScreenState extends State<StripeCheckoutScreen> {
                           paymentMethodData: PaymentMethodData(),
                         ),
                       );
-
                       if (mounted) {
                         Navigator.pushNamedAndRemoveUntil(
                           context,

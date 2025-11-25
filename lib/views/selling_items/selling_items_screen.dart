@@ -122,21 +122,26 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
                           final product = products[index];
                           final items = product.items ?? [];
 
-                          final totalQty = items.fold(
-                            0,
-                            (sum, item) => sum + (item.quantity ?? 0),
-                          );
+                          int totalQty = 0;
+                          double totalPrice = 0.0;
 
-                          final totalPrice = items.fold(
-                            0.0,
-                            (sum, item) =>
-                                sum +
-                                ((item.price ?? 0.0) * (item.quantity ?? 0)),
-                          );
+                          // Calculate total quantity
+                          for (final item in items) {
+                            final quantity = _parseToInt(item.quantity);
+                            totalQty += quantity;
+                          }
+
+                          // Calculate total price
+                          for (final item in items) {
+                            final quantity = _parseToInt(item.quantity);
+                            final price = _parseToDouble(item.price);
+                            totalPrice += price * quantity;
+                          }
 
                           final productOwnerId =
                               items.isNotEmpty
-                                  ? (items.first.productOwnerId ?? "")
+                                  ? (items.first.productOwnerId?.toString() ??
+                                      "")
                                   : "";
 
                           return Padding(
@@ -145,10 +150,10 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
                               elevation: 1,
                               child: ExpansionTile(
                                 title: ItemCard(
-                                  title: product.orderId ?? '',
+                                  title: product.orderId?.toString() ?? '',
                                   quantity: totalQty,
                                   price: totalPrice,
-                                  status: product.orderStatus ?? '',
+                                  status: product.orderStatus?.toString() ?? '',
                                 ),
                                 children: [
                                   Padding(
@@ -170,16 +175,16 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
                                         // -------- ITEM ROWS --------
                                         ...items.map(
                                           (item) => buildItemRow(
-                                            item.productTitle,
-                                            item.price ?? 0,
-                                            item.quantity ?? 0,
+                                            item.productTitle?.toString(),
+                                            _parseToDouble(item.price),
+                                            _parseToInt(item.quantity),
                                           ),
                                         ),
 
                                         SizedBox(height: 10.h),
 
                                         Text(
-                                          'Status: ${product.orderStatus ?? ''}',
+                                          'Status: ${product.orderStatus?.toString() ?? ''}',
                                           style: const TextStyle(
                                             fontWeight: FontWeight.w500,
                                           ),
@@ -193,7 +198,7 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
                                             ReviewDialog().showReviewDialog(
                                               context,
                                               productOwnerId,
-                                              product.orderId,
+                                              product.orderId!.toString(),
                                             );
                                           },
                                         ),
@@ -214,7 +219,22 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
   }
 
   // =====================================================
-  //                  ITEM ROW WIDGET
+  int _parseToInt(dynamic value) {
+    if (value == null) return 0;
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value) ?? 0;
+    if (value is double) return value.toInt();
+    return 0;
+  }
+
+  double _parseToDouble(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0.0;
+    return 0.0;
+  }
+
   // =====================================================
   Widget buildItemRow(String? name, double price, int quantity) {
     return Padding(
@@ -244,8 +264,6 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
   }
 }
 
-// ======================================================
-//                   ITEM CARD WIDGET
 // ======================================================
 class ItemCard extends StatelessWidget {
   final String title;
@@ -286,7 +304,6 @@ class ItemCard extends StatelessWidget {
 
     return Row(
       children: [
-        // ---- Image ----
         Container(
           height: 80.h,
           width: 80.w,
@@ -299,12 +316,10 @@ class ItemCard extends StatelessWidget {
 
         SizedBox(width: 10.w),
 
-        // ---- Details ----
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Title
               Text(
                 title,
                 maxLines: 1,
@@ -336,7 +351,6 @@ class ItemCard extends StatelessWidget {
 
               SizedBox(height: 10.h),
 
-              // Status badge
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
                 decoration: BoxDecoration(
