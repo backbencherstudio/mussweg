@@ -1,16 +1,16 @@
+// lib/views/screens/wishlist_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
-import 'package:mussweg/core/constants/api_end_points.dart';
-import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
-import 'package:mussweg/views/widgets/simple_apppbar.dart';
 import 'package:provider/provider.dart';
-
-import '../../core/routes/route_names.dart';
-import '../../view_model/bid/place_a_bid_provider.dart';
-import '../../view_model/product_item_list_provider/category_based_product_provider.dart';
-import '../../view_model/product_item_list_provider/get_product_details_provider.dart';
+import '../../core/constants/api_end_points.dart';
+import '../../data/model/whistlist/favourite_product_model.dart';
+import '../../view_model/language/language_provider.dart';
 import '../../view_model/whistlist/whistlist_provider_of_get_favourite_product.dart';
+import '../../view_model/product_item_list_provider/get_product_details_provider.dart';
+import '../../view_model/bid/place_a_bid_provider.dart';
+import '../../core/routes/route_names.dart';
+import '../../view_model/parent_provider/parent_screen_provider.dart';
+import '../../views/widgets/simple_apppbar.dart';
 
 class WishlistScreen extends StatefulWidget {
   const WishlistScreen({super.key});
@@ -27,6 +27,18 @@ class _WishlistScreenState extends State<WishlistScreen> {
     super.initState();
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
+
+    // Initial load
+    Future.microtask(() {
+      final provider = context.read<WhistlistProviderOfGetFavouriteProduct>();
+      final languageProvider = context.read<LanguageProvider>();
+
+      // Sync language with provider
+      provider.changeLanguage(languageProvider.currentLang);
+
+      // Load wishlist
+      provider.getWishlistProduct();
+    });
   }
 
   @override
@@ -36,16 +48,62 @@ class _WishlistScreenState extends State<WishlistScreen> {
     super.dispose();
   }
 
-  // Scroll listener to detect when we reach the bottom
   void _scrollListener() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      // Trigger loading more items when scrolled to the bottom
-      context.read<WhistlistProviderOfGetFavouriteProduct>().loadMoreWishlistProduct();
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 100) {
+      if (!context.read<WhistlistProviderOfGetFavouriteProduct>().isPaginationLoading) {
+        context.read<WhistlistProviderOfGetFavouriteProduct>().loadMoreWishlistProduct();
+      }
     }
+  }
+
+  String _getTranslatedText(String text, BuildContext context) {
+    final langCode = context.read<LanguageProvider>().currentLang;
+
+    // Simple translation dictionary for UI texts
+    final translations = {
+      'en': {
+        'Wishlist': 'Wishlist',
+        'Favourite List': 'Favourite List',
+        'No Favourite Product Found': 'No Favourite Product Found',
+        'Size': 'Size',
+        'condition': 'condition',
+
+      },
+      'de': {
+        'Wishlist': 'Wunschliste',
+        'Favourite List': 'Favoritenliste',
+        'No Favourite Product Found': 'Kein Favoritenprodukt gefunden',
+        'Size': 'Größe',
+        'condition': 'Zustand',
+
+      },
+      'fr': {
+        'Wishlist': 'Liste de souhaits',
+        'Favourite List': 'Liste des favoris',
+        'No Favourite Product Found': 'Aucun produit favori trouvé',
+        'Size': 'Taille',
+        'condition': 'état',
+
+      },
+      'bn': {
+        'Wishlist': 'ইচ্ছেতালিকা',
+        'Favourite List': 'প্রিয় তালিকা',
+        'No Favourite Product Found': 'কোন প্রিয় পণ্য পাওয়া যায়নি',
+        'Size': 'আকার',
+        'condition': 'অবস্থা',
+
+      },
+    };
+
+    return translations[langCode]?[text] ?? text;
   }
 
   @override
   Widget build(BuildContext context) {
+    final languageProvider = context.watch<LanguageProvider>();
+    final wishlistProvider = context.watch<WhistlistProviderOfGetFavouriteProduct>();
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (_, __) {
@@ -53,229 +111,339 @@ class _WishlistScreenState extends State<WishlistScreen> {
       },
       child: Scaffold(
         appBar: SimpleApppbar(
-          title: 'Wishlist',
-          onBack: () =>
-              context.read<ParentScreensProvider>().onSelectedIndex(0),
+          title: _getTranslatedText('Wishlist', context),
+          onBack: () => context.read<ParentScreensProvider>().onSelectedIndex(0),
         ),
         body: Padding(
           padding: EdgeInsets.all(16.w),
-          child: RefreshIndicator(
-            onRefresh: () => context.read<WhistlistProviderOfGetFavouriteProduct>().getWishlistProduct(),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Favourite List",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Language Selector
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(color: Colors.grey[300]!),
                 ),
-                SizedBox(height: 16.h),
-                Expanded(
-                  child: Consumer<WhistlistProviderOfGetFavouriteProduct>(
-                    builder: (_, wishlistProvider, __) {
-                      if (wishlistProvider.isLoading) {
-                        return Center(
-                          child: CircularProgressIndicator(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '${_getTranslatedText('Language', context)}:',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    DropdownButton<String>(
+                      value: languageProvider.currentLang,
+                      underline: const SizedBox(),
+                      icon: Icon(Icons.arrow_drop_down, size: 24.w),
+                      items: [
+                        DropdownMenuItem(
+                          value: "en",
+                          child: Text(_getTranslatedText('English', context)),
+                        ),
+                        DropdownMenuItem(
+                          value: "de",
+                          child: Text(_getTranslatedText('German', context)),
+                        ),
+                        DropdownMenuItem(
+                          value: "fr",
+                          child: Text(_getTranslatedText('French', context)),
+                        ),
+                        DropdownMenuItem(
+                          value: "bn",
+                          child: Text(_getTranslatedText('Bangla', context)),
+                        ),
+                      ],
+                      onChanged: (value) async {
+                        if (value == null) return;
+
+                        // Show loading indicator
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) => const Center(
+                            child: CircularProgressIndicator(),
+                          ),
                         );
-                      }
 
-                      final favouriteProduct = wishlistProvider.wishlistModel?.data;
+                        try {
+                          // Change language
+                          await languageProvider.changeLanguage(value);
 
-                      if (favouriteProduct?.isEmpty ?? true) {
-                        return Center(child: Text('No Favourite Product Found'));
-                      }
+                          // Update wishlist provider language
+                          await wishlistProvider.changeLanguage(value);
 
-                      return ListView.separated(
-                        controller: _scrollController, // Attach scroll controller
-                        itemCount: favouriteProduct?.length ?? 0,
-                        itemBuilder: (context, index) {
-                          final product = favouriteProduct![index];
-                          return GestureDetector(
-                            onTap: () {
-                              context.read<GetProductDetailsProvider>().getProductDetails(product.productId);
-                              context.read<PlaceABidProvider>().getAllBidsForProduct(product.productId);
-                              Navigator.pushNamed(
-                                context,
-                                RouteNames.productDetailsScreen,
-                              );
-                            },
-                            child: Card(
-                              color: Colors.white,
-                              elevation: 1,
-                              child: Padding(
-                                padding: EdgeInsets.all(8.w),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  spacing: 4.h,
-                                  children: [
-                                    Stack(
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(12.r),
-                                          child: Container(
-                                            height: 180.h,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.circular(12.r),
-                                            ),
-                                            child: Image.network(
-                                              product.productPhoto != null && product.productPhoto!.isNotEmpty
-                                                  ? "${ApiEndpoints.baseUrl}${product.productPhoto!.first.replaceAll('http://localhost:5005', '')}"
-                                                  : 'https://via.placeholder.com/150',
-                                              fit: BoxFit.cover,
-                                              height: 180.h,
-                                              width: double.infinity,
-                                              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                                                if (loadingProgress == null) return child;
-                                                return Center(
-                                                  child: CircularProgressIndicator(
-                                                    value: loadingProgress.expectedTotalBytes != null
-                                                        ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                                        : null,
-                                                  ),
-                                                );
-                                              },
-                                              errorBuilder: (_, __, ___) => Container(
-                                                height: 180.h,
-                                                width: double.infinity,
-                                                color: Colors.grey.shade50,
-                                                child: Image.asset(
-                                                  'assets/images/placeholder.jpg',
-                                                  fit: BoxFit.fill,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Positioned(
-                                          top: 8.w,
-                                          left: 8.w,
-                                          child: Container(
-                                            height: 36.h,
-                                            width: 36.w,
-                                            padding: EdgeInsets.all(4.w),
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Color(0xffC7C8C8),
-                                            ),
-                                            child: Center(
-                                              child: Icon(
-                                                Icons.favorite,
-                                                color: Colors.red,
-                                                size: 20.h,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Text(
-                                      product.productTitle ?? '',
-                                      style: TextStyle(
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Size ${product.productSize ?? ''} (${product.productCondition ?? ''} condition)',
-                                      style: TextStyle(
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xff777980),
-                                      ),
-                                    ),
-                                    RichText(
-                                      text: TextSpan(
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.black,
-                                        ),
-                                        children: [
-                                          TextSpan(
-                                            text: DateFormat(
-                                              "dd MMM, yy h:mm a",
-                                            ).format(DateTime.parse(product.createdAt)) ??
-                                                '' ,
-                                            style: TextStyle(
-                                              fontSize: 14.sp,
-                                              fontWeight: FontWeight.w500,
-                                              color: Color(0xff777980),
-                                            ),
-                                          ),
-                                          TextSpan(
-                                            text: product.boostTime == '' ||
-                                                product.boostTime == null
-                                                ? '\n'
-                                                : '\n${DateFormat("dd MMM, yy h:mm a").format(DateTime.parse(product.boostTime ?? ''))}',
-                                            style: TextStyle(
-                                              fontSize: 14.sp,
-                                              fontWeight: FontWeight.w500,
-                                              color: Color(0xff1A9882),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Divider(
-                                      color: Colors.grey.shade200,
-                                      thickness: .7.h,
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 8.w,
-                                        vertical: 2.h,
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            '\$ ${product.productPrice ?? ''}',
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: 18.sp,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Image.asset(
-                                            'assets/icons/cart.png',
-                                            color: Colors.red,
-                                            height: 24.h,
-                                            width: 24.h,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        separatorBuilder: (BuildContext context, int index) =>
-                            SizedBox(height: 8.h),
+                          // Reload wishlist with new language
+                          await wishlistProvider.getWishlistProduct();
+                        } finally {
+                          // Hide loading indicator
+                          if (mounted) {
+                            Navigator.of(context).pop();
+                          }
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: 20.h),
+
+              // Title
+              Text(
+                _getTranslatedText('Favourite List', context),
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              SizedBox(height: 16.h),
+
+              // Wishlist Items
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    await wishlistProvider.getWishlistProduct();
+                  },
+                  child: _buildWishlistContent(context, wishlistProvider),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWishlistContent(BuildContext context, WhistlistProviderOfGetFavouriteProduct provider) {
+    if (provider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (provider.isTranslating) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const CircularProgressIndicator(),
+          SizedBox(height: 16.h),
+          Text(
+            'Translating content...',
+            style: TextStyle(fontSize: 14.sp, color: Colors.grey),
+          ),
+        ],
+      );
+    }
+
+    final favouriteProduct = provider.wishlistModel?.data;
+
+    if (favouriteProduct?.isEmpty ?? true) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.favorite_border, size: 64.w, color: Colors.grey[300]),
+            SizedBox(height: 16.h),
+            Text(
+              _getTranslatedText('No Favourite Product Found', context),
+              style: TextStyle(
+                fontSize: 16.sp,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.separated(
+      controller: _scrollController,
+      physics: const AlwaysScrollableScrollPhysics(),
+      itemCount: favouriteProduct!.length + (provider.isPaginationLoading ? 1 : 0),
+      separatorBuilder: (_, __) => SizedBox(height: 12.h),
+      itemBuilder: (context, index) {
+        // Loading indicator for pagination
+        if (index == favouriteProduct.length) {
+          return Padding(
+            padding: EdgeInsets.symmetric(vertical: 20.h),
+            child: const Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        final product = favouriteProduct[index];
+
+        return _buildProductCard(context, product);
+      },
+    );
+  }
+
+  Widget _buildProductCard(BuildContext context, WishlistItem product) {
+    return GestureDetector(
+      onTap: () {
+        context.read<GetProductDetailsProvider>().getProductDetails(product.productId);
+        context.read<PlaceABidProvider>().getAllBidsForProduct(product.productId);
+        Navigator.pushNamed(context, RouteNames.productDetailsScreen);
+      },
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(12.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Product Image
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8.r),
+                child: Container(
+                  height: 180.h,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                  ),
+                  child: product.productPhoto != null &&
+                      product.productPhoto!.isNotEmpty
+                      ? Image.network(
+                    "${ApiEndpoints.baseUrl}${product.productPhoto!.first.replaceAll('http://localhost:5005', '')}",
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                              : null,
+                        ),
                       );
                     },
+                    errorBuilder: (_, __, ___) => Center(
+                      child: Icon(
+                        Icons.image_not_supported,
+                        size: 48.w,
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                  )
+                      : Center(
+                    child: Icon(
+                      Icons.image,
+                      size: 48.w,
+                      color: Colors.grey[400],
+                    ),
                   ),
                 ),
-                Consumer<WhistlistProviderOfGetFavouriteProduct>(
-                  builder: (_, wishlistProvider, __) {
-                    if (wishlistProvider.isPaginationLoading) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16.h),
-                        child: Center(child: CircularProgressIndicator()),
-                      );
-                    }
-                    return SizedBox.shrink();
-                  },
+              ),
+
+              SizedBox(height: 12.h),
+
+              // Product Title
+              Text(
+                product.translatedTitle ?? product.productTitle,
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                  height: 1.3,
                 ),
-                SizedBox(height: 75.h),
-              ],
-            ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+
+              SizedBox(height: 8.h),
+
+              // Product Details
+              Row(
+                children: [
+                  Icon(Icons.straighten, size: 16.w, color: Colors.grey[600]),
+                  SizedBox(width: 4.w),
+                  Text(
+                    '${_getTranslatedText('Size', context)}: ',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  Text(
+                    product.translatedSize ?? product.productSize,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 4.h),
+
+              Row(
+                children: [
+                  Icon(Icons.assignment_turned_in_outlined, size: 16.w, color: Colors.grey[600]),
+                  SizedBox(width: 4.w),
+                  Text(
+                    '${_getTranslatedText('condition', context)}: ',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  Text(
+                    product.translatedCondition ?? product.productCondition,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 8.h),
+
+              // Price and Stock
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (product.productPrice.isNotEmpty)
+                    Text(
+                      '\$${product.productPrice}',
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green[700],
+                      ),
+                    ),
+
+                  if (product.productStock > 0)
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                      decoration: BoxDecoration(
+                        color: Colors.green[50],
+                        borderRadius: BorderRadius.circular(4.r),
+                        border: Border.all(color: Colors.green[100]!),
+                      ),
+                      child: Text(
+                        '${product.productStock} in stock',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: Colors.green[800],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ],
           ),
         ),
       ),

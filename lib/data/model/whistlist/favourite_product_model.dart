@@ -29,13 +29,18 @@ class WishlistItem {
   final String userId;
   final String productId;
   final String productTitle;
-  final List<String>? productPhoto; // updated to List<String>?
+  final List<String>? productPhoto;
   final String productSize;
   final String productCondition;
   final String productPrice;
   final int productStock;
   final String createdAt;
   final String? boostTime;
+
+  // Translated fields
+  String? translatedTitle;
+  String? translatedSize;
+  String? translatedCondition;
 
   WishlistItem({
     required this.id,
@@ -49,6 +54,9 @@ class WishlistItem {
     required this.productStock,
     required this.createdAt,
     this.boostTime,
+    this.translatedTitle,
+    this.translatedSize,
+    this.translatedCondition,
   });
 
   factory WishlistItem.fromJson(Map<String, dynamic> json) {

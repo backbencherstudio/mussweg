@@ -274,7 +274,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                           if (!result) {
                                             provider.toggleFavorite(product.id, !provider.isFavorite(product.id));
                                           } else {
-                                            await context.read<WhistlistProviderOfGetFavouriteProduct>().getWishlistProduct();
+                                          //  await context.read<WhistlistProviderOfGetFavouriteProduct>().getWishlistProduct();
                                           }
                                         },
                                         child: Container(

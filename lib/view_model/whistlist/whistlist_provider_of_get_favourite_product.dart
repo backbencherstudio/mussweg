@@ -1,29 +1,95 @@
+// lib/view_model/whistlist/whistlist_provider_of_get_favourite_product.dart
 import 'package:flutter/material.dart';
-import 'package:mussweg/data/model/whistlist/favourite_product_model.dart';
-
-import '../../core/constants/api_end_points.dart';
 import '../../core/services/api_service.dart';
+import '../../core/services/translator_service.dart';
+import '../../data/model/whistlist/favourite_product_model.dart';
+import '../../core/constants/api_end_points.dart';
 
 class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
   bool _isLoading = false;
-  bool get isLoading => _isLoading;
-
+  bool _isPaginationLoading = false;
+  bool _isTranslating = false;
   String _errorMessage = '';
-  String get errorMessage => _errorMessage;
-
   WishListModel? _wishlistModel;
-  WishListModel? get wishlistModel => _wishlistModel;
+  int _currentPage = 1;
+  bool _hasNextPage = false;
+  String _currentLanguage = 'en';
 
   final ApiService _apiService = ApiService();
+  final AppTranslator _translator = AppTranslator();
 
-  int _currentPage = 1;
-  int get currentPage => _currentPage;
+  // Translation cache
+  final Map<String, Map<String, String>> _translationCache = {};
 
-  bool _hasNextPage = false;
-  bool get hasNextPage => _hasNextPage;
-
-  bool _isPaginationLoading = false;
+  bool get isLoading => _isLoading;
   bool get isPaginationLoading => _isPaginationLoading;
+  bool get isTranslating => _isTranslating;
+  String get errorMessage => _errorMessage;
+  WishListModel? get wishlistModel => _wishlistModel;
+  int get currentPage => _currentPage;
+  bool get hasNextPage => _hasNextPage;
+  String get currentLanguage => _currentLanguage;
+
+  Future<void> changeLanguage(String langCode) async {
+    if (_currentLanguage == langCode) return;
+
+    _currentLanguage = langCode;
+    await _translator.setLanguage(langCode);
+
+    // Clear translation cache for the new language
+    _translationCache.clear();
+
+    // Re-translate existing products if any
+    if (_wishlistModel != null && _wishlistModel!.data.isNotEmpty) {
+      _isTranslating = true;
+      notifyListeners();
+
+      await _translateAllProducts(_wishlistModel!.data);
+
+      _isTranslating = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> _translateAllProducts(List<WishlistItem> items) async {
+    if (items.isEmpty) return;
+
+    // Initialize cache for current language
+    if (!_translationCache.containsKey(_currentLanguage)) {
+      _translationCache[_currentLanguage] = {};
+    }
+
+    final cache = _translationCache[_currentLanguage]!;
+
+    for (var item in items) {
+      // Translate title
+      final titleKey = 'title_${item.productId}';
+      if (!cache.containsKey(titleKey)) {
+        item.translatedTitle = await _translator.translateText(item.productTitle);
+        cache[titleKey] = item.translatedTitle!;
+      } else {
+        item.translatedTitle = cache[titleKey];
+      }
+
+      // Translate size
+      final sizeKey = 'size_${item.productSize}';
+      if (!cache.containsKey(sizeKey)) {
+        item.translatedSize = await _translator.translateText(item.productSize);
+        cache[sizeKey] = item.translatedSize!;
+      } else {
+        item.translatedSize = cache[sizeKey];
+      }
+
+      // Translate condition
+      final conditionKey = 'condition_${item.productCondition}';
+      if (!cache.containsKey(conditionKey)) {
+        item.translatedCondition = await _translator.translateText(item.productCondition);
+        cache[conditionKey] = item.translatedCondition!;
+      } else {
+        item.translatedCondition = cache[conditionKey];
+      }
+    }
+  }
 
   Future<bool> getWishlistProduct() async {
     _isLoading = true;
@@ -31,15 +97,24 @@ class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await _apiService.get(ApiEndpoints.getWishList(_currentPage, 10));
+      final response = await _apiService.get(
+          ApiEndpoints.getWishList(_currentPage, 10)
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        _isLoading = false;
         _wishlistModel = WishListModel.fromJson(response.data);
         _hasNextPage = _wishlistModel?.pagination.hasNextPage ?? false;
-        _errorMessage = response.data['message'] ?? '';
+
+        // Translate products
+        _isTranslating = true;
         notifyListeners();
-        return response.data['success'];
+
+        await _translateAllProducts(_wishlistModel!.data);
+
+        _isTranslating = false;
+        _isLoading = false;
+        notifyListeners();
+        return true;
       } else {
         _isLoading = false;
         _errorMessage = response.data['message'] ?? 'Something went wrong';
@@ -47,35 +122,37 @@ class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      debugPrint("Error fetching wishlist products: $e");
-      _errorMessage = e.toString();
       _isLoading = false;
+      _errorMessage = e.toString();
       notifyListeners();
       return false;
     }
   }
 
   Future<bool> loadMoreWishlistProduct() async {
-    if (_isPaginationLoading || !_hasNextPage) {
-      return false;
-    }
+    if (_isPaginationLoading || !_hasNextPage) return false;
 
     _isPaginationLoading = true;
+    _currentPage++;
     notifyListeners();
 
     try {
-      _currentPage++;
-      final response = await _apiService.get(ApiEndpoints.getWishList(_currentPage, 10));
+      final response = await _apiService.get(
+          ApiEndpoints.getWishList(_currentPage, 10)
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final newWishlistModel = WishListModel.fromJson(response.data);
+
+        // Translate new products
+        await _translateAllProducts(newWishlistModel.data);
+
         _wishlistModel?.data.addAll(newWishlistModel.data);
         _hasNextPage = newWishlistModel.pagination.hasNextPage;
 
         _isPaginationLoading = false;
-        _errorMessage = response.data['message'] ?? '';
         notifyListeners();
-        return response.data['success'];
+        return true;
       } else {
         _isPaginationLoading = false;
         _errorMessage = response.data['message'] ?? 'Something went wrong';
@@ -83,11 +160,19 @@ class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      debugPrint("Error loading more wishlist products: $e");
-      _errorMessage = e.toString();
       _isPaginationLoading = false;
+      _errorMessage = e.toString();
       notifyListeners();
       return false;
     }
+  }
+
+  // Clear all data
+  void clear() {
+    _wishlistModel = null;
+    _currentPage = 1;
+    _hasNextPage = false;
+    _translationCache.clear();
+    notifyListeners();
   }
 }
