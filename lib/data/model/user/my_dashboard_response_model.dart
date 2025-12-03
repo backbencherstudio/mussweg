@@ -1,3 +1,4 @@
+// my_dashboard_response_model.dart
 class MyDashboardResponseModel {
   final bool success;
   final String message;
@@ -84,9 +85,9 @@ class Profile {
       coverPhotoUrl: json["coverPhotoUrl"],
       location: json["location"],
       rating: (json["rating"] ?? 0).toDouble(),
-      reviewCount: (json["review_count"] ?? '0').toString(),  // Ensure it's a String
-      totalEarning: (json["total_earning"] ?? "0").toString(),  // Ensure it's a String
-      totalPenalties: (json["total_penalties"] ?? 0).toString(),  // Ensure it's a String
+      reviewCount: (json["review_count"] ?? '0').toString(),
+      totalEarning: (json["total_earning"] ?? "0").toString(),
+      totalPenalties: (json["total_penalties"] ?? 0).toString(),
     );
   }
 }
@@ -122,10 +123,13 @@ class ProductList {
 class ProductData {
   final String id;
   final String productTitle;
-  final double price;  // Updated to double
+  final double price;
   final List<String> photo;
   final String status;
   final List<String> photoUrls;
+
+  // Translation fields
+  String? translatedTitle;
 
   ProductData({
     required this.id,
@@ -134,13 +138,14 @@ class ProductData {
     required this.photo,
     required this.status,
     required this.photoUrls,
+    this.translatedTitle,
   });
 
   factory ProductData.fromJson(Map<String, dynamic> json) {
     return ProductData(
       id: json["id"] ?? "",
       productTitle: json["product_title"] ?? "",
-      price: double.tryParse(json["price"].toString()) ?? 0.0,  // Parse price as double
+      price: double.tryParse(json["price"].toString()) ?? 0.0,
       photo: (json["photo"] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
       status: json["status"] ?? "",
       photoUrls: (json["photoUrls"] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
@@ -184,6 +189,9 @@ class ReviewData {
   final String? reviewerAvatar;
   final String createdAgo;
 
+  // Translation field for comment
+  String? translatedComment;
+
   ReviewData({
     required this.id,
     required this.rating,
@@ -191,6 +199,7 @@ class ReviewData {
     required this.reviewerName,
     this.reviewerAvatar,
     required this.createdAgo,
+    this.translatedComment,
   });
 
   factory ReviewData.fromJson(Map<String, dynamic> json) {

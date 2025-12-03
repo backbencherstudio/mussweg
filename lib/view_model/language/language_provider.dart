@@ -1,146 +1,167 @@
 // lib/view_model/language/language_provider.dart
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/services/translator_service.dart';
 
 class LanguageProvider extends ChangeNotifier {
-  String currentLang = "en";
+  String _currentLang = "en";
   bool _isChangingLanguage = false;
+  final AppTranslator _translatorService = AppTranslator();
 
-  final AppTranslator translatorService = AppTranslator();
+  // Stream controller for real-time language updates
+  final StreamController<String> _languageChangeStreamController =
+  StreamController<String>.broadcast();
+  Stream<String> get languageChangeStream => _languageChangeStreamController.stream;
 
-  bool get isChangingLanguage => _isChangingLanguage;
+  // Global event bus for language changes (alternative approach)
+  static final _languageChangeEvents = StreamController<String>.broadcast();
+  static Stream<String> get languageChangeEvents => _languageChangeEvents.stream;
 
-  String translate(String text) {
-    return translatorService.translateUIText(text, langCode: currentLang);
+  // Cache for database translations
+  final Map<String, Map<String, String>> _databaseTranslationCache = {};
+
+  // Key for SharedPreferences
+  static const String _languageKey = 'app_language';
+
+  LanguageProvider() {
+    _loadSavedLanguage();
   }
 
-  Future<void> changeLanguage(String lang) async {
-    if (currentLang == lang) return;
+  Future<void> _loadSavedLanguage() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedLang = prefs.getString(_languageKey) ?? 'en';
+      await setLanguage(savedLang, save: false, notifyGlobal: false);
+    } catch (e) {
+      debugPrint('Error loading saved language: $e');
+    }
+  }
+
+  bool get isChangingLanguage => _isChangingLanguage;
+  String get currentLang => _currentLang;
+  AppTranslator get translatorService => _translatorService;
+
+  // Main method to change language
+  Future<void> setLanguage(
+      String langCode, {
+        bool save = true,
+        bool notifyGlobal = true,
+      }) async {
+    if (_currentLang == langCode || _isChangingLanguage) return;
 
     _isChangingLanguage = true;
     notifyListeners();
 
     try {
-      currentLang = lang;
-      await translatorService.setLanguage(lang);
-      notifyListeners(); // Notify after successful change
+      final oldLang = _currentLang;
+      _currentLang = langCode;
+
+      // Update translator service
+      await _translatorService.setLanguage(langCode);
+
+      // Save to SharedPreferences
+      if (save) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(_languageKey, langCode);
+      }
+
+      // Clear cache for old language
+      clearTranslationCacheForLanguage(oldLang);
+
+      // Notify via stream
+      _languageChangeStreamController.add(langCode);
+
+      // Global notification for app-wide updates
+      if (notifyGlobal) {
+        _languageChangeEvents.add(langCode);
+      }
+
+      debugPrint('Language changed to: $langCode');
     } catch (e) {
       debugPrint('Error changing language: $e');
-      // Revert to previous language on error
-      currentLang = currentLang;
-      notifyListeners();
+      // Revert on error
+      _currentLang = _currentLang;
       rethrow;
     } finally {
       _isChangingLanguage = false;
-    }
-  }
-
-  Future<void> changeLanguageWithCallback(
-    String lang,
-    BuildContext context, {
-    required VoidCallback onSuccess,
-    VoidCallback? onError,
-  }) async {
-    if (currentLang == lang) return;
-
-    _isChangingLanguage = true;
-    notifyListeners();
-
-    try {
-      currentLang = lang;
-      await translatorService.setLanguage(lang);
-      onSuccess();
-    } catch (e) {
-      debugPrint('Error changing language: $e');
-      // Revert to previous language
-      currentLang = currentLang;
-      onError?.call();
-      if (context.mounted) {
-        _showErrorSnackbar(context, translate('Failed to change language'));
-      }
-    } finally {
-      _isChangingLanguage = false;
       notifyListeners();
     }
   }
 
-  Future<bool> showLanguageChangeDialog(
-    BuildContext context,
-    String lang,
-  ) async {
-    return await showDialog<bool>(
-          context: context,
-          builder:
-              (context) => AlertDialog(
-                title: Text(translate('Change Language')),
-                content: Text(
-                  '${translate('Change language to')} ${translate(lang)}?',
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context, false),
-                    child: Text(translate('Cancel')),
-                  ),
-                  ElevatedButton(
-                    onPressed: () => Navigator.pop(context, true),
-                    child: Text(translate('Confirm')),
-                  ),
-                ],
-              ),
-        ) ??
-        false;
+  // Translate text
+  String translate(String text) {
+    return _translatorService.translateUIText(text, langCode: _currentLang);
   }
 
-  void _showErrorSnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-        duration: const Duration(seconds: 2),
-      ),
-    );
+  // Translate database content
+  Future<String> translateDatabaseText(String text, {String? contextKey}) async {
+    if (text.isEmpty) return text;
+
+    // Check cache first
+    final cacheKey = contextKey != null ? '${contextKey}_$text' : text;
+    if (_databaseTranslationCache[_currentLang]?.containsKey(cacheKey) == true) {
+      return _databaseTranslationCache[_currentLang]![cacheKey]!;
+    }
+
+    // Translate using ML Kit or fallback
+    final translated = await _translatorService.translateText(text);
+
+    // Cache the result
+    if (!_databaseTranslationCache.containsKey(_currentLang)) {
+      _databaseTranslationCache[_currentLang] = {};
+    }
+    _databaseTranslationCache[_currentLang]![cacheKey] = translated;
+
+    return translated;
   }
 
+  // Clear translation cache
+  void clearTranslationCache() {
+    _databaseTranslationCache.clear();
+  }
+
+  // Clear cache for specific language
+  void clearTranslationCacheForLanguage(String langCode) {
+    _databaseTranslationCache.remove(langCode);
+  }
+
+  // Language name
   String getLanguageName(String langCode) {
     switch (langCode) {
       case 'en':
-        return translate('English');
+        return 'English';
       case 'de':
-        return translate('German');
+        return 'German';
       case 'fr':
-        return translate('French');
+        return 'French';
       case 'bn':
-        return translate('Bangla');
+        return 'Bangla';
       default:
-        return langCode;
+        return langCode.toUpperCase();
     }
   }
 
-  String getLanguageFlag(String langCode) {
-    switch (langCode) {
-      case 'en':
-        return '🇬🇧';
-      case 'de':
-        return '🇩🇪';
-      case 'fr':
-        return '🇫🇷';
-      case 'bn':
-        return '🇧🇩';
-      default:
-        return '🌐';
-    }
-  }
-
-  List<Map<String, String>> getSupportedLanguages() {
+  // Get all supported languages
+  List<Map<String, String>> getAllLanguages() {
     return [
-      {'code': 'en', 'name': translate('English'), 'flag': '🇬🇧'},
-      {'code': 'de', 'name': translate('German'), 'flag': '🇩🇪'},
-      {'code': 'fr', 'name': translate('French'), 'flag': '🇫🇷'},
-      {'code': 'bn', 'name': translate('Bangla'), 'flag': '🇧🇩'},
+      {'code': 'en', 'name': 'English'},
+      {'code': 'de', 'name': 'German'},
+      {'code': 'fr', 'name': 'French'},
+      {'code': 'bn', 'name': 'Bangla'},
     ];
   }
 
-  void disposeProvider() {
-    translatorService.dispose();
+  // Check if language is supported
+  bool isLanguageSupported(String langCode) {
+    final languages = getAllLanguages();
+    return languages.any((lang) => lang['code'] == langCode);
+  }
+
+  @override
+  void dispose() {
+    _languageChangeStreamController.close();
+    _translatorService.dispose();
+    super.dispose();
   }
 }

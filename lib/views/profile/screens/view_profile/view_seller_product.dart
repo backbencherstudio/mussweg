@@ -1,4 +1,3 @@
-// seller_profile_page.dart
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -51,24 +50,13 @@ class _SellerProfilePageState extends State<SellerProfilePage>
     final sellerVM = Provider.of<SellerProfileProvider>(context);
     final userProductVM = context.watch<UserAllProductsProvider>();
     final languageProvider = context.watch<LanguageProvider>();
+    final dashboardProvider = context.watch<MyDashboardResponseProvider>();
 
-    final myProfileDashboardDetails =
-        context
-            .watch<MyDashboardResponseProvider>()
-            .myDashboardResponseModel
-            ?.data;
-
-    final reviews =
-        context
-            .watch<MyDashboardResponseProvider>()
-            .myDashboardResponseModel
-            ?.data
-            .reviews;
+    final myProfileDashboardDetails = dashboardProvider.myDashboardResponseModel?.data;
+    final reviews = myProfileDashboardDetails?.reviews;
 
     return Scaffold(
-      appBar: SimpleApppbar(
-        title: languageProvider.translate('My Products'),
-      ),
+      appBar: SimpleApppbar(title: languageProvider.translate('My Products')),
       body: Column(
         children: [
           SizedBox(
@@ -88,8 +76,9 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           width: 1.w,
                         ),
                       ),
-                      child: Image.network(
-                        "${ApiEndpoints.baseUrl}/public/storage/coverPhoto/${userProfileDetails?.coverPhoto}",
+                      child: userProfileDetails?.coverPhoto != null
+                          ? Image.network(
+                        "${ApiEndpoints.baseUrl}/public/storage/coverPhoto/${userProfileDetails!.coverPhoto}",
                         fit: BoxFit.cover,
                         loadingBuilder: (
                             BuildContext context,
@@ -99,8 +88,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           if (loadingProgress == null) return child;
                           return Center(
                             child: CircularProgressIndicator(
-                              value:
-                              loadingProgress.expectedTotalBytes != null
+                              value: loadingProgress.expectedTotalBytes != null
                                   ? loadingProgress.cumulativeBytesLoaded /
                                   loadingProgress.expectedTotalBytes!
                                   : null,
@@ -114,6 +102,10 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                             child: Image.asset('assets/images/placeholder.jpg'),
                           );
                         },
+                      )
+                          : Image.asset(
+                        'assets/images/placeholder.jpg',
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -163,8 +155,9 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                                   width: 1.w,
                                 ),
                               ),
-                              child: Image.network(
-                                "${ApiEndpoints.baseUrl}/public/storage/avatar/${userVM.user!.avatar!}",
+                              child: userVM.user?.avatar != null
+                                  ? Image.network(
+                                "${ApiEndpoints.baseUrl}/public/storage/avatar/${userVM.user!.avatar}",
                                 width: 90,
                                 height: 90,
                                 fit: BoxFit.cover,
@@ -176,13 +169,9 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                                   if (loadingProgress == null) return child;
                                   return Center(
                                     child: CircularProgressIndicator(
-                                      value:
-                                      loadingProgress.expectedTotalBytes !=
-                                          null
-                                          ? loadingProgress
-                                          .cumulativeBytesLoaded /
-                                          loadingProgress
-                                              .expectedTotalBytes!
+                                      value: loadingProgress.expectedTotalBytes != null
+                                          ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
                                           : null,
                                     ),
                                   );
@@ -194,6 +183,12 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                                     child: Image.asset('assets/icons/user.png'),
                                   );
                                 },
+                              )
+                                  : Image.asset(
+                                'assets/icons/user.png',
+                                width: 90,
+                                height: 90,
+                                fit: BoxFit.cover,
                               ),
                             ),
                           ),
@@ -310,7 +305,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                             ),
                           ),
                           Text(
-                            ' - ${myProfileDashboardDetails?.profile.reviewCount} ${languageProvider.translate('Reviewers')}',
+                            ' - ${myProfileDashboardDetails?.profile.reviewCount ?? 0} ${languageProvider.translate('Reviewers')}',
                             style: TextStyle(
                               color: const Color(0xff777980),
                               fontSize: 14.sp,
@@ -324,7 +319,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           Image.asset("assets/icons/location.png"),
                           SizedBox(width: 7.w),
                           Text(
-                            '${myProfileDashboardDetails?.profile.address}, ${myProfileDashboardDetails?.profile.city}',
+                            '${myProfileDashboardDetails?.profile.address ?? ''}, ${myProfileDashboardDetails?.profile.city ?? ''}',
                             style: TextStyle(
                               color: const Color(0xff777980),
                               fontSize: 14.sp,
@@ -333,6 +328,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           ),
                         ],
                       ),
+                      SizedBox(height: 4.h),
                       Row(
                         children: [
                           Icon(
@@ -342,8 +338,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           ),
                           SizedBox(width: 7.w),
                           Text(
-                            myProfileDashboardDetails?.profile.totalEarning ??
-                                '',
+                            myProfileDashboardDetails?.profile.totalEarning ?? '0',
                             style: TextStyle(
                               color: const Color(0xff777980),
                               fontSize: 14.sp,
@@ -358,8 +353,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           ),
                           SizedBox(width: 7.w),
                           Text(
-                            myProfileDashboardDetails?.profile.totalPenalties ??
-                                '',
+                            myProfileDashboardDetails?.profile.totalPenalties ?? '0',
                             style: TextStyle(
                               color: const Color(0xff777980),
                               fontSize: 14.sp,
@@ -390,7 +384,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
               controller: _tabController,
               children: [
                 _buildProductsTab(userProductVM, languageProvider),
-                _buildReviewsTab(reviews, languageProvider),
+                _buildReviewsTab(dashboardProvider, languageProvider),
               ],
             ),
           ),
@@ -424,10 +418,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
               const Spacer(),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    RouteNames.sellItemPage,
-                  );
+                  Navigator.pushNamed(context, RouteNames.sellItemPage);
                 },
                 child: Container(
                   width: 80.w,
@@ -535,7 +526,6 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                     ),
                   );
                 }
-
                 return RefreshIndicator(
                   onRefresh: () => provider.refreshData(),
                   child: GridView.builder(
@@ -575,17 +565,76 @@ class _SellerProfilePageState extends State<SellerProfilePage>
     );
   }
 
-  Widget _buildReviewsTab(reviews, LanguageProvider languageProvider) {
+  Widget _buildReviewsTab(
+      MyDashboardResponseProvider dashboardProvider,
+      LanguageProvider languageProvider,
+      ) {
+    if (dashboardProvider.loading) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    if (dashboardProvider.error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 60.w, color: Colors.red),
+            SizedBox(height: 16.h),
+            Text(
+              languageProvider.translate('Error loading reviews'),
+              style: TextStyle(fontSize: 16.sp, color: Colors.red),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              dashboardProvider.error!,
+              style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 16.h),
+            ElevatedButton(
+              onPressed: () => dashboardProvider.fetchMyDashboardData(),
+              child: Text(languageProvider.translate('Retry')),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final reviews = dashboardProvider.myDashboardResponseModel?.data.reviews;
+
+    if (reviews == null || reviews.data.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.reviews_outlined, size: 60.w, color: Colors.grey[400]),
+            SizedBox(height: 16.h),
+            Text(
+              languageProvider.translate('No reviews yet'),
+              style: TextStyle(fontSize: 16.sp, color: Colors.grey[600]),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              languageProvider.translate('Reviews will appear here when received'),
+              style: TextStyle(fontSize: 14.sp, color: Colors.grey[500]),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      itemCount: reviews?.data.length ?? 0,
+      padding: EdgeInsets.symmetric(vertical: 10.h),
+      itemCount: reviews.data.length,
       itemBuilder: (context, index) {
+        final review = reviews.data[index];
         return SellerProfileRefresh(
-          title: reviews?.data[index].reviewerName ?? '',
-          time: reviews?.data[index].createdAgo ?? '',
-          avatarUrl: reviews?.data[index].reviewerAvatar ?? '',
-          message: reviews?.data[index].comment ?? '',
-          starCount: reviews?.data[index].rating ?? 0,
+          title: review.reviewerName,
+          time: review.createdAgo,
+          avatarUrl: review.reviewerAvatar ?? '',
+          message: review.comment,
+          starCount: review.rating,
         );
       },
     );

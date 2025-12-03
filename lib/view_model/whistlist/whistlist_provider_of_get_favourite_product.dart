@@ -1,9 +1,11 @@
 // lib/view_model/whistlist/whistlist_provider_of_get_favourite_product.dart
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../core/services/api_service.dart';
 import '../../core/services/translator_service.dart';
 import '../../data/model/whistlist/favourite_product_model.dart';
 import '../../core/constants/api_end_points.dart';
+import '../../view_model/language/language_provider.dart';
 
 class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
   bool _isLoading = false;
@@ -18,6 +20,9 @@ class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
   final ApiService _apiService = ApiService();
   final AppTranslator _translator = AppTranslator();
 
+  // Stream subscription for language changes
+  StreamSubscription<String>? _languageChangeSubscription;
+
   // Translation cache
   final Map<String, Map<String, String>> _translationCache = {};
 
@@ -30,11 +35,26 @@ class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
   bool get hasNextPage => _hasNextPage;
   String get currentLanguage => _currentLanguage;
 
-  Future<void> changeLanguage(String langCode) async {
-    if (_currentLanguage == langCode) return;
+  WhistlistProviderOfGetFavouriteProduct() {
+    // Listen to language change events
+    _listenToLanguageChanges();
+  }
 
-    _currentLanguage = langCode;
-    await _translator.setLanguage(langCode);
+  void _listenToLanguageChanges() {
+    _languageChangeSubscription = LanguageProvider.languageChangeEvents.listen(
+          (newLang) async {
+        if (newLang != _currentLanguage) {
+          await _handleLanguageChange(newLang);
+        }
+      },
+    );
+  }
+
+  Future<void> _handleLanguageChange(String newLang) async {
+    if (newLang == _currentLanguage) return;
+
+    _currentLanguage = newLang;
+    await _translator.setLanguage(newLang);
 
     // Clear translation cache for the new language
     _translationCache.clear();
@@ -48,7 +68,13 @@ class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
 
       _isTranslating = false;
       notifyListeners();
+    } else {
+      notifyListeners(); // Just notify UI to rebuild with new language
     }
+  }
+
+  Future<void> changeLanguage(String langCode) async {
+    await _handleLanguageChange(langCode);
   }
 
   Future<void> _translateAllProducts(List<WishlistItem> items) async {
@@ -174,5 +200,11 @@ class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
     _hasNextPage = false;
     _translationCache.clear();
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _languageChangeSubscription?.cancel();
+    super.dispose();
   }
 }

@@ -22,19 +22,39 @@ class WishlistScreen extends StatefulWidget {
 
 class _WishlistScreenState extends State<WishlistScreen> {
   late ScrollController _scrollController;
+  StreamSubscription<String>? _languageChangeSubscription;
 
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
+
+    // Listen to language changes
+    _listenToLanguageChanges();
+
     _initializeScreen();
+  }
+
+  void _listenToLanguageChanges() {
+    final languageProvider = context.read<LanguageProvider>();
+
+    _languageChangeSubscription = languageProvider.languageChangeStream.listen(
+          (newLang) {
+        // Refresh wishlist when language changes
+        if (mounted) {
+          final provider = context.read<WhistlistProviderOfGetFavouriteProduct>();
+          provider.changeLanguage(newLang);
+        }
+      },
+    );
   }
 
   @override
   void dispose() {
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
+    _languageChangeSubscription?.cancel();
     super.dispose();
   }
 
@@ -59,41 +79,10 @@ class _WishlistScreenState extends State<WishlistScreen> {
     }
   }
 
-  Future<void> _handleLanguageChange(String newLang) async {
-    final languageProvider = context.read<LanguageProvider>();
-    final wishlistProvider = context.read<WhistlistProviderOfGetFavouriteProduct>();
-
-    if (languageProvider.currentLang == newLang) return;
-
-    // Show loading dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const LoadingDialog(),
-    );
-
-    try {
-      await languageProvider.changeLanguage(newLang);
-      await wishlistProvider.changeLanguage(newLang);
-      await wishlistProvider.getWishlistProduct();
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(languageProvider.translate('Failed to change language')),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        Navigator.of(context).pop();
-      }
-    }
-  }
-
   void _onProductTap(WishlistItem product) {
-    context.read<GetProductDetailsProvider>().getProductDetails(product.productId);
+    context.read<GetProductDetailsProvider>().getProductDetails(
+      product.productId,
+    );
     context.read<PlaceABidProvider>().getAllBidsForProduct(product.productId);
     Navigator.pushNamed(context, RouteNames.productDetailsScreen);
   }
@@ -101,7 +90,8 @@ class _WishlistScreenState extends State<WishlistScreen> {
   @override
   Widget build(BuildContext context) {
     final languageProvider = context.watch<LanguageProvider>();
-    final wishlistProvider = context.watch<WhistlistProviderOfGetFavouriteProduct>();
+    final wishlistProvider =
+    context.watch<WhistlistProviderOfGetFavouriteProduct>();
 
     return PopScope(
       canPop: false,
@@ -111,15 +101,14 @@ class _WishlistScreenState extends State<WishlistScreen> {
       child: Scaffold(
         appBar: SimpleApppbar(
           title: languageProvider.translate('Wishlist'),
-          onBack: () => context.read<ParentScreensProvider>().onSelectedIndex(0),
+          onBack:
+              () => context.read<ParentScreensProvider>().onSelectedIndex(0),
         ),
         body: Padding(
           padding: EdgeInsets.all(16.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildLanguageSelector(languageProvider),
-              SizedBox(height: 20.h),
               _buildTitle(languageProvider),
               SizedBox(height: 16.h),
               _buildWishlistContent(wishlistProvider, languageProvider),
@@ -128,77 +117,6 @@ class _WishlistScreenState extends State<WishlistScreen> {
         ),
       ),
     );
-  }
-
-  Widget _buildLanguageSelector(LanguageProvider languageProvider) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.language, size: 20.w, color: Colors.grey[700]),
-              SizedBox(width: 8.w),
-              Text(
-                languageProvider.translate('Language'),
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[700],
-                ),
-              ),
-            ],
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8.r),
-              border: Border.all(color: Colors.grey[300]!),
-            ),
-            child: DropdownButton<String>(
-              value: languageProvider.currentLang,
-              underline: const SizedBox(),
-              icon: Icon(Icons.arrow_drop_down, size: 24.w, color: Colors.grey[700]),
-              dropdownColor: Colors.white,
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: Colors.black,
-              ),
-              items: _buildLanguageDropdownItems(languageProvider),
-              onChanged: (value) {
-                if (value != null) {
-                  _handleLanguageChange(value);
-                }
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  List<DropdownMenuItem<String>> _buildLanguageDropdownItems(
-      LanguageProvider languageProvider,
-      ) {
-    return languageProvider.getSupportedLanguages().map((lang) {
-      return DropdownMenuItem(
-        value: lang['code'],
-        child: Row(
-          children: [
-            Text(lang['flag']!),
-            SizedBox(width: 8.w),
-            Text(lang['name']!),
-          ],
-        ),
-      );
-    }).toList();
   }
 
   Widget _buildTitle(LanguageProvider languageProvider) {
@@ -275,11 +193,8 @@ class _WishlistScreenState extends State<WishlistScreen> {
           ),
           SizedBox(height: 8.h),
           Text(
-            'Add products to your wishlist to see them here',
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: Colors.grey[500],
-            ),
+            languageProvider.translate('Add products to your wishlist to see them here'),
+            style: TextStyle(fontSize: 14.sp, color: Colors.grey[500]),
             textAlign: TextAlign.center,
           ),
         ],
@@ -295,7 +210,8 @@ class _WishlistScreenState extends State<WishlistScreen> {
     return ListView.separated(
       controller: _scrollController,
       physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: favouriteProduct.length + (provider.isPaginationLoading ? 1 : 0),
+      itemCount:
+      favouriteProduct.length + (provider.isPaginationLoading ? 1 : 0),
       separatorBuilder: (_, __) => SizedBox(height: 12.h),
       itemBuilder: (context, index) {
         if (index == favouriteProduct.length) {
@@ -316,41 +232,6 @@ class _WishlistScreenState extends State<WishlistScreen> {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 20.h),
       child: const Center(child: CircularProgressIndicator()),
-    );
-  }
-}
-
-class LoadingDialog extends StatelessWidget {
-  const LoadingDialog({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      child: Center(
-        child: Container(
-          padding: EdgeInsets.all(20.w),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                    Theme.of(context).primaryColor),
-              ),
-              SizedBox(height: 16.h),
-              Text(
-                'Changing language...',
-                style: TextStyle(fontSize: 14.sp),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
@@ -396,21 +277,26 @@ class WishlistItemCard extends StatelessWidget {
   }
 
   Widget _buildProductImage() {
+    final hasPhoto =
+        product.productPhoto != null && product.productPhoto!.isNotEmpty;
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(8.r),
       child: Container(
         height: 180.h,
         width: double.infinity,
         decoration: BoxDecoration(color: Colors.grey[100]),
-        child: product.productPhoto != null && product.productPhoto!.isNotEmpty
+        child:
+        hasPhoto
             ? Image.network(
-          "${ApiEndpoints.baseUrl}${product.productPhoto!.first.replaceAll('http://localhost:5005', '')}",
+          _getImageUrl(product.productPhoto!.first),
           fit: BoxFit.cover,
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress == null) return child;
             return Center(
               child: CircularProgressIndicator(
-                value: loadingProgress.expectedTotalBytes != null
+                value:
+                loadingProgress.expectedTotalBytes != null
                     ? loadingProgress.cumulativeBytesLoaded /
                     loadingProgress.expectedTotalBytes!
                     : null,
@@ -424,15 +310,19 @@ class WishlistItemCard extends StatelessWidget {
     );
   }
 
+  String _getImageUrl(String photoPath) {
+    if (photoPath.startsWith('http')) {
+      return photoPath;
+    } else if (photoPath.startsWith('/')) {
+      return "${ApiEndpoints.baseUrl}$photoPath";
+    } else {
+      return "${ApiEndpoints.baseUrl}/$photoPath";
+    }
+  }
+
   Widget _buildPlaceholderIcon() {
     return Center(
-      child: Icon(
-        product.productPhoto?.isNotEmpty ?? false
-            ? Icons.image_not_supported
-            : Icons.image,
-        size: 48.w,
-        color: Colors.grey[400],
-      ),
+      child: Icon(Icons.image, size: 48.w, color: Colors.grey[400]),
     );
   }
 
@@ -479,10 +369,7 @@ class WishlistItemCard extends StatelessWidget {
         SizedBox(width: 4.w),
         Text(
           '$label: ',
-          style: TextStyle(
-            fontSize: 14.sp,
-            color: Colors.grey[600],
-          ),
+          style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
         ),
         Expanded(
           child: Text(

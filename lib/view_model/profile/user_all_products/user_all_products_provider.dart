@@ -82,33 +82,6 @@ class UserAllProductsProvider extends ChangeNotifier {
       } else {
         item.translatedCondition = cache[conditionKey];
       }
-
-      // Translate description
-      final descKey = 'description_${item.id}';
-      if (!cache.containsKey(descKey)) {
-        item.translatedDescription = await _translator.translateText(item.description);
-        cache[descKey] = item.translatedDescription!;
-      } else {
-        item.translatedDescription = cache[descKey];
-      }
-
-      // Translate location
-      final locationKey = 'location_${item.id}';
-      if (!cache.containsKey(locationKey)) {
-        item.translatedLocation = await _translator.translateText(item.location);
-        cache[locationKey] = item.translatedLocation!;
-      } else {
-        item.translatedLocation = cache[locationKey];
-      }
-
-      // Translate color
-      final colorKey = 'color_${item.color}';
-      if (!cache.containsKey(colorKey)) {
-        item.translatedColor = await _translator.translateText(item.color);
-        cache[colorKey] = item.translatedColor!;
-      } else {
-        item.translatedColor = cache[colorKey];
-      }
     }
   }
 
@@ -117,10 +90,7 @@ class UserAllProductsProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Call the API without pagination parameters
-      final response = await _apiService.get(
-          ApiEndpoints.userAllProducts
-      );
+      final response = await _apiService.get(ApiEndpoints.userAllProducts);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         _userAllProductsViewmodel = UserAllProductsViewmodel.fromJson(response.data);
@@ -134,7 +104,7 @@ class UserAllProductsProvider extends ChangeNotifier {
         _isTranslating = false;
         _isLoading = false;
         notifyListeners();
-        return _userAllProductsViewmodel!.success;
+        return true;
       } else {
         _isLoading = false;
         _errorMessage = response.data['message'] ?? 'Something went wrong';
@@ -150,29 +120,9 @@ class UserAllProductsProvider extends ChangeNotifier {
     }
   }
 
-  // Clear all data
-  void clear() {
-    _userAllProductsViewmodel = null;
-    _translationCache.clear();
-    notifyListeners();
-  }
-
-  // Helper method to refresh data
-  Future<bool> refreshData() async {
-    return await getAllUserProduct();
-  }
-
   // Helper methods to get translated text for display
   String getTranslatedTitle(ProductData product) {
     return product.translatedTitle ?? product.title;
-  }
-
-  String getTranslatedDescription(ProductData product) {
-    return product.translatedDescription ?? product.description;
-  }
-
-  String getTranslatedLocation(ProductData product) {
-    return product.translatedLocation ?? product.location;
   }
 
   String getTranslatedCondition(ProductData product) {
@@ -183,7 +133,19 @@ class UserAllProductsProvider extends ChangeNotifier {
     return product.translatedSize ?? product.size;
   }
 
-  String getTranslatedColor(ProductData product) {
-    return product.translatedColor ?? product.color;
+  String getTranslatedDescription(ProductData product) {
+    return product.translatedDescription ?? product.description;
+  }
+
+  // Clear all data
+  void clear() {
+    _userAllProductsViewmodel = null;
+    _translationCache.clear();
+    notifyListeners();
+  }
+
+  // Helper method to refresh data
+  Future<bool> refreshData() async {
+    return await getAllUserProduct();
   }
 }
