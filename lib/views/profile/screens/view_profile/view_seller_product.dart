@@ -1,3 +1,4 @@
+// seller_profile_page.dart
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/constants/api_end_points.dart';
 import '../../../../view_model/auth/login/get_me_viewmodel.dart';
 import '../../../../view_model/auth/login/user_profile_get_me_provider.dart';
+import '../../../../view_model/language/language_provider.dart';
 import '../../../../view_model/my_dashboard/my_dashboard_response_provider.dart';
 import '../../../../view_model/profile/edit_image/edit_image.dart';
 import '../../../widgets/seller_profile_refresh.dart';
@@ -28,8 +30,10 @@ class _SellerProfilePageState extends State<SellerProfilePage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await context.read<MyDashboardResponseProvider>().fetchMyDashboardData();
+      await context.read<UserAllProductsProvider>().getAllUserProduct();
     });
   }
 
@@ -45,14 +49,26 @@ class _SellerProfilePageState extends State<SellerProfilePage>
     final userProfileDetails =
         context.watch<UserProfileGetMeProvider>().userProfileResponse?.data;
     final sellerVM = Provider.of<SellerProfileProvider>(context);
-    final userProductVM = Provider.of<UserAllProductsProvider>(context);
+    final userProductVM = context.watch<UserAllProductsProvider>();
+    final languageProvider = context.watch<LanguageProvider>();
 
-    final myProfileDashboardDetails = context.watch<MyDashboardResponseProvider>().myDashboardResponseModel?.data;
+    final myProfileDashboardDetails =
+        context
+            .watch<MyDashboardResponseProvider>()
+            .myDashboardResponseModel
+            ?.data;
 
-    final reviews = context.watch<MyDashboardResponseProvider>().myDashboardResponseModel?.data.reviews;
+    final reviews =
+        context
+            .watch<MyDashboardResponseProvider>()
+            .myDashboardResponseModel
+            ?.data
+            .reviews;
 
     return Scaffold(
-      appBar: SimpleApppbar(title: 'View Profile'),
+      appBar: SimpleApppbar(
+        title: languageProvider.translate('My Products'),
+      ),
       body: Column(
         children: [
           SizedBox(
@@ -75,12 +91,18 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                       child: Image.network(
                         "${ApiEndpoints.baseUrl}/public/storage/coverPhoto/${userProfileDetails?.coverPhoto}",
                         fit: BoxFit.cover,
-                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                        loadingBuilder: (
+                            BuildContext context,
+                            Widget child,
+                            ImageChunkEvent? loadingProgress,
+                            ) {
                           if (loadingProgress == null) return child;
                           return Center(
                             child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                              value:
+                              loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
                                   : null,
                             ),
                           );
@@ -117,8 +139,8 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                               content: Text(
                                 success
                                     ? sellerVM.uploadMessage ??
-                                        'Profile updated'
-                                    : 'Upload failed',
+                                    languageProvider.translate('Profile updated')
+                                    : languageProvider.translate('Upload failed'),
                               ),
                             ),
                           );
@@ -146,12 +168,21 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                                 width: 90,
                                 height: 90,
                                 fit: BoxFit.cover,
-                                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                loadingBuilder: (
+                                    BuildContext context,
+                                    Widget child,
+                                    ImageChunkEvent? loadingProgress,
+                                    ) {
                                   if (loadingProgress == null) return child;
                                   return Center(
                                     child: CircularProgressIndicator(
-                                      value: loadingProgress.expectedTotalBytes != null
-                                          ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                      value:
+                                      loadingProgress.expectedTotalBytes !=
+                                          null
+                                          ? loadingProgress
+                                          .cumulativeBytesLoaded /
+                                          loadingProgress
+                                              .expectedTotalBytes!
                                           : null,
                                     ),
                                   );
@@ -206,8 +237,8 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                               content: Text(
                                 success
                                     ? sellerVM.uploadMessage ??
-                                        'Profile updated'
-                                    : 'Upload failed',
+                                    languageProvider.translate('Profile updated')
+                                    : languageProvider.translate('Upload failed'),
                               ),
                             ),
                           );
@@ -231,7 +262,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           ),
                           child: Center(
                             child: Text(
-                              'Change Cover',
+                              languageProvider.translate('Change Cover'),
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -252,7 +283,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        userVM.user?.name ?? 'Guest',
+                        userVM.user?.name ?? languageProvider.translate('Guest'),
                         style: TextStyle(
                           fontSize: 20.sp,
                           fontWeight: FontWeight.w800,
@@ -270,9 +301,8 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           ),
                           SizedBox(width: 4.w),
                           Text(
-                            (myProfileDashboardDetails?.profile.rating ?? 0).toStringAsFixed(
-                              1,
-                            ),
+                            (myProfileDashboardDetails?.profile.rating ?? 0)
+                                .toStringAsFixed(1),
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               color: const Color(0xff777980),
@@ -280,7 +310,7 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                             ),
                           ),
                           Text(
-                            ' - ${myProfileDashboardDetails?.profile.reviewCount} Reviewers',
+                            ' - ${myProfileDashboardDetails?.profile.reviewCount} ${languageProvider.translate('Reviewers')}',
                             style: TextStyle(
                               color: const Color(0xff777980),
                               fontSize: 14.sp,
@@ -312,7 +342,8 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           ),
                           SizedBox(width: 7.w),
                           Text(
-                            myProfileDashboardDetails?.profile.totalEarning ?? '',
+                            myProfileDashboardDetails?.profile.totalEarning ??
+                                '',
                             style: TextStyle(
                               color: const Color(0xff777980),
                               fontSize: 14.sp,
@@ -327,7 +358,8 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           ),
                           SizedBox(width: 7.w),
                           Text(
-                            myProfileDashboardDetails?.profile.totalPenalties ?? '',
+                            myProfileDashboardDetails?.profile.totalPenalties ??
+                                '',
                             style: TextStyle(
                               color: const Color(0xff777980),
                               fontSize: 14.sp,
@@ -348,143 +380,214 @@ class _SellerProfilePageState extends State<SellerProfilePage>
             labelColor: Colors.red,
             unselectedLabelColor: Colors.grey,
             indicatorSize: TabBarIndicatorSize.tab,
-            tabs: const [Tab(text: 'Offers'), Tab(text: 'Reviews')],
+            tabs: [
+              Tab(text: languageProvider.translate('Offers')),
+              Tab(text: languageProvider.translate('Reviews')),
+            ],
           ),
           Expanded(
             child: TabBarView(
               controller: _tabController,
               children: [
-                Padding(
-                  padding: EdgeInsets.all(8.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          if (userProductVM.userAllProductsViewmodel?.data !=
-                              null)
-                            Text(
-                              userProductVM
-                                          .userAllProductsViewmodel!
-                                          .data
-                                          .length >
-                                      50
-                                  ? '50+ products uploaded'
-                                  : '${userProductVM.userAllProductsViewmodel?.data.length} products uploaded',
-                              style: TextStyle(
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xff4A4C56),
-                              ),
-                            ),
-                          const Spacer(),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                RouteNames.sellItemPage,
-                              );
-                            },
-                            child: Container(
-                              width: 80.w,
-                              height: 30.w,
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(8.r),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.add_box_outlined,
-                                    color: Colors.white,
-                                    size: 16.w,
-                                  ),
-                                  SizedBox(width: 4.w),
-                                  Text(
-                                    'Sell',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14.sp,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 8.h),
-                      Expanded(
-                        child: Consumer<UserAllProductsProvider>(
-                          builder: (_, provider, __) {
-                            final userAllProducts =
-                                provider.userAllProductsViewmodel?.data;
-                            return GridView.builder(
-                              itemCount: userAllProducts?.length ?? 0,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    crossAxisSpacing: 8.w,
-                                    mainAxisSpacing: 8.w,
-                                    childAspectRatio: .7,
-                                  ),
-                              itemBuilder: (context, index) {
-                                final image =
-                                    (userAllProducts?[index]
-                                                .productPhotoUrl
-                                                ?.isNotEmpty ??
-                                            false)
-                                        ? userAllProducts![index]
-                                            .productPhotoUrl!
-                                            .first
-                                        : null;
-                                return ProductCard(
-                                  imageUrl: image,
-                                  productName:
-                                      userAllProducts?[index].title ?? '',
-                                  price: userAllProducts?[index].price ?? '',
-                                  isBoosted:
-                                      userAllProducts?[index].remainingTime !=
-                                      null,
-                                  productId: userAllProducts?[index].id ?? '',
-                                  productDate:
-                                      userAllProducts?[index].uploaded ?? '',
-                                  productBoostTime:
-                                      userAllProducts?[index].remainingTime ??
-                                      '',
-                                  productSize:
-                                      userAllProducts?[index].size ?? '',
-                                  condition:
-                                      userAllProducts?[index].condition ?? '',
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                ListView.builder(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  itemCount: reviews?.data.length ?? 0,
-                  itemBuilder: (context, index) {
-                    return SellerProfileRefresh(
-                      title: reviews?.data[index].reviewerName ?? '',
-                      time: reviews?.data[index].createdAgo ?? '',
-                      avatarUrl: reviews?.data[index].reviewerAvatar ?? '',
-                      message: reviews?.data[index].comment ?? '',
-                      starCount: reviews?.data[index].rating ?? 0,
-                    );
-                  },
-                ),
+                _buildProductsTab(userProductVM, languageProvider),
+                _buildReviewsTab(reviews, languageProvider),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildProductsTab(
+      UserAllProductsProvider userProductVM,
+      LanguageProvider languageProvider,
+      ) {
+    return Padding(
+      padding: EdgeInsets.all(8.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              if (userProductVM.userAllProductsViewmodel?.data != null)
+                Text(
+                  userProductVM.userAllProductsViewmodel!.data.length > 50
+                      ? '50+ ${languageProvider.translate('products uploaded')}'
+                      : '${userProductVM.userAllProductsViewmodel!.data.length} ${languageProvider.translate('products uploaded')}',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xff4A4C56),
+                  ),
+                ),
+              const Spacer(),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    RouteNames.sellItemPage,
+                  );
+                },
+                child: Container(
+                  width: 80.w,
+                  height: 30.w,
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.add_box_outlined,
+                        color: Colors.white,
+                        size: 16.w,
+                      ),
+                      SizedBox(width: 4.w),
+                      Text(
+                        languageProvider.translate('Sell'),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8.h),
+          if (userProductVM.isTranslating)
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.h),
+              child: Center(
+                child: Column(
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 8.h),
+                    Text(
+                      languageProvider.translate('Translating content...'),
+                      style: TextStyle(fontSize: 12.sp),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          Expanded(
+            child: Consumer<UserAllProductsProvider>(
+              builder: (context, provider, child) {
+                final userAllProducts = provider.userAllProductsViewmodel?.data;
+
+                if (provider.isLoading && userAllProducts == null) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                if (provider.errorMessage.isNotEmpty && userAllProducts == null) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          languageProvider.translate('Error') + ': ${provider.errorMessage}',
+                          style: TextStyle(color: Colors.red),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 20.h),
+                        ElevatedButton(
+                          onPressed: () => provider.getAllUserProduct(),
+                          child: Text(languageProvider.translate('Retry')),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                if (userAllProducts?.isEmpty ?? true) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.inventory_2_outlined,
+                          size: 60.w,
+                          color: Colors.grey[400],
+                        ),
+                        SizedBox(height: 16.h),
+                        Text(
+                          languageProvider.translate('No products yet'),
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        SizedBox(height: 8.h),
+                        Text(
+                          languageProvider.translate('Start selling by clicking the Sell button'),
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: Colors.grey[500],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return RefreshIndicator(
+                  onRefresh: () => provider.refreshData(),
+                  child: GridView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: userAllProducts!.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 8.w,
+                      mainAxisSpacing: 8.w,
+                      childAspectRatio: .7,
+                    ),
+                    itemBuilder: (context, index) {
+                      final product = userAllProducts[index];
+                      final image = (product.productPhotoUrl?.isNotEmpty ?? false)
+                          ? product.productPhotoUrl!.first
+                          : null;
+                      return ProductCard(
+                        imageUrl: image,
+                        productName: provider.getTranslatedTitle(product),
+                        price: product.price,
+                        isBoosted: product.remainingTime != null,
+                        productId: product.id,
+                        productDate: product.uploaded,
+                        productBoostTime: product.remainingTime ?? '',
+                        productSize: provider.getTranslatedSize(product),
+                        condition: provider.getTranslatedCondition(product),
+                        languageProvider: languageProvider,
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReviewsTab(reviews, LanguageProvider languageProvider) {
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      itemCount: reviews?.data.length ?? 0,
+      itemBuilder: (context, index) {
+        return SellerProfileRefresh(
+          title: reviews?.data[index].reviewerName ?? '',
+          time: reviews?.data[index].createdAgo ?? '',
+          avatarUrl: reviews?.data[index].reviewerAvatar ?? '',
+          message: reviews?.data[index].comment ?? '',
+          starCount: reviews?.data[index].rating ?? 0,
+        );
+      },
     );
   }
 }

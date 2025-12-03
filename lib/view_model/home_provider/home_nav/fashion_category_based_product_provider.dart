@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mussweg/data/model/home/category_based_product_model.dart';
-import 'package:mussweg/data/model/home/category_model.dart';
-
 import '../../../core/constants/api_end_points.dart';
 import '../../../core/services/api_service.dart';
 

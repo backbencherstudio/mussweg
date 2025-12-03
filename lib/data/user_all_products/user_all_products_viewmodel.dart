@@ -1,3 +1,4 @@
+// user_all_products_viewmodel.dart
 class UserAllProductsViewmodel {
   final bool success;
   final String message;
@@ -50,6 +51,14 @@ class ProductData {
   final String? remainingTime;
   final bool isInWishlist;
 
+  // Translated fields
+  String? translatedTitle;
+  String? translatedDescription;
+  String? translatedLocation;
+  String? translatedCondition;
+  String? translatedSize;
+  String? translatedColor;
+
   ProductData({
     required this.id,
     required this.photo,
@@ -64,6 +73,12 @@ class ProductData {
     required this.uploaded,
     this.remainingTime,
     required this.isInWishlist,
+    this.translatedTitle,
+    this.translatedDescription,
+    this.translatedLocation,
+    this.translatedCondition,
+    this.translatedSize,
+    this.translatedColor,
   });
 
   factory ProductData.fromJson(Map<String, dynamic> json) {
@@ -107,7 +122,6 @@ class ProductData {
       'is_in_wishlist': isInWishlist,
     };
   }
-
 }
 
 class Pagination {

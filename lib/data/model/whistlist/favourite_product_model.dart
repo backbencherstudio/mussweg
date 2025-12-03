@@ -15,9 +15,10 @@ class WishListModel {
     return WishListModel(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
-      data: (json['data'] as List<dynamic>?)
-          ?.map((item) => WishlistItem.fromJson(item))
-          .toList() ??
+      data:
+          (json['data'] as List<dynamic>?)
+              ?.map((item) => WishlistItem.fromJson(item))
+              .toList() ??
           [],
       pagination: Pagination.fromJson(json['pagination'] ?? {}),
     );
@@ -65,9 +66,10 @@ class WishlistItem {
       userId: json['user_id'] ?? '',
       productId: json['product_id'] ?? '',
       productTitle: json['product_title'] ?? '',
-      productPhoto: json['product_photo'] != null
-          ? List<String>.from(json['product_photo'])
-          : null,
+      productPhoto:
+          json['product_photo'] != null
+              ? List<String>.from(json['product_photo'])
+              : null,
       productSize: json['product_size'] ?? '',
       productCondition: json['product_condition'] ?? '',
       productPrice: json['product_price'] ?? '',

@@ -11,8 +11,8 @@ class GoogleTranslateService {
 
     try {
       final url = Uri.parse(
-          'https://translation.googleapis.com/language/translate/v2'
-              '?key=$apiKey&q=${Uri.encodeComponent(text)}&target=$targetLang'
+        'https://translation.googleapis.com/language/translate/v2'
+        '?key=$apiKey&q=${Uri.encodeComponent(text)}&target=$targetLang',
       );
 
       final response = await http.post(url);

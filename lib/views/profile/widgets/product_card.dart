@@ -1,5 +1,5 @@
+// product_card.dart
 import 'dart:core';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -8,9 +8,9 @@ import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/view_model/boost_product/boost_product_create_provider.dart';
 import 'package:mussweg/view_model/mussweg/mussweg_product_screen_provider.dart';
 import 'package:mussweg/views/auth/sign_up/widgets/buttons.dart';
-import 'package:mussweg/views/profile/widgets/pickup_option_widget.dart';
 import 'package:provider/provider.dart';
 import '../../../view_model/bid/place_a_bid_provider.dart';
+import '../../../view_model/language/language_provider.dart';
 import '../../../view_model/product_item_list_provider/get_product_details_provider.dart';
 import '../screens/view_profile/edit_product_page.dart';
 
@@ -24,6 +24,7 @@ class ProductCard extends StatelessWidget {
   final String condition;
   final String productBoostTime;
   final bool isBoosted;
+  final LanguageProvider? languageProvider;
 
   const ProductCard({
     super.key,
@@ -36,10 +37,13 @@ class ProductCard extends StatelessWidget {
     required this.productBoostTime,
     required this.productSize,
     required this.condition,
+    this.languageProvider,
   });
 
   @override
   Widget build(BuildContext context) {
+    final langProvider = languageProvider ?? context.read<LanguageProvider>();
+
     return GestureDetector(
       onTap: () {
         context.read<GetProductDetailsProvider>().getProductDetails(productId);
@@ -58,7 +62,6 @@ class ProductCard extends StatelessWidget {
             ),
           ],
         ),
-
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -69,48 +72,46 @@ class ProductCard extends StatelessWidget {
                   alignment: Alignment.topCenter,
                   child: SizedBox(
                     width: double.infinity,
-                    child:
-                        imageUrl != null || imageUrl != ''
-                            ? ClipRRect(
-                              borderRadius: BorderRadius.circular(8.r),
-                              child: Image.network(
-                                "${ApiEndpoints.baseUrl}${imageUrl?.replaceAll('http://localhost:5005', '')}",
-                                height: 110.h,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                                  if (loadingProgress == null) return child;
-                                  return SizedBox(
-                                    height: 110.h,
-                                    width: double.infinity,
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        value: loadingProgress.expectedTotalBytes != null
-                                            ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                            : null,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                errorBuilder:
-                                    (_, __, ___) => Container(
-                                      height: 110.h,
-                                      color: Colors.grey[300],
-                                      child: Image.asset(
-                                        'assets/images/placeholder.jpg',
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
-                              ),
-                            )
-                            : Container(
-                              height: 110.h,
-                              color: Colors.grey[300],
-                              child: Image.asset(
-                                'assets/images/placeholder.jpg',
-                                fit: BoxFit.fill,
+                    child: imageUrl != null && imageUrl!.isNotEmpty
+                        ? ClipRRect(
+                      borderRadius: BorderRadius.circular(8.r),
+                      child: Image.network(
+                        "${ApiEndpoints.baseUrl}${imageUrl?.replaceAll('http://localhost:5005', '')}",
+                        height: 110.h,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return SizedBox(
+                            height: 110.h,
+                            width: double.infinity,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                    : null,
                               ),
                             ),
+                          );
+                        },
+                        errorBuilder: (_, __, ___) => Container(
+                          height: 110.h,
+                          color: Colors.grey[300],
+                          child: Image.asset(
+                            'assets/images/placeholder.jpg',
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                      ),
+                    )
+                        : Container(
+                      height: 110.h,
+                      color: Colors.grey[300],
+                      child: Image.asset(
+                        'assets/images/placeholder.jpg',
+                        fit: BoxFit.fill,
+                      ),
+                    ),
                   ),
                 ),
                 Positioned(
@@ -123,12 +124,8 @@ class ProductCard extends StatelessWidget {
                     ),
                     onSelected: (value) {
                       if (value == 'edit') {
-                        context
-                            .read<GetProductDetailsProvider>()
-                            .getProductDetails(productId);
-                        context.read<PlaceABidProvider>().getAllBidsForProduct(
-                          productId,
-                        );
+                        context.read<GetProductDetailsProvider>().getProductDetails(productId);
+                        context.read<PlaceABidProvider>().getAllBidsForProduct(productId);
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -136,81 +133,56 @@ class ProductCard extends StatelessWidget {
                           ),
                         );
                       } else if (value == 'boost_products') {
-                        context.read<BoostProductCreateProvider>().setProductId(
-                          productId,
-                        );
-                        context.read<BoostProductCreateProvider>().setImage(
-                          imageUrl ?? '',
-                        );
-                        context.read<BoostProductCreateProvider>().setTitle(
-                          productName,
-                        );
-                        context.read<BoostProductCreateProvider>().setSize(
-                          productSize,
-                        );
-                        context.read<BoostProductCreateProvider>().setCondition(
-                          condition,
-                        );
-                        context.read<BoostProductCreateProvider>().setPrice(
-                          price,
-                        );
-                        context.read<BoostProductCreateProvider>().setTime(
-                          productDate,
-                        );
-                        context.read<BoostProductCreateProvider>().setBoostTime(
-                          productBoostTime,
-                        );
-                        Navigator.pushNamed(
-                          context,
-                          RouteNames.boostProductPage,
-                        );
+                        context.read<BoostProductCreateProvider>().setProductId(productId);
+                        context.read<BoostProductCreateProvider>().setImage(imageUrl ?? '');
+                        context.read<BoostProductCreateProvider>().setTitle(productName);
+                        context.read<BoostProductCreateProvider>().setSize(productSize);
+                        context.read<BoostProductCreateProvider>().setCondition(condition);
+                        context.read<BoostProductCreateProvider>().setPrice(price);
+                        context.read<BoostProductCreateProvider>().setTime(productDate);
+                        context.read<BoostProductCreateProvider>().setBoostTime(productBoostTime);
+                        Navigator.pushNamed(context, RouteNames.boostProductPage);
                       } else if (value == 'delete') {
                         showDialog(
                           context: context,
-                          builder:
-                              (ctx) => AlertDialog(
-                                title: const Text("Delete Product"),
-                                content: const Text(
-                                  "Are you sure you want to delete this product?",
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(ctx),
-                                    child: const Text("Cancel"),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.pop(ctx);
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        const SnackBar(
-                                          content: Text("Product Deleted"),
-                                        ),
-                                      );
-                                    },
-                                    child: const Text("Delete"),
-                                  ),
-                                ],
+                          builder: (ctx) => AlertDialog(
+                            title: Text(langProvider.translate('Delete Product')),
+                            content: Text(langProvider.translate('Are you sure you want to delete this product?')),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx),
+                                child: Text(langProvider.translate('Cancel')),
                               ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(ctx);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(langProvider.translate('Product Deleted')),
+                                    ),
+                                  );
+                                },
+                                child: Text(langProvider.translate('Delete')),
+                              ),
+                            ],
+                          ),
                         );
                       }
                     },
-                    itemBuilder:
-                        (BuildContext context) => <PopupMenuEntry<String>>[
-                          const PopupMenuItem<String>(
-                            value: 'edit',
-                            child: Text('Edit'),
-                          ),
-                          const PopupMenuItem<String>(
-                            value: 'boost_products',
-                            child: Text('Boost'),
-                          ),
-                          const PopupMenuItem<String>(
-                            value: 'delete',
-                            child: Text('Delete'),
-                          ),
-                        ],
+                    itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                      PopupMenuItem<String>(
+                        value: 'edit',
+                        child: Text(langProvider.translate('Edit')),
+                      ),
+                      PopupMenuItem<String>(
+                        value: 'boost_products',
+                        child: Text(langProvider.translate('Boost')),
+                      ),
+                      PopupMenuItem<String>(
+                        value: 'delete',
+                        child: Text(langProvider.translate('Delete')),
+                      ),
+                    ],
                   ),
                 ),
                 if (isBoosted)
@@ -232,68 +204,53 @@ class ProductCard extends StatelessWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 14.sp,
-                      color: Color(0xff4A4C56),
+                      color: const Color(0xff4A4C56),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 5.h),
                   Text(
-                    DateFormat(
-                      "dd MMM, yy h:mm a",
-                    ).format(DateTime.parse(productDate)),
+                    DateFormat("dd MMM, yy h:mm a").format(DateTime.parse(productDate)),
                     style: TextStyle(
                       fontSize: 11.sp,
                       fontWeight: FontWeight.w400,
-                      color: Color(0xff777980),
+                      color: const Color(0xff777980),
                     ),
                   ),
                   SizedBox(height: 5.w),
-                  (productBoostTime != null && productBoostTime.isNotEmpty)
-                      ? Text(
-                        DateFormat(
-                          "dd MMM, yy h:mm a",
-                        ).format(DateTime.parse(productBoostTime)),
-                        style: TextStyle(
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xff1A9882),
-                        ),
-                      )
-                      : Text(''),
-
-                  Divider(color: Color(0xffE9E9EA)),
+                  if (productBoostTime.isNotEmpty)
+                    Text(
+                      DateFormat("dd MMM, yy h:mm a").format(DateTime.parse(productBoostTime)),
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xff1A9882),
+                      ),
+                    ),
+                  Divider(color: const Color(0xffE9E9EA)),
                   Row(
                     children: [
                       Text(
                         price,
                         style: TextStyle(
-                          color: Color(0xffDE3526),
+                          color: const Color(0xffDE3526),
                           fontWeight: FontWeight.bold,
                           fontSize: 16.sp,
                         ),
                       ),
-                      Spacer(),
-
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushReplacementNamed(
-                            context,
-                            RouteNames.boostProductPage,
-                          );
-                        },
-                        child: SizedBox(
-                          height: 30.w,
-                          width: 70.w,
-                          child: PrimaryButton(
-                            onTap: () {
-                              context.read<MusswegProductScreenProvider>().setProductId(productId);
-                              Navigator.pushNamed(context, RouteNames.musswegGuidelineScreen);
-                            },
-                            title: 'Muss Weg',
-                            textSize: 12.sp,
-                            color: Colors.red,
-                          ),
+                      const Spacer(),
+                      SizedBox(
+                        height: 30.w,
+                        width: 70.w,
+                        child: PrimaryButton(
+                          onTap: () {
+                            context.read<MusswegProductScreenProvider>().setProductId(productId);
+                            Navigator.pushNamed(context, RouteNames.musswegGuidelineScreen);
+                          },
+                          title: 'Muss Weg',
+                          textSize: 12.sp,
+                          color: Colors.red,
                         ),
                       ),
                     ],
