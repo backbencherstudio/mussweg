@@ -36,8 +36,9 @@ import '../../views/home/screens/view_profile.dart';
 import '../../views/auth/login/login_screen.dart';
 import '../../views/inbox/screen.dart';
 import '../../views/inbox/screens/account_settings.dart';
+import '../../views/notification/notification_screen.dart';
 import '../../views/order_placed/screen/order_placed_screen.dart';
-import '../../views/profile/screen.dart';
+import '../../views/profile/profile_screen.dart';
 import '../../views/profile/screens/boost_product/boost_product.dart';
 import '../../views/profile/screens/boost_product/boost_success_page.dart';
 import '../../views/profile/screens/languages/language_page.dart';
@@ -97,5 +98,6 @@ class AppRoutes {
     RouteNames.locationPickScreen:(context) => const LocationPickerScreen(),
     RouteNames.disposalScreen:(context) => const DisposalItemsScreen(),
     RouteNames.orderIdWithPayment:(context) => const OrderIdWithPayment(),
+    RouteNames.notificationScreen:(context) => const NotificationScreen(),
   };
 }

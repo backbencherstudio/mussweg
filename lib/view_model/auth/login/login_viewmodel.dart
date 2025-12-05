@@ -28,25 +28,28 @@ class LoginScreenProvider extends ChangeNotifier {
   // UserModel? _user;
   // UserModel? get user => _user;
 
-  Future<bool> login({required String email, required String password}) async {
+  Future<bool> login({
+    required String email,
+    required String password,
+    required String fcmToken,
+  }) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
     try {
       final response = await _apiService.post(
         ApiEndpoints.login,
-        data: {'email': email, 'password': password},
+        data: {'email': email, 'password': password, 'fcm_token': fcmToken},
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data;
         final token = data['authorization']['access_token'];
         await _tokenStorage.saveToken(token);
 
-        if(data['userid'] != null){
+        if (data['userid'] != null) {
           await _userIdStorage.saveUserId(data['userid']);
           debugPrint("The authorization token is${data['userid']}");
-
-        }else{
+        } else {
           debugPrint("user Id Not found");
         }
 

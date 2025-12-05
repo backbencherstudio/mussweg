@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "5883817412",
+    "project_id": "mussweg-1a0a4",
+    "storage_bucket": "mussweg-1a0a4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:5883817412:android:8778d6bb0c9c9d95a84891",
+        "android_client_info": {
+          "package_name": "com.sva.delta.mussweg"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCn5VwaJYgNpqxg5yjdUDcFWrSnk47Uk0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

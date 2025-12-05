@@ -41,6 +41,8 @@ import '../../views/bought_items/viewModel/bought_product/bought_product_provide
 import '../../views/bought_items/viewModel/bought_product/review_provider.dart';
 import '../../views/cart/view_model/payment_screen_provider.dart';
 import '../../views/inbox/view_model/inbox_screen_provider.dart';
+import '../../views/notification/notification_screen_provider.dart';
+import '../../views/profile/profile_screen_provider/profile_screen_provider.dart';
 import '../../views/selling_items/model_view/selling_item_screen_provider.dart';
 
 class AppProviders {
@@ -65,11 +67,15 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => UserProfileGetMeProvider()),
     ChangeNotifierProvider(create: (_) => PickupTimerProvider()),
     ChangeNotifierProvider(create: (_) => PickupOptionProvider()),
-    ChangeNotifierProvider(create: (_) => FashionCategoryBasedProductProvider()),
+    ChangeNotifierProvider(
+      create: (_) => FashionCategoryBasedProductProvider(),
+    ),
     ChangeNotifierProvider(create: (_) => HomeCategoryBasedProvider()),
     ChangeNotifierProvider(create: (_) => ElectronicCategoryBasedProvider()),
     ChangeNotifierProvider(create: (_) => CategoryBasedProductProvider()),
-    ChangeNotifierProvider(create: (_) => WhistlistProviderOfGetFavouriteProduct()),
+    ChangeNotifierProvider(
+      create: (_) => WhistlistProviderOfGetFavouriteProduct(),
+    ),
     ChangeNotifierProvider(create: (_) => WishlistCreate()),
     ChangeNotifierProvider(create: (_) => SellerProfileProvider()),
     ChangeNotifierProvider(create: (_) => MusswegProductScreenProvider()),
@@ -87,5 +93,9 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => SellingItemScreenProvider()),
     ChangeNotifierProvider(create: (_) => PaymentScreenProvider()),
     ChangeNotifierProvider(create: (_) => LanguageProvider()),
+    ChangeNotifierProvider(create: (_) => NotificationScreenProvider()),
   ];
+  static List<SingleChildWidget> getProviders() {
+    return providers;
+  }
 }

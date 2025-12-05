@@ -2,19 +2,20 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-
 import 'package:mussweg/core/constants/api_end_points.dart';
 import 'package:mussweg/core/services/token_storage.dart';
 import 'package:mussweg/core/services/user_id_storage.dart';
-
 import 'package:mussweg/views/inbox/model/inbox_model.dart';
 import '../model/all_message_model.dart';
+import 'package:mussweg/core/services/socket_service.dart';
 
 class InboxScreenProvider extends ChangeNotifier {
   InboxScreenProvider() {
     getChatList();
+    initSocket();
   }
 
+  final SocketService socketService = SocketService();
   final TokenStorage _tokenStorage = TokenStorage();
   final UserIdStorage _userIdStorage = UserIdStorage();
 
@@ -32,12 +33,33 @@ class InboxScreenProvider extends ChangeNotifier {
   bool hasNextPage = false;
   bool isMoreLoading = false;
 
+  // INIT SOCKET
+  Future<void> initSocket() async {
+    final token = await _tokenStorage.getToken();
+
+    await socketService.connect(token!);
+
+    socketService.messageStream.listen((data) {
+      print(" REAL-TIME MESSAGE RECEIVED → $data");
+
+      try {
+        final conversationId = data["data"]["conversationId"];
+        getAllMessage(conversationId); // refresh messages
+      } catch (e) {
+        print("⚠ Error parsing socket message: $e");
+      }
+
+      notifyListeners();
+    });
+  }
+
+  // API FUNCTIONS
+
   Future<void> createConversation(String participantId) async {
     try {
       _isLoading = true;
       notifyListeners();
 
-      final userId = await _userIdStorage.getUserId();
       final url = Uri.parse(ApiEndpoints.createConversation);
       final token = await _tokenStorage.getToken();
 
@@ -46,17 +68,13 @@ class InboxScreenProvider extends ChangeNotifier {
         headers: {
           "Authorization": "Bearer $token",
           "Accept": "application/json",
+          "Content-Type": "application/json",
         },
         body: jsonEncode({"participant_id": participantId}),
       );
 
       final decodeData = jsonDecode(response.body);
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        debugPrint("THe success message ${decodeData['message']}");
-      } else {
-        debugPrint("THe failed message ${decodeData['message']}");
-      }
       _inboxModel = InboxModel.fromJson(decodeData);
     } catch (error) {
       debugPrint("Chat fetch error: $error");
@@ -71,7 +89,6 @@ class InboxScreenProvider extends ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      final userId = await _userIdStorage.getUserId();
       final url = Uri.parse(ApiEndpoints.getChatList);
       final token = await _tokenStorage.getToken();
 
@@ -105,7 +122,6 @@ class InboxScreenProvider extends ChangeNotifier {
     } else {
       _isLoading = true;
       currentPage = 1;
-      // notifyListeners();
     }
 
     try {
@@ -124,7 +140,6 @@ class InboxScreenProvider extends ChangeNotifier {
       final decodeData = jsonDecode(response.body);
       final newData = AllMessageModel.fromJson(decodeData);
 
-      // 🔥 Reverse if API returns newest first
       if (newData.data != null) {
         newData.data = newData.data!.reversed.toList();
       }
@@ -135,7 +150,6 @@ class InboxScreenProvider extends ChangeNotifier {
         _allMessageModel = newData;
       }
 
-      //  Correct pagination logic
       hasNextPage = newData.pagination?.hasNextPage ?? false;
     } catch (error) {
       debugPrint("Error loading messages: $error");
@@ -146,9 +160,8 @@ class InboxScreenProvider extends ChangeNotifier {
     }
   }
 
-  // ----------------------------
-  // Send Message
-  // ----------------------------
+  // SEND MESSAGE
+
   Future<void> sendMessage(
     String text,
     String conversationId,
@@ -174,13 +187,21 @@ class InboxScreenProvider extends ChangeNotifier {
         );
         request.files.add(file);
       }
+
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         await getAllMessage(conversationId);
       }
     } catch (error) {
       debugPrint("Send message error: $error");
     }
+  }
+
+  @override
+  void dispose() {
+    socketService.dispose();
+    super.dispose();
   }
 }

@@ -39,15 +39,15 @@ class _WishlistScreenState extends State<WishlistScreen> {
   void _listenToLanguageChanges() {
     final languageProvider = context.read<LanguageProvider>();
 
-    _languageChangeSubscription = languageProvider.languageChangeStream.listen(
-          (newLang) {
-        // Refresh wishlist when language changes
-        if (mounted) {
-          final provider = context.read<WhistlistProviderOfGetFavouriteProduct>();
-          provider.changeLanguage(newLang);
-        }
-      },
-    );
+    _languageChangeSubscription = languageProvider.languageChangeStream.listen((
+      newLang,
+    ) {
+      // Refresh wishlist when language changes
+      if (mounted) {
+        final provider = context.read<WhistlistProviderOfGetFavouriteProduct>();
+        provider.changeLanguage(newLang);
+      }
+    });
   }
 
   @override
@@ -91,7 +91,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
   Widget build(BuildContext context) {
     final languageProvider = context.watch<LanguageProvider>();
     final wishlistProvider =
-    context.watch<WhistlistProviderOfGetFavouriteProduct>();
+        context.watch<WhistlistProviderOfGetFavouriteProduct>();
 
     return PopScope(
       canPop: false,
@@ -131,9 +131,9 @@ class _WishlistScreenState extends State<WishlistScreen> {
   }
 
   Widget _buildWishlistContent(
-      WhistlistProviderOfGetFavouriteProduct provider,
-      LanguageProvider languageProvider,
-      ) {
+    WhistlistProviderOfGetFavouriteProduct provider,
+    LanguageProvider languageProvider,
+  ) {
     return Expanded(
       child: RefreshIndicator(
         onRefresh: () => provider.getWishlistProduct(),
@@ -143,9 +143,9 @@ class _WishlistScreenState extends State<WishlistScreen> {
   }
 
   Widget _buildWishlistBody(
-      WhistlistProviderOfGetFavouriteProduct provider,
-      LanguageProvider languageProvider,
-      ) {
+    WhistlistProviderOfGetFavouriteProduct provider,
+    LanguageProvider languageProvider,
+  ) {
     if (provider.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -193,7 +193,9 @@ class _WishlistScreenState extends State<WishlistScreen> {
           ),
           SizedBox(height: 8.h),
           Text(
-            languageProvider.translate('Add products to your wishlist to see them here'),
+            languageProvider.translate(
+              'Add products to your wishlist to see them here',
+            ),
             style: TextStyle(fontSize: 14.sp, color: Colors.grey[500]),
             textAlign: TextAlign.center,
           ),
@@ -203,15 +205,15 @@ class _WishlistScreenState extends State<WishlistScreen> {
   }
 
   Widget _buildWishlistList(
-      WhistlistProviderOfGetFavouriteProduct provider,
-      List<WishlistItem> favouriteProduct,
-      LanguageProvider languageProvider,
-      ) {
+    WhistlistProviderOfGetFavouriteProduct provider,
+    List<WishlistItem> favouriteProduct,
+    LanguageProvider languageProvider,
+  ) {
     return ListView.separated(
       controller: _scrollController,
       physics: const AlwaysScrollableScrollPhysics(),
       itemCount:
-      favouriteProduct.length + (provider.isPaginationLoading ? 1 : 0),
+          favouriteProduct.length + (provider.isPaginationLoading ? 1 : 0),
       separatorBuilder: (_, __) => SizedBox(height: 12.h),
       itemBuilder: (context, index) {
         if (index == favouriteProduct.length) {
@@ -287,25 +289,25 @@ class WishlistItemCard extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(color: Colors.grey[100]),
         child:
-        hasPhoto
-            ? Image.network(
-          _getImageUrl(product.productPhoto!.first),
-          fit: BoxFit.cover,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return Center(
-              child: CircularProgressIndicator(
-                value:
-                loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded /
-                    loadingProgress.expectedTotalBytes!
-                    : null,
-              ),
-            );
-          },
-          errorBuilder: (_, __, ___) => _buildPlaceholderIcon(),
-        )
-            : _buildPlaceholderIcon(),
+            hasPhoto
+                ? Image.network(
+                  _getImageUrl(product.productPhoto!.first),
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(
+                        value:
+                            loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                      ),
+                    );
+                  },
+                  errorBuilder: (_, __, ___) => _buildPlaceholderIcon(),
+                )
+                : _buildPlaceholderIcon(),
       ),
     );
   }
