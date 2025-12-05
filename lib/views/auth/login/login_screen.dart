@@ -5,6 +5,7 @@ import 'package:mussweg/core/routes/route_names.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:mussweg/views/auth/sign_up/screen/sign_up_screen.dart';
 import 'package:provider/provider.dart';
+import '../../../core/services/fm_token_storage.dart';
 import '../../../view_model/auth/login/get_me_viewmodel.dart';
 import '../../../view_model/auth/login/login_viewmodel.dart';
 import '../../../view_model/auth/login/user_profile_get_me_provider.dart';
@@ -183,10 +184,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   );
                   return;
                 }
+                final fcmToken = await FcmTokenStorage().getFcmToken() ?? "";
 
                 final result = await viewModel.login(
                   email: _emailController.text.trim(),
                   password: _passwordController.text.trim(),
+                  fcmToken : fcmToken
                 );
 
                 if (!mounted) return;

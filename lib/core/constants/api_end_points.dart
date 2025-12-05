@@ -80,6 +80,7 @@ class ApiEndpoints {
   static String getSearchProducts(int page, String Q) =>
       '$baseUrl/api/products/search?page=$page&perPage=10&search=$Q';
   static String filterProducts = '$baseUrl/api/products/filter';
+  static String notification = '$baseUrl/api/no';
 
   ///chat
   static String getChatList =

@@ -4,6 +4,7 @@ import 'package:mussweg/view_model/home_provider/home_nav/electronic_category_ba
 import 'package:mussweg/view_model/home_provider/home_nav/fashion_category_based_product_provider.dart';
 import 'package:mussweg/view_model/home_provider/home_nav/home_category_based_provider.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
+import 'package:mussweg/views/notification/notification_screen_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../core/constants/api_end_points.dart';
@@ -124,25 +125,41 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
                     const Spacer(),
-                    GestureDetector(
-                      onTap: () {
-                        context.read<ParentScreensProvider>().onSelectedIndex(
-                          2,
+                    Consumer<NotificationScreenProvider>(
+                      builder: (context, provider, child) {
+                        return GestureDetector(
+                          onTap: () async {
+                            await provider.getNotification();
+                            context
+                                .read<ParentScreensProvider>()
+                                .onSelectedIndex(2);
+                          },
+                          child: Image.asset(
+                            "assets/icons/cart.png",
+                            scale: 1.5,
+                          ),
                         );
                       },
-                      child: Image.asset("assets/icons/cart.png", scale: 1.5),
                     ),
                     SizedBox(width: 8.w),
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.white,
-                      ),
-                      child: Icon(
-                        Icons.notifications_active_outlined,
-                        size: 27.w,
-                        color: Colors.grey.shade700,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          RouteNames.notificationScreen,
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.white,
+                        ),
+                        child: Icon(
+                          Icons.notifications_active_outlined,
+                          size: 27.w,
+                          color: Colors.grey.shade700,
+                        ),
                       ),
                     ),
                   ],

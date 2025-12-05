@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mussweg/views/cart/cart_screen.dart';
 import 'package:mussweg/views/checkout/screen/checkout_cart_list_screen.dart';
 import 'package:mussweg/views/inbox/screen.dart';
-import 'package:mussweg/views/profile/screen.dart';
+import 'package:mussweg/views/profile/profile_screen.dart';
 
 import '../../views/home/screen/home_screen.dart';
 import '../../views/wishlist/wishlist_screen.dart';
