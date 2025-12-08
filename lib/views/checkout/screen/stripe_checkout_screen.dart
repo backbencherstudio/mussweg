@@ -68,34 +68,34 @@ class _StripeCheckoutScreenState extends State<StripeCheckoutScreen> {
             _isProcessing
                 ? const Center(child: CircularProgressIndicator())
                 : CustomButton(
-                  text: 'Pay Now',
-                  textColor: Colors.white,
-                  buttonColor: Colors.redAccent,
-                  onPressed: () async {
-                    setState(() => _isProcessing = true);
-                    try {
-                      await Stripe.instance.confirmPayment(
-                        paymentIntentClientSecret: clientSecret,
-                        data: PaymentMethodParams.card(
-                          paymentMethodData: PaymentMethodData(),
-                        ),
-                      );
-                      if (mounted) {
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          RouteNames.orderPlacedScreen,
+              text: 'Pay Now',
+              textColor: Colors.white,
+              buttonColor: Colors.redAccent,
+              onPressed: () async {
+                setState(() => _isProcessing = true);
+                try {
+                  await Stripe.instance.confirmPayment(
+                    paymentIntentClientSecret: clientSecret,
+                    data: PaymentMethodParams.card(
+                      paymentMethodData: PaymentMethodData(),
+                    ),
+                  );
+                  if (mounted) {
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      RouteNames.orderPlacedScreen,
                           (route) => false,
-                        );
-                      }
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Payment failed: $e')),
-                      );
-                    } finally {
-                      if (mounted) setState(() => _isProcessing = false);
-                    }
-                  },
-                ),
+                    );
+                  }
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Payment failed: $e')),
+                  );
+                } finally {
+                  if (mounted) setState(() => _isProcessing = false);
+                }
+              },
+            ),
           ],
         ),
       ),

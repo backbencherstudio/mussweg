@@ -29,20 +29,13 @@ class _WishlistScreenState extends State<WishlistScreen> {
     super.initState();
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-
-    // Listen to language changes
     _listenToLanguageChanges();
-
     _initializeScreen();
   }
 
   void _listenToLanguageChanges() {
     final languageProvider = context.read<LanguageProvider>();
-
-    _languageChangeSubscription = languageProvider.languageChangeStream.listen((
-      newLang,
-    ) {
-      // Refresh wishlist when language changes
+    _languageChangeSubscription = languageProvider.languageChangeStream.listen((newLang) {
       if (mounted) {
         final provider = context.read<WhistlistProviderOfGetFavouriteProduct>();
         provider.changeLanguage(newLang);
@@ -65,7 +58,11 @@ class _WishlistScreenState extends State<WishlistScreen> {
 
       // Sync language with provider
       provider.changeLanguage(languageProvider.currentLang);
-      provider.getWishlistProduct();
+
+      // Load wishlist if not already loaded
+      if (provider.wishlistModel == null) {
+        provider.getWishlistProduct();
+      }
     });
   }
 
@@ -90,8 +87,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
   @override
   Widget build(BuildContext context) {
     final languageProvider = context.watch<LanguageProvider>();
-    final wishlistProvider =
-        context.watch<WhistlistProviderOfGetFavouriteProduct>();
+    final wishlistProvider = context.watch<WhistlistProviderOfGetFavouriteProduct>();
 
     return PopScope(
       canPop: false,
@@ -101,8 +97,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
       child: Scaffold(
         appBar: SimpleApppbar(
           title: languageProvider.translate('Wishlist'),
-          onBack:
-              () => context.read<ParentScreensProvider>().onSelectedIndex(0),
+          onBack: () => context.read<ParentScreensProvider>().onSelectedIndex(0),
         ),
         body: Padding(
           padding: EdgeInsets.all(16.w),
@@ -131,9 +126,9 @@ class _WishlistScreenState extends State<WishlistScreen> {
   }
 
   Widget _buildWishlistContent(
-    WhistlistProviderOfGetFavouriteProduct provider,
-    LanguageProvider languageProvider,
-  ) {
+      WhistlistProviderOfGetFavouriteProduct provider,
+      LanguageProvider languageProvider,
+      ) {
     return Expanded(
       child: RefreshIndicator(
         onRefresh: () => provider.getWishlistProduct(),
@@ -143,27 +138,15 @@ class _WishlistScreenState extends State<WishlistScreen> {
   }
 
   Widget _buildWishlistBody(
-    WhistlistProviderOfGetFavouriteProduct provider,
-    LanguageProvider languageProvider,
-  ) {
+      WhistlistProviderOfGetFavouriteProduct provider,
+      LanguageProvider languageProvider,
+      ) {
     if (provider.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
     if (provider.isTranslating) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const CircularProgressIndicator(),
-            SizedBox(height: 16.h),
-            Text(
-              languageProvider.translate('Translating content...'),
-              style: TextStyle(fontSize: 14.sp, color: Colors.grey),
-            ),
-          ],
-        ),
-      );
+      return _buildTranslationProgress(provider, languageProvider);
     }
 
     final favouriteProduct = provider.wishlistModel?.data;
@@ -173,6 +156,38 @@ class _WishlistScreenState extends State<WishlistScreen> {
     }
 
     return _buildWishlistList(provider, favouriteProduct!, languageProvider);
+  }
+
+  Widget _buildTranslationProgress(
+      WhistlistProviderOfGetFavouriteProduct provider,
+      LanguageProvider languageProvider,
+      ) {
+    final progress = provider.translationProgress;
+    final total = provider.totalToTranslate;
+    final percentage = total > 0 ? (progress / total * 100).toInt() : 0;
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(
+            value: total > 0 ? progress / total : null,
+            strokeWidth: 4.w,
+          ),
+          SizedBox(height: 16.h),
+          Text(
+            languageProvider.translate('Translating content...'),
+            style: TextStyle(fontSize: 14.sp, color: Colors.grey[700]),
+          ),
+          SizedBox(height: 8.h),
+          if (total > 0)
+            Text(
+              '$percentage% ($progress/$total)',
+              style: TextStyle(fontSize: 12.sp, color: Colors.grey[600]),
+            ),
+        ],
+      ),
+    );
   }
 
   Widget _buildEmptyState(LanguageProvider languageProvider) {
@@ -205,15 +220,14 @@ class _WishlistScreenState extends State<WishlistScreen> {
   }
 
   Widget _buildWishlistList(
-    WhistlistProviderOfGetFavouriteProduct provider,
-    List<WishlistItem> favouriteProduct,
-    LanguageProvider languageProvider,
-  ) {
+      WhistlistProviderOfGetFavouriteProduct provider,
+      List<WishlistItem> favouriteProduct,
+      LanguageProvider languageProvider,
+      ) {
     return ListView.separated(
       controller: _scrollController,
       physics: const AlwaysScrollableScrollPhysics(),
-      itemCount:
-          favouriteProduct.length + (provider.isPaginationLoading ? 1 : 0),
+      itemCount: favouriteProduct.length + (provider.isPaginationLoading ? 1 : 0),
       separatorBuilder: (_, __) => SizedBox(height: 12.h),
       itemBuilder: (context, index) {
         if (index == favouriteProduct.length) {
@@ -279,8 +293,7 @@ class WishlistItemCard extends StatelessWidget {
   }
 
   Widget _buildProductImage() {
-    final hasPhoto =
-        product.productPhoto != null && product.productPhoto!.isNotEmpty;
+    final hasPhoto = product.productPhoto != null && product.productPhoto!.isNotEmpty;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(8.r),
@@ -288,26 +301,24 @@ class WishlistItemCard extends StatelessWidget {
         height: 180.h,
         width: double.infinity,
         decoration: BoxDecoration(color: Colors.grey[100]),
-        child:
-            hasPhoto
-                ? Image.network(
-                  _getImageUrl(product.productPhoto!.first),
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Center(
-                      child: CircularProgressIndicator(
-                        value:
-                            loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                                : null,
-                      ),
-                    );
-                  },
-                  errorBuilder: (_, __, ___) => _buildPlaceholderIcon(),
-                )
-                : _buildPlaceholderIcon(),
+        child: hasPhoto
+            ? Image.network(
+          _getImageUrl(product.productPhoto!.first),
+          fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Center(
+              child: CircularProgressIndicator(
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                    loadingProgress.expectedTotalBytes!
+                    : null,
+              ),
+            );
+          },
+          errorBuilder: (_, __, ___) => _buildPlaceholderIcon(),
+        )
+            : _buildPlaceholderIcon(),
       ),
     );
   }
@@ -353,7 +364,7 @@ class WishlistItemCard extends StatelessWidget {
         SizedBox(height: 4.h),
         _buildDetailRow(
           icon: Icons.assignment_turned_in_outlined,
-          label: languageProvider.translate('condition'),
+          label: languageProvider.translate('Condition'),
           value: product.translatedCondition ?? product.productCondition,
         ),
       ],
@@ -416,7 +427,7 @@ class WishlistItemCard extends StatelessWidget {
         border: Border.all(color: Colors.green[100]!),
       ),
       child: Text(
-        '${product.productStock} in stock',
+        languageProvider.translate('${product.productStock} in stock'),
         style: TextStyle(
           fontSize: 12.sp,
           color: Colors.green[800],

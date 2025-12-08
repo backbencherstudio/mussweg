@@ -1,6 +1,6 @@
 class ApiEndpoints {
   ApiEndpoints._();
-  static const String baseUrl = 'http://192.168.7.14:5005';
+  static const String baseUrl = 'https://afford-pockets-memory-andreas.trycloudflare.com';
 
   /// Auth
   static const String register = '$baseUrl/api/auth/register';

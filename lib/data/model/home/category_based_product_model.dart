@@ -13,12 +13,14 @@ class CategoryBasedProductModel {
 
   factory CategoryBasedProductModel.fromJson(Map<String, dynamic> json) {
     return CategoryBasedProductModel(
-      success: json['success'],
-      message: json['message'],
-      data: (json['data'] as List)
-          .map((item) => ProductData.fromJson(item))
-          .toList(),
-      pagination: Pagination.fromJson(json['pagination']),
+      success: json['success'] ?? false,
+      message: json['message'] ?? '',
+      data:
+      (json['data'] as List<dynamic>?)
+          ?.map((item) => ProductData.fromJson(item))
+          .toList() ??
+          [],
+      pagination: Pagination.fromJson(json['pagination'] ?? {}),
     );
   }
 }
@@ -35,6 +37,11 @@ class ProductData {
   final bool isInWishlist;
   final String? minimumBid;
 
+  // Translated fields
+  String? translatedTitle;
+  String? translatedSize;
+  String? translatedCondition;
+
   ProductData({
     required this.id,
     this.photo,
@@ -46,22 +53,23 @@ class ProductData {
     required this.price,
     required this.isInWishlist,
     this.minimumBid,
+    this.translatedTitle,
+    this.translatedSize,
+    this.translatedCondition,
   });
 
   factory ProductData.fromJson(Map<String, dynamic> json) {
     return ProductData(
-      id: json['id'],
-      photo: (json['photo'] as List<dynamic>?)
-          ?.map((e) => e.toString())
-          .toList() ??
-          [],
-      title: json['title'],
+      id: json['id'] ?? '',
+      photo:
+      json['photo'] != null ? List<String>.from(json['photo']) : null,
+      title: json['title'] ?? '',
       size: json['size'],
-      condition: json['condition'],
-      createdTime: json['created_time'],
+      condition: json['condition'] ?? '',
+      createdTime: json['created_time'] ?? '',
       boostTimeLeft: json['boost_time_left'],
-      price: json['price'],
-      isInWishlist: json['is_in_wishlist'],
+      price: json['price'] ?? '',
+      isInWishlist: json['is_in_wishlist'] ?? false,
       minimumBid: json['minimum_bid'],
     );
   }
@@ -86,12 +94,12 @@ class Pagination {
 
   factory Pagination.fromJson(Map<String, dynamic> json) {
     return Pagination(
-      total: json['total'],
-      page: json['page'],
-      perPage: json['perPage'],
-      totalPages: json['totalPages'],
-      hasNextPage: json['hasNextPage'],
-      hasPrevPage: json['hasPrevPage'],
+      total: json['total'] ?? 0,
+      page: json['page'] ?? 1,
+      perPage: json['perPage'] ?? 0,
+      totalPages: json['totalPages'] ?? 0,
+      hasNextPage: json['hasNextPage'] ?? false,
+      hasPrevPage: json['hasPrevPage'] ?? false,
     );
   }
 }

@@ -17,6 +17,10 @@ class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
   bool _hasNextPage = false;
   String _currentLanguage = 'en';
 
+  // Translation progress
+  int _translationProgress = 0;
+  int _totalToTranslate = 0;
+
   final ApiService _apiService = ApiService();
   final AppTranslator _translator = AppTranslator();
 
@@ -26,6 +30,7 @@ class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
   // Translation cache
   final Map<String, Map<String, String>> _translationCache = {};
 
+  // Getter methods
   bool get isLoading => _isLoading;
   bool get isPaginationLoading => _isPaginationLoading;
   bool get isTranslating => _isTranslating;
@@ -34,39 +39,56 @@ class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
   int get currentPage => _currentPage;
   bool get hasNextPage => _hasNextPage;
   String get currentLanguage => _currentLanguage;
+  int get translationProgress => _translationProgress;
+  int get totalToTranslate => _totalToTranslate;
 
   WhistlistProviderOfGetFavouriteProduct() {
+    _initializeTranslator();
+  }
+
+  void _initializeTranslator() async {
+    // Initialize with default language
+    await _translator.setLanguage(_currentLanguage);
+
     // Listen to language change events
     _listenToLanguageChanges();
   }
 
   void _listenToLanguageChanges() {
-    _languageChangeSubscription = LanguageProvider.languageChangeEvents.listen(
-          (newLang) async {
-        if (newLang != _currentLanguage) {
-          await _handleLanguageChange(newLang);
-        }
-      },
-    );
+    _languageChangeSubscription = LanguageProvider.languageChangeEvents.listen((
+      newLang,
+    ) async {
+      if (newLang != _currentLanguage) {
+        await _handleLanguageChange(newLang);
+      }
+    });
   }
 
   Future<void> _handleLanguageChange(String newLang) async {
     if (newLang == _currentLanguage) return;
 
+    // Update current language
     _currentLanguage = newLang;
+
+    // Update translator
     await _translator.setLanguage(newLang);
 
-    // Clear translation cache for the new language
+    // Clear translation cache for the old language
     _translationCache.clear();
 
     // Re-translate existing products if any
     if (_wishlistModel != null && _wishlistModel!.data.isNotEmpty) {
       _isTranslating = true;
+      _translationProgress = 0;
+      _totalToTranslate =
+          _wishlistModel!.data.length * 3; // title, size, condition
       notifyListeners();
 
       await _translateAllProducts(_wishlistModel!.data);
 
       _isTranslating = false;
+      _translationProgress = 0;
+      _totalToTranslate = 0;
       notifyListeners();
     } else {
       notifyListeners(); // Just notify UI to rebuild with new language
@@ -87,12 +109,18 @@ class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
 
     final cache = _translationCache[_currentLanguage]!;
 
-    for (var item in items) {
+    for (int i = 0; i < items.length; i++) {
+      final item = items[i];
+
       // Translate title
       final titleKey = 'title_${item.productId}';
       if (!cache.containsKey(titleKey)) {
-        item.translatedTitle = await _translator.translateText(item.productTitle);
+        item.translatedTitle = await _translator.translateText(
+          item.productTitle,
+        );
         cache[titleKey] = item.translatedTitle!;
+        _translationProgress++;
+        notifyListeners();
       } else {
         item.translatedTitle = cache[titleKey];
       }
@@ -102,6 +130,8 @@ class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
       if (!cache.containsKey(sizeKey)) {
         item.translatedSize = await _translator.translateText(item.productSize);
         cache[sizeKey] = item.translatedSize!;
+        _translationProgress++;
+        notifyListeners();
       } else {
         item.translatedSize = cache[sizeKey];
       }
@@ -109,8 +139,12 @@ class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
       // Translate condition
       final conditionKey = 'condition_${item.productCondition}';
       if (!cache.containsKey(conditionKey)) {
-        item.translatedCondition = await _translator.translateText(item.productCondition);
+        item.translatedCondition = await _translator.translateText(
+          item.productCondition,
+        );
         cache[conditionKey] = item.translatedCondition!;
+        _translationProgress++;
+        notifyListeners();
       } else {
         item.translatedCondition = cache[conditionKey];
       }
@@ -124,7 +158,7 @@ class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
 
     try {
       final response = await _apiService.get(
-          ApiEndpoints.getWishList(_currentPage, 10)
+        ApiEndpoints.getWishList(_currentPage, 10),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -133,12 +167,16 @@ class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
 
         // Translate products
         _isTranslating = true;
+        _translationProgress = 0;
+        _totalToTranslate = _wishlistModel!.data.length * 3;
         notifyListeners();
 
         await _translateAllProducts(_wishlistModel!.data);
 
         _isTranslating = false;
         _isLoading = false;
+        _translationProgress = 0;
+        _totalToTranslate = 0;
         notifyListeners();
         return true;
       } else {
@@ -164,13 +202,15 @@ class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
 
     try {
       final response = await _apiService.get(
-          ApiEndpoints.getWishList(_currentPage, 10)
+        ApiEndpoints.getWishList(_currentPage, 10),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final newWishlistModel = WishListModel.fromJson(response.data);
 
         // Translate new products
+        final currentCount = _translationProgress;
+        _totalToTranslate += newWishlistModel.data.length * 3;
         await _translateAllProducts(newWishlistModel.data);
 
         _wishlistModel?.data.addAll(newWishlistModel.data);
@@ -193,7 +233,14 @@ class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
     }
   }
 
-  // Clear all data
+  // Remove item from wishlist
+  void removeItem(String productId) {
+    if (_wishlistModel != null) {
+      _wishlistModel!.data.removeWhere((item) => item.productId == productId);
+      notifyListeners();
+    }
+  }
+
   void clear() {
     _wishlistModel = null;
     _currentPage = 1;
@@ -205,6 +252,7 @@ class WhistlistProviderOfGetFavouriteProduct extends ChangeNotifier {
   @override
   void dispose() {
     _languageChangeSubscription?.cancel();
+    _translator.dispose();
     super.dispose();
   }
 }
