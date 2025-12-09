@@ -1,6 +1,7 @@
 class ApiEndpoints {
   ApiEndpoints._();
-  static const String baseUrl = 'https://afford-pockets-memory-andreas.trycloudflare.com';
+  static const String baseUrl =
+      'https://lately-digit-grace-hansen.trycloudflare.com';
 
   /// Auth
   static const String register = '$baseUrl/api/auth/register';
@@ -51,8 +52,7 @@ class ApiEndpoints {
       '$baseUrl/api/dashborad/bought-cancelled-item';
 
   ///  Sell product
-  static String totalSellProduct =
-      '$baseUrl/api/dashborad/total-selling-item';
+  static String totalSellProduct = '$baseUrl/api/dashborad/total-selling-item';
   static String sellPendingProduct =
       '$baseUrl/api/dashborad/selling-pending-item';
   static String sellDeliveredProduct =

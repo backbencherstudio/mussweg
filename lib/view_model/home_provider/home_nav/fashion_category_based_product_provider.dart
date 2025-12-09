@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/constants/api_end_points.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/services/translator_service.dart';
@@ -16,7 +17,7 @@ class FashionCategoryBasedProductProvider extends ChangeNotifier {
   int _totalToTranslate = 0;
 
   // Language management
-  String _currentLanguage = 'en';
+  late String _currentLanguage;
 
   CategoryBasedProductModel? _categoryBasedProductModel;
   final ApiService _apiService = ApiService();
@@ -38,15 +39,23 @@ class FashionCategoryBasedProductProvider extends ChangeNotifier {
   String get currentLanguage => _currentLanguage;
 
   FashionCategoryBasedProductProvider() {
-    _initializeTranslator();
+    _initializeProvider();
   }
 
-  void _initializeTranslator() async {
-    // Initialize with default language
+  Future<void> _initializeProvider() async {
+    // Load saved language on initialization
+    await _loadSavedLanguage();
+
+    // Initialize translator with saved language
     await _translator.setLanguage(_currentLanguage);
 
     // Listen to language change events
     _listenToLanguageChanges();
+  }
+
+  Future<void> _loadSavedLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    _currentLanguage = prefs.getString('selected_language') ?? 'en';
   }
 
   void _listenToLanguageChanges() {
@@ -64,42 +73,42 @@ class FashionCategoryBasedProductProvider extends ChangeNotifier {
 
     _currentLanguage = newLang;
 
+    // Save the language change
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('selected_language', newLang);
+
     await _translator.setLanguage(newLang);
 
-    _translationCache.clear();
+    // Clear translation cache for old language if needed
+    if (_translationCache.containsKey(_currentLanguage)) {
+      // We can keep the cache for current language
+    }
+
+    // Re-translate existing products if any
     if (_categoryBasedProductModel != null && _categoryBasedProductModel!.data.isNotEmpty) {
-      _isTranslating = true;
-      _translationProgress = 0;
-      _totalToTranslate = _categoryBasedProductModel!.data.length * 3; // title, size, condition
-      notifyListeners();
-
-      await _translateAllProducts(_categoryBasedProductModel!.data);
-
-      _isTranslating = false;
-      _translationProgress = 0;
-      _totalToTranslate = 0;
-      notifyListeners();
+      await _translateExistingProducts();
     } else {
       notifyListeners();
     }
   }
 
-  Future<void> changeLanguage(String langCode) async {
-    await _handleLanguageChange(langCode);
-  }
+  Future<void> _translateExistingProducts() async {
+    if (_categoryBasedProductModel == null || _categoryBasedProductModel!.data.isEmpty) return;
 
-  Future<void> _translateAllProducts(List<ProductData> products) async {
-    if (products.isEmpty) return;
+    _isTranslating = true;
+    _translationProgress = 0;
+    _totalToTranslate = _categoryBasedProductModel!.data.length * 3; // title, size, condition
+    notifyListeners();
 
-    // Initialize cache for current language
+    // Initialize cache for current language if not exists
     if (!_translationCache.containsKey(_currentLanguage)) {
       _translationCache[_currentLanguage] = {};
     }
 
     final cache = _translationCache[_currentLanguage]!;
 
-    for (int i = 0; i < products.length; i++) {
-      final product = products[i];
+    for (int i = 0; i < _categoryBasedProductModel!.data.length; i++) {
+      final product = _categoryBasedProductModel!.data[i];
 
       // Translate title
       final titleKey = 'title_${product.id}';
@@ -114,7 +123,7 @@ class FashionCategoryBasedProductProvider extends ChangeNotifier {
 
       // Translate size if exists
       if (product.size != null && product.size!.isNotEmpty) {
-        final sizeKey = 'size_${product.size}';
+        final sizeKey = 'size_${product.size}_${product.id}';
         if (!cache.containsKey(sizeKey)) {
           product.translatedSize = await _translator.translateText(product.size!);
           cache[sizeKey] = product.translatedSize!;
@@ -126,7 +135,7 @@ class FashionCategoryBasedProductProvider extends ChangeNotifier {
       }
 
       // Translate condition
-      final conditionKey = 'condition_${product.condition}';
+      final conditionKey = 'condition_${product.condition}_${product.id}';
       if (!cache.containsKey(conditionKey)) {
         product.translatedCondition = await _translator.translateText(product.condition);
         cache[conditionKey] = product.translatedCondition!;
@@ -136,6 +145,11 @@ class FashionCategoryBasedProductProvider extends ChangeNotifier {
         product.translatedCondition = cache[conditionKey];
       }
     }
+
+    _isTranslating = false;
+    _translationProgress = 0;
+    _totalToTranslate = 0;
+    notifyListeners();
   }
 
   Future<bool> getCategoryBasedProduct(String id) async {
@@ -151,18 +165,9 @@ class FashionCategoryBasedProductProvider extends ChangeNotifier {
         _categoryBasedProductModel = CategoryBasedProductModel.fromJson(response.data);
         _errorMessage = response.data['message'] ?? '';
 
-        // Translate products if model exists
-        if (_categoryBasedProductModel!.data.isNotEmpty) {
-          _isTranslating = true;
-          _translationProgress = 0;
-          _totalToTranslate = _categoryBasedProductModel!.data.length * 3;
-          notifyListeners();
-
-          await _translateAllProducts(_categoryBasedProductModel!.data);
-
-          _isTranslating = false;
-          _translationProgress = 0;
-          _totalToTranslate = 0;
+        // Translate products if model exists and language is not English
+        if (_categoryBasedProductModel!.data.isNotEmpty && _currentLanguage != 'en') {
+          await _translateExistingProducts();
         }
 
         _isLoading = false;
@@ -200,11 +205,60 @@ class FashionCategoryBasedProductProvider extends ChangeNotifier {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final newData = CategoryBasedProductModel.fromJson(response.data);
 
-        // Translate new products
-        if (newData.data.isNotEmpty) {
-          final currentProgress = _translationProgress;
-          _totalToTranslate += newData.data.length * 3;
-          await _translateAllProducts(newData.data);
+        // Initialize cache for current language if not exists
+        if (!_translationCache.containsKey(_currentLanguage)) {
+          _translationCache[_currentLanguage] = {};
+        }
+
+        final cache = _translationCache[_currentLanguage]!;
+
+        // Translate new products if language is not English
+        if (newData.data.isNotEmpty && _currentLanguage != 'en') {
+          _isTranslating = true;
+          _translationProgress = 0;
+          _totalToTranslate = newData.data.length * 3;
+          notifyListeners();
+
+          for (final product in newData.data) {
+            // Translate title
+            final titleKey = 'title_${product.id}';
+            if (!cache.containsKey(titleKey)) {
+              product.translatedTitle = await _translator.translateText(product.title);
+              cache[titleKey] = product.translatedTitle!;
+              _translationProgress++;
+              notifyListeners();
+            } else {
+              product.translatedTitle = cache[titleKey];
+            }
+
+            // Translate size if exists
+            if (product.size != null && product.size!.isNotEmpty) {
+              final sizeKey = 'size_${product.size}_${product.id}';
+              if (!cache.containsKey(sizeKey)) {
+                product.translatedSize = await _translator.translateText(product.size!);
+                cache[sizeKey] = product.translatedSize!;
+                _translationProgress++;
+                notifyListeners();
+              } else {
+                product.translatedSize = cache[sizeKey];
+              }
+            }
+
+            // Translate condition
+            final conditionKey = 'condition_${product.condition}_${product.id}';
+            if (!cache.containsKey(conditionKey)) {
+              product.translatedCondition = await _translator.translateText(product.condition);
+              cache[conditionKey] = product.translatedCondition!;
+              _translationProgress++;
+              notifyListeners();
+            } else {
+              product.translatedCondition = cache[conditionKey];
+            }
+          }
+
+          _isTranslating = false;
+          _translationProgress = 0;
+          _totalToTranslate = 0;
         }
 
         // Merge new data with existing
@@ -228,8 +282,17 @@ class FashionCategoryBasedProductProvider extends ChangeNotifier {
   // Clear all data
   void clear() {
     _categoryBasedProductModel = null;
-    _translationCache.clear();
+    // Don't clear translation cache - keep it for better performance
     notifyListeners();
+  }
+
+  // Force refresh translations (useful when coming back from background)
+  Future<void> refreshTranslations() async {
+    if (_categoryBasedProductModel != null &&
+        _categoryBasedProductModel!.data.isNotEmpty &&
+        _currentLanguage != 'en') {
+      await _translateExistingProducts();
+    }
   }
 
   @override

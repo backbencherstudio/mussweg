@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:mussweg/core/constants/api_end_points.dart';
 import 'package:mussweg/core/services/user_id_storage.dart';
 import 'package:mussweg/view_model/bid/place_a_bid_provider.dart';
+import 'package:mussweg/view_model/language/language_provider.dart';
 import 'package:mussweg/view_model/parent_provider/parent_screen_provider.dart';
 import 'package:mussweg/view_model/product_item_list_provider/get_product_details_provider.dart';
 import 'package:mussweg/views/auth/sign_up/widgets/buttons.dart';
@@ -15,7 +16,6 @@ import 'package:provider/provider.dart';
 import '../../../core/routes/route_names.dart';
 import '../../../view_model/client_dashboard/client_dashboard_details_provider.dart';
 import '../../widgets/custom_main_button.dart';
-
 import '../widgets/bider_list_card.dart';
 import '../widgets/custom_page_indicator.dart';
 
@@ -29,8 +29,26 @@ class ProductDetailsBidScreens extends StatefulWidget {
 
 class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
   final PageController _pageController = PageController();
-
   final _bidController = TextEditingController();
+
+  // Helper method to get translated text
+  String _getTranslatedText(
+    BuildContext context,
+    String? originalText,
+    String? translatedText,
+  ) {
+    final languageProvider = context.read<LanguageProvider>();
+    final isEnglish = languageProvider.currentLang == 'en';
+
+    if (isEnglish ||
+        translatedText == null ||
+        translatedText.isEmpty ||
+        translatedText == originalText) {
+      return originalText ?? '';
+    }
+
+    return translatedText;
+  }
 
   @override
   void dispose() {
@@ -43,13 +61,41 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
   Widget build(BuildContext context) {
     final productProvider = context.watch<GetProductDetailsProvider>();
     final product = productProvider.productDetailsResponse?.data;
-
     final isBidingProvider = context.watch<PlaceABidProvider>();
+    final languageProvider = context.watch<LanguageProvider>();
+    final isEnglish = languageProvider.currentLang == 'en';
 
     if (productProvider.loading) {
       return Scaffold(
         backgroundColor: Colors.white,
         body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    // Show translation progress indicator if translating
+    if (productProvider.isTranslating) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(title: Text('Translating...')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text(
+                'Translating product details...',
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 8),
+              if (productProvider.totalToTranslate > 0)
+                Text(
+                  '${productProvider.translationProgress} / ${productProvider.totalToTranslate}',
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                ),
+            ],
+          ),
+        ),
       );
     }
 
@@ -59,7 +105,9 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
       },
       child: Scaffold(
         appBar: SimpleApppbar(
-          title: 'Product Details',
+          title:
+              languageProvider.translate('Product Details') ??
+              'Product Details',
           onBack: () async {
             await context.read<PlaceABidProvider>().setIsBidding(false);
             Navigator.pop(context);
@@ -147,7 +195,7 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                 ),
               ),
 
-              // Page Indicator (optional)
+              // Page Indicator
               SizedBox(height: 8),
               CustomPageIndicator(
                 controller: _pageController,
@@ -247,7 +295,7 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                   ),
                                 ),
                                 Text(
-                                  "${product?.sellerInfo?.totalItems} items",
+                                  "${product?.sellerInfo?.totalItems} ${languageProvider.translate('items') ?? 'items'}",
                                   style: TextStyle(
                                     color: Colors.grey,
                                     fontSize: 14,
@@ -279,7 +327,8 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                               borderRadius: BorderRadius.circular(99),
                             ),
                             child: Text(
-                              "Message",
+                              languageProvider.translate('Message') ??
+                                  "Message",
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
@@ -306,7 +355,11 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                       ),
                       child: Center(
                         child: Text(
-                          product?.category?.categoryName ?? '',
+                          _getTranslatedText(
+                            context,
+                            product?.category?.categoryName ?? '',
+                            product?.category?.translatedName,
+                          ),
                           style: TextStyle(
                             color: Color(0xff3A9B7A),
                             fontWeight: FontWeight.w700,
@@ -326,7 +379,11 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      product?.title ?? 'Unknown',
+                      _getTranslatedText(
+                        context,
+                        product?.title ?? 'Unknown',
+                        product?.translatedTitle,
+                      ),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
@@ -342,7 +399,11 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                           size: 20,
                         ),
                         Text(
-                          product?.location ?? 'unknown',
+                          _getTranslatedText(
+                            context,
+                            product?.location ?? 'unknown',
+                            product?.translatedLocation,
+                          ),
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontSize: 14,
@@ -367,7 +428,10 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Product Description",
+                              languageProvider.translate(
+                                    'Product Description',
+                                  ) ??
+                                  "Product Description",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -376,7 +440,11 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                             ),
                             SizedBox(height: 4),
                             Text(
-                              product?.description ?? '',
+                              _getTranslatedText(
+                                context,
+                                product?.description ?? '',
+                                product?.translatedDescription,
+                              ),
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.black87,
@@ -401,7 +469,10 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "Condition",
+                                        languageProvider.translate(
+                                              'Condition',
+                                            ) ??
+                                            "Condition",
                                         style: TextStyle(
                                           fontSize: 14,
                                           color: Colors.black87,
@@ -409,7 +480,8 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                       ),
                                       SizedBox(height: 4),
                                       Text(
-                                        "Size",
+                                        languageProvider.translate('Size') ??
+                                            "Size",
                                         style: TextStyle(
                                           fontSize: 14,
                                           color: Colors.black87,
@@ -417,7 +489,8 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                       ),
                                       SizedBox(height: 4),
                                       Text(
-                                        "Color",
+                                        languageProvider.translate('Color') ??
+                                            "Color",
                                         style: TextStyle(
                                           fontSize: 14,
                                           color: Colors.black87,
@@ -425,7 +498,10 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                       ),
                                       SizedBox(height: 4),
                                       Text(
-                                        "Uploaded",
+                                        languageProvider.translate(
+                                              'Uploaded',
+                                            ) ??
+                                            "Uploaded",
                                         style: TextStyle(
                                           fontSize: 14,
                                           color: Colors.black87,
@@ -433,7 +509,10 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                       ),
                                       SizedBox(height: 4),
                                       Text(
-                                        "Remaining Time",
+                                        languageProvider.translate(
+                                              'Remaining Time',
+                                            ) ??
+                                            "Remaining Time",
                                         style: TextStyle(
                                           fontSize: 14,
                                           color: Colors.black87,
@@ -450,7 +529,7 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          ": ${product?.condition ?? ''}",
+                                          ": ${_getTranslatedText(context, product?.condition ?? '', product?.translatedCondition)}",
                                           style: TextStyle(
                                             fontSize: 14,
                                             color: Colors.black87,
@@ -458,7 +537,7 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                         ),
                                         SizedBox(height: 4),
                                         Text(
-                                          ": ${product?.size ?? ''}",
+                                          ": ${_getTranslatedText(context, product?.size ?? '', product?.translatedSize)}",
                                           style: TextStyle(
                                             fontSize: 14,
                                             color: Colors.black87,
@@ -466,7 +545,7 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                         ),
                                         SizedBox(height: 4),
                                         Text(
-                                          ": ${product?.color ?? ''}",
+                                          ": ${_getTranslatedText(context, product?.color ?? '', product?.translatedColor)}",
                                           style: TextStyle(
                                             fontSize: 14,
                                             color: Colors.black87,
@@ -474,7 +553,7 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                         ),
                                         SizedBox(height: 4),
                                         Text(
-                                          ": ${DateFormat("dd MMM, yy h:mm a").format(DateTime.parse(product?.uploaded ?? '')) ?? ''}",
+                                          ": ${product?.uploaded != null ? DateFormat("dd MMM, yy h:mm a").format(DateTime.parse(product!.uploaded!)) : ''}",
                                           style: TextStyle(
                                             fontSize: 14,
                                             color: Colors.black87,
@@ -485,7 +564,7 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                           product?.remainingTime == null ||
                                                   product?.remainingTime == ''
                                               ? ": 00h : 00m : 00s"
-                                              : ": ${DateFormat("dd MMM, yy h:mm a").format(DateTime.parse(product?.remainingTime ?? '')) ?? ''}",
+                                              : ": ${DateFormat("dd MMM, yy h:mm a").format(DateTime.parse(product!.remainingTime!))}",
                                           style: TextStyle(
                                             fontSize: 14,
                                             color: Color(0xff1A9882),
@@ -514,10 +593,17 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                       color: Color(0Xff1DBF73),
                                     ),
                                     SizedBox(width: 12.w),
-                                    Text(
-                                      "If a scam occurs, their money is protected.",
-                                      style: TextStyle(
-                                        color: Color(0xff1DBF73),
+                                    Expanded(
+                                      child: Text(
+                                        languageProvider.translate(
+                                              'If a scam occurs, their money is protected.',
+                                            ) ??
+                                            "If a scam occurs, their money is protected.",
+                                        style: TextStyle(
+                                          color: Color(0xff1DBF73),
+                                          fontSize: 12,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                   ],
@@ -526,7 +612,7 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                             ),
                             SizedBox(height: 25),
                             Text(
-                              'Market Price: \$${product?.price ?? '0.00'} ',
+                              '${languageProvider.translate('Market Price') ?? 'Market Price'}: \$${product?.price ?? '0.00'} ',
                               style: TextStyle(
                                 color: Color(0xff4A4C56),
                                 fontSize: 15.sp,
@@ -535,7 +621,7 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                             ),
                             SizedBox(height: 4),
                             Text(
-                              "Last bid Price: \$${product?.minimumBid ?? '0.00'}  ",
+                              "${languageProvider.translate('Last bid Price') ?? 'Last bid Price'}: \$${product?.minimumBid ?? '0.00'}  ",
                               style: TextStyle(
                                 color: Color(0xff4A4C56),
                                 fontSize: 15.sp,
@@ -559,7 +645,11 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                                 );
                                             await provider.setIsBidding(true);
                                           },
-                                          title: 'Place a Bid',
+                                          title:
+                                              languageProvider.translate(
+                                                'Place a Bid',
+                                              ) ??
+                                              'Place a Bid',
                                         );
                                       },
                                     ),
@@ -585,7 +675,11 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                               RouteNames.parentScreen,
                                             );
                                           },
-                                          title: 'Buy Now',
+                                          title:
+                                              languageProvider.translate(
+                                                'Buy Now',
+                                              ) ??
+                                              'Buy Now',
                                         );
                                       },
                                     ),
@@ -599,7 +693,8 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Total bid",
+                              languageProvider.translate("Total bid") ??
+                                  "Total bid",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -615,7 +710,10 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                 final bids =
                                     bidListProvider.bidsResponse?.bids ?? [];
                                 if (bids.isEmpty) {
-                                  return const Text("No bids yet");
+                                  return Text(
+                                    languageProvider.translate("No bids yet") ??
+                                        "No bids yet",
+                                  );
                                 }
                                 return Column(
                                   spacing: 16.h,
@@ -628,7 +726,11 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                             ),
                             CustomTextField(
                               title: '',
-                              hintText: 'Enter your bid price',
+                              hintText:
+                                  languageProvider.translate(
+                                    'Enter your bid price',
+                                  ) ??
+                                  'Enter your bid price',
                               controller: _bidController,
                             ),
                             Consumer<PlaceABidProvider>(
@@ -656,9 +758,12 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                           ScaffoldMessenger.of(
                                             context,
                                           ).showSnackBar(
-                                            const SnackBar(
+                                            SnackBar(
                                               content: Text(
-                                                'Bid amount must be less than product price',
+                                                languageProvider.translate(
+                                                      'Bid amount must be less than product price',
+                                                    ) ??
+                                                    'Bid amount must be less than product price',
                                                 style: TextStyle(
                                                   color: Colors.white,
                                                 ),
@@ -697,7 +802,9 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                         }
                                       }
                                     },
-                                    title: 'Bid Now',
+                                    title:
+                                        languageProvider.translate('Bid Now') ??
+                                        'Bid Now',
                                     color: Colors.red,
                                   ),
                                 );

@@ -160,9 +160,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         ? products.reversed.toList()
                         : products;
 
-                    if (provider.isLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
+                    // if (provider.isLoading) {
+                    //   return const Center(child: CircularProgressIndicator());
+                    // }
 
                     if (displayedProducts.isEmpty) {
                       return Center(
