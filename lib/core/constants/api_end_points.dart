@@ -1,7 +1,7 @@
 class ApiEndpoints {
   ApiEndpoints._();
   static const String baseUrl =
-      'https://lately-digit-grace-hansen.trycloudflare.com';
+      'https://urban-louisiana-mutual-join.trycloudflare.com';
 
   /// Auth
   static const String register = '$baseUrl/api/auth/register';
