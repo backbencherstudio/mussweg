@@ -1,4 +1,4 @@
-// product_card.dart
+// lib/views/widgets/product_card.dart
 import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -232,7 +232,7 @@ class ProductCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        price,
+                        '\$$price',
                         style: TextStyle(
                           color: const Color(0xffDE3526),
                           fontWeight: FontWeight.bold,
@@ -248,7 +248,7 @@ class ProductCard extends StatelessWidget {
                             context.read<MusswegProductScreenProvider>().setProductId(productId);
                             Navigator.pushNamed(context, RouteNames.musswegGuidelineScreen);
                           },
-                          title: 'Muss Weg',
+                          title: langProvider.translate('Muss Weg'),
                           textSize: 12.sp,
                           color: Colors.red,
                         ),
