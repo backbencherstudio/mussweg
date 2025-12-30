@@ -1,3 +1,5 @@
+// lib/views/profile/seller_profile_page.dart
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,6 +14,7 @@ import '../../../../view_model/language/language_provider.dart';
 import '../../../../view_model/my_dashboard/my_dashboard_response_provider.dart';
 import '../../../../view_model/profile/edit_image/edit_image.dart';
 import '../../../widgets/seller_profile_refresh.dart';
+
 import '../../widgets/product_card.dart';
 
 class SellerProfilePage extends StatefulWidget {
@@ -24,11 +27,15 @@ class SellerProfilePage extends StatefulWidget {
 class _SellerProfilePageState extends State<SellerProfilePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  StreamSubscription<String>? _languageChangeSubscription;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+
+    // Listen to language changes
+    _listenToLanguageChanges();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await context.read<MyDashboardResponseProvider>().fetchMyDashboardData();
@@ -36,9 +43,24 @@ class _SellerProfilePageState extends State<SellerProfilePage>
     });
   }
 
+  void _listenToLanguageChanges() {
+    final languageProvider = context.read<LanguageProvider>();
+
+    _languageChangeSubscription = languageProvider.languageChangeStream.listen((
+      newLang,
+    ) {
+      // Refresh user products when language changes
+      if (mounted) {
+        final provider = context.read<UserAllProductsProvider>();
+        provider.changeLanguage(newLang);
+      }
+    });
+  }
+
   @override
   void dispose() {
     _tabController.dispose();
+    _languageChangeSubscription?.cancel();
     super.dispose();
   }
 
@@ -52,7 +74,8 @@ class _SellerProfilePageState extends State<SellerProfilePage>
     final languageProvider = context.watch<LanguageProvider>();
     final dashboardProvider = context.watch<MyDashboardResponseProvider>();
 
-    final myProfileDashboardDetails = dashboardProvider.myDashboardResponseModel?.data;
+    final myProfileDashboardDetails =
+        dashboardProvider.myDashboardResponseModel?.data;
     final reviews = myProfileDashboardDetails?.reviews;
 
     return Scaffold(
@@ -76,37 +99,44 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           width: 1.w,
                         ),
                       ),
-                      child: userProfileDetails?.coverPhoto != null
-                          ? Image.network(
-                        "${ApiEndpoints.baseUrl}/public/storage/coverPhoto/${userProfileDetails!.coverPhoto}",
-                        fit: BoxFit.cover,
-                        loadingBuilder: (
-                            BuildContext context,
-                            Widget child,
-                            ImageChunkEvent? loadingProgress,
-                            ) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
-                                  : null,
-                            ),
-                          );
-                        },
-                        errorBuilder: (_, __, ___) {
-                          return SizedBox(
-                            width: double.infinity,
-                            height: 180.h,
-                            child: Image.asset('assets/images/placeholder.jpg'),
-                          );
-                        },
-                      )
-                          : Image.asset(
-                        'assets/images/placeholder.jpg',
-                        fit: BoxFit.cover,
-                      ),
+                      child:
+                          userProfileDetails?.coverPhoto != null
+                              ? Image.network(
+                                "${ApiEndpoints.baseUrl}/public/storage/coverPhoto/${userProfileDetails!.coverPhoto}",
+                                fit: BoxFit.cover,
+                                loadingBuilder: (
+                                  BuildContext context,
+                                  Widget child,
+                                  ImageChunkEvent? loadingProgress,
+                                ) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      value:
+                                          loadingProgress.expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (_, __, ___) {
+                                  return SizedBox(
+                                    width: double.infinity,
+                                    height: 180.h,
+                                    child: Image.asset(
+                                      'assets/images/placeholder.jpg',
+                                    ),
+                                  );
+                                },
+                              )
+                              : Image.asset(
+                                'assets/images/placeholder.jpg',
+                                fit: BoxFit.cover,
+                              ),
                     ),
                   ),
                 ),
@@ -131,8 +161,12 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                               content: Text(
                                 success
                                     ? sellerVM.uploadMessage ??
-                                    languageProvider.translate('Profile updated')
-                                    : languageProvider.translate('Upload failed'),
+                                        languageProvider.translate(
+                                          'Profile updated',
+                                        )
+                                    : languageProvider.translate(
+                                      'Upload failed',
+                                    ),
                               ),
                             ),
                           );
@@ -155,41 +189,50 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                                   width: 1.w,
                                 ),
                               ),
-                              child: userVM.user?.avatar != null
-                                  ? Image.network(
-                                "${ApiEndpoints.baseUrl}/public/storage/avatar/${userVM.user!.avatar}",
-                                width: 90,
-                                height: 90,
-                                fit: BoxFit.cover,
-                                loadingBuilder: (
-                                    BuildContext context,
-                                    Widget child,
-                                    ImageChunkEvent? loadingProgress,
-                                    ) {
-                                  if (loadingProgress == null) return child;
-                                  return Center(
-                                    child: CircularProgressIndicator(
-                                      value: loadingProgress.expectedTotalBytes != null
-                                          ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                          : null,
-                                    ),
-                                  );
-                                },
-                                errorBuilder: (_, __, ___) {
-                                  return SizedBox(
-                                    width: 90,
-                                    height: 90,
-                                    child: Image.asset('assets/icons/user.png'),
-                                  );
-                                },
-                              )
-                                  : Image.asset(
-                                'assets/icons/user.png',
-                                width: 90,
-                                height: 90,
-                                fit: BoxFit.cover,
-                              ),
+                              child:
+                                  userVM.user?.avatar != null
+                                      ? Image.network(
+                                        "${ApiEndpoints.baseUrl}/public/storage/avatar/${userVM.user!.avatar}",
+                                        width: 90,
+                                        height: 90,
+                                        fit: BoxFit.cover,
+                                        loadingBuilder: (
+                                          BuildContext context,
+                                          Widget child,
+                                          ImageChunkEvent? loadingProgress,
+                                        ) {
+                                          if (loadingProgress == null)
+                                            return child;
+                                          return Center(
+                                            child: CircularProgressIndicator(
+                                              value:
+                                                  loadingProgress
+                                                              .expectedTotalBytes !=
+                                                          null
+                                                      ? loadingProgress
+                                                              .cumulativeBytesLoaded /
+                                                          loadingProgress
+                                                              .expectedTotalBytes!
+                                                      : null,
+                                            ),
+                                          );
+                                        },
+                                        errorBuilder: (_, __, ___) {
+                                          return SizedBox(
+                                            width: 90,
+                                            height: 90,
+                                            child: Image.asset(
+                                              'assets/icons/user.png',
+                                            ),
+                                          );
+                                        },
+                                      )
+                                      : Image.asset(
+                                        'assets/icons/user.png',
+                                        width: 90,
+                                        height: 90,
+                                        fit: BoxFit.cover,
+                                      ),
                             ),
                           ),
                         ),
@@ -232,8 +275,12 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                               content: Text(
                                 success
                                     ? sellerVM.uploadMessage ??
-                                    languageProvider.translate('Profile updated')
-                                    : languageProvider.translate('Upload failed'),
+                                        languageProvider.translate(
+                                          'Profile updated',
+                                        )
+                                    : languageProvider.translate(
+                                      'Upload failed',
+                                    ),
                               ),
                             ),
                           );
@@ -278,7 +325,8 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        userVM.user?.name ?? languageProvider.translate('Guest'),
+                        userVM.user?.name ??
+                            languageProvider.translate('Guest'),
                         style: TextStyle(
                           fontSize: 20.sp,
                           fontWeight: FontWeight.w800,
@@ -338,7 +386,8 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           ),
                           SizedBox(width: 7.w),
                           Text(
-                            myProfileDashboardDetails?.profile.totalEarning ?? '0',
+                            myProfileDashboardDetails?.profile.totalEarning ??
+                                '0',
                             style: TextStyle(
                               color: const Color(0xff777980),
                               fontSize: 14.sp,
@@ -353,7 +402,8 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                           ),
                           SizedBox(width: 7.w),
                           Text(
-                            myProfileDashboardDetails?.profile.totalPenalties ?? '0',
+                            myProfileDashboardDetails?.profile.totalPenalties ??
+                                '0',
                             style: TextStyle(
                               color: const Color(0xff777980),
                               fontSize: 14.sp,
@@ -393,10 +443,11 @@ class _SellerProfilePageState extends State<SellerProfilePage>
     );
   }
 
+  // Update just the _buildProductsTab method in SellerProfilePage
   Widget _buildProductsTab(
-      UserAllProductsProvider userProductVM,
-      LanguageProvider languageProvider,
-      ) {
+    UserAllProductsProvider userProductVM,
+    LanguageProvider languageProvider,
+  ) {
     return Padding(
       padding: EdgeInsets.all(8.w),
       child: Column(
@@ -451,22 +502,11 @@ class _SellerProfilePageState extends State<SellerProfilePage>
             ],
           ),
           SizedBox(height: 8.h),
+
+          // Show translation progress with percentage
           if (userProductVM.isTranslating)
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.h),
-              child: Center(
-                child: Column(
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 8.h),
-                    Text(
-                      languageProvider.translate('Translating content...'),
-                      style: TextStyle(fontSize: 12.sp),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            _buildTranslationProgress(userProductVM, languageProvider),
+
           Expanded(
             child: Consumer<UserAllProductsProvider>(
               builder: (context, provider, child) {
@@ -476,13 +516,15 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                   return Center(child: CircularProgressIndicator());
                 }
 
-                if (provider.errorMessage.isNotEmpty && userAllProducts == null) {
+                if (provider.errorMessage.isNotEmpty &&
+                    userAllProducts == null) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          languageProvider.translate('Error') + ': ${provider.errorMessage}',
+                          languageProvider.translate('Error') +
+                              ': ${provider.errorMessage}',
                           style: TextStyle(color: Colors.red),
                           textAlign: TextAlign.center,
                         ),
@@ -516,7 +558,9 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                         ),
                         SizedBox(height: 8.h),
                         Text(
-                          languageProvider.translate('Start selling by clicking the Sell button'),
+                          languageProvider.translate(
+                            'Start selling by clicking the Sell button',
+                          ),
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: Colors.grey[500],
@@ -539,9 +583,10 @@ class _SellerProfilePageState extends State<SellerProfilePage>
                     ),
                     itemBuilder: (context, index) {
                       final product = userAllProducts[index];
-                      final image = (product.productPhotoUrl?.isNotEmpty ?? false)
-                          ? product.productPhotoUrl!.first
-                          : null;
+                      final image =
+                          (product.productPhotoUrl?.isNotEmpty ?? false)
+                              ? product.productPhotoUrl!.first
+                              : null;
                       return ProductCard(
                         imageUrl: image,
                         productName: provider.getTranslatedTitle(product),
@@ -565,10 +610,91 @@ class _SellerProfilePageState extends State<SellerProfilePage>
     );
   }
 
+  // Add this helper method to show translation progress
+  Widget _buildTranslationProgress(
+    UserAllProductsProvider provider,
+    LanguageProvider languageProvider,
+  ) {
+    final percentage =
+        provider.totalToTranslate > 0
+            ? (provider.translationProgress / provider.totalToTranslate * 100)
+                .toInt()
+            : 0;
+
+    return Container(
+      padding: EdgeInsets.all(12.w),
+      margin: EdgeInsets.symmetric(vertical: 8.h),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: Colors.blue.shade100),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              CircularProgressIndicator(
+                value:
+                    provider.totalToTranslate > 0
+                        ? provider.translationProgress /
+                            provider.totalToTranslate
+                        : 0,
+                strokeWidth: 2,
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      languageProvider.translate('Translating content...'),
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.blue.shade800,
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      '$percentage% (${provider.translationProgress}/${provider.totalToTranslate})',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: Colors.blue.shade600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          if (percentage > 0)
+            Padding(
+              padding: EdgeInsets.only(top: 8.h),
+              child: LinearProgressIndicator(
+                value:
+                    provider.totalToTranslate > 0
+                        ? provider.translationProgress /
+                            provider.totalToTranslate
+                        : 0,
+                backgroundColor: Colors.blue.shade100,
+                color: Colors.blue,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+// Update the _buildReviewsTab method in SellerProfilePage
   Widget _buildReviewsTab(
       MyDashboardResponseProvider dashboardProvider,
       LanguageProvider languageProvider,
       ) {
+    // Show translation progress
+    if (dashboardProvider.isTranslating) {
+      return _buildDashboardTranslationProgress(dashboardProvider, languageProvider);
+    }
+
     if (dashboardProvider.loading) {
       return Center(child: CircularProgressIndicator());
     }
@@ -631,12 +757,60 @@ class _SellerProfilePageState extends State<SellerProfilePage>
         final review = reviews.data[index];
         return SellerProfileRefresh(
           title: review.reviewerName,
+          message: dashboardProvider.getTranslatedReviewComment(review),
           time: review.createdAgo,
           avatarUrl: review.reviewerAvatar ?? '',
-          message: review.comment,
           starCount: review.rating,
+          languageProvider: languageProvider,
         );
       },
+    );
+  }
+
+// Add this helper method for dashboard translation progress
+  Widget _buildDashboardTranslationProgress(
+      MyDashboardResponseProvider provider,
+      LanguageProvider languageProvider,
+      ) {
+    final percentage = provider.totalToTranslate > 0
+        ? (provider.translationProgress / provider.totalToTranslate * 100).toInt()
+        : 0;
+
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 20.h),
+            Text(
+              languageProvider.translate('Translating reviews...'),
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.blue.shade800,
+              ),
+            ),
+            SizedBox(height: 12.h),
+            Text(
+              '$percentage% (${provider.translationProgress}/${provider.totalToTranslate})',
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Colors.blue.shade600,
+              ),
+            ),
+            SizedBox(height: 20.h),
+            LinearProgressIndicator(
+              value: provider.totalToTranslate > 0
+                  ? provider.translationProgress / provider.totalToTranslate
+                  : 0,
+              backgroundColor: Colors.blue.shade100,
+              color: Colors.blue,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

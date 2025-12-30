@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-
 import 'core/provider/app_provider.dart';
 import 'core/routes/route_configs.dart';
 import 'core/routes/route_names.dart';
@@ -59,12 +58,12 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return AppProviders.getProviders().isNotEmpty
         ? MultiProvider(
-      providers: [
-        ...AppProviders.getProviders(),
-        ChangeNotifierProvider(create: (_) => NotificationScreenProvider()),
-      ],
-      child: _buildScreenUtilInit(),
-    )
+          providers: [
+            ...AppProviders.getProviders(),
+            ChangeNotifierProvider(create: (_) => NotificationScreenProvider()),
+          ],
+          child: _buildScreenUtilInit(),
+        )
         : _buildScreenUtilInit();
   }
 
@@ -84,25 +83,30 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(scaffoldBackgroundColor: Colors.white),
       initialRoute: RouteNames.splashScreen,
       routes: AppRoutes.routes,
-      onUnknownRoute: (settings) => MaterialPageRoute(
-        builder: (context) => Scaffold(
-          appBar: AppBar(title: const Text('Route Error')),
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('No route defined for: ${settings.name}'),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () =>
-                      Navigator.pushNamed(context, RouteNames.splashScreen),
-                  child: const Text('Go to Home'),
+      onUnknownRoute:
+          (settings) => MaterialPageRoute(
+            builder:
+                (context) => Scaffold(
+                  appBar: AppBar(title: const Text('Route Error')),
+                  body: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('No route defined for: ${settings.name}'),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed:
+                              () => Navigator.pushNamed(
+                                context,
+                                RouteNames.splashScreen,
+                              ),
+                          child: const Text('Go to Home'),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ],
-            ),
           ),
-        ),
-      ),
     );
   }
 }

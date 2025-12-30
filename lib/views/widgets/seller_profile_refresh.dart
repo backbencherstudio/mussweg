@@ -1,8 +1,7 @@
+// lib/views/widgets/seller_profile_refresh.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:http/http.dart' show read;
-import 'package:provider/provider.dart';
-
+import 'package:http/http.dart';
 import '../../core/constants/api_end_points.dart';
 import '../../view_model/language/language_provider.dart';
 
@@ -20,14 +19,13 @@ class SellerProfileRefresh extends StatelessWidget {
     required this.message,
     required this.time,
     required this.avatarUrl,
-
     required this.starCount,
     this.languageProvider,
   });
 
   @override
   Widget build(BuildContext context) {
-    final langProvider = languageProvider ?? context.read<LanguageProvider>();
+   // final langProvider = languageProvider ?? context.read<LanguageProvider>();
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 8.0.h),
@@ -42,7 +40,9 @@ class SellerProfileRefresh extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(langProvider.translate('table')),
+                // Debug text removed
+                // Text(langProvider.translate('table')), // Removed this line
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -74,9 +74,9 @@ class SellerProfileRefresh extends StatelessWidget {
                     return Icon(
                       Icons.star,
                       color:
-                          index < starCount
-                              ? Colors.orange.shade400
-                              : Colors.grey.shade300,
+                      index < starCount
+                          ? Colors.orange.shade400
+                          : Colors.grey.shade300,
                       size: 18.w,
                     );
                   }),
@@ -117,9 +117,9 @@ class SellerProfileRefresh extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(25.r),
         child:
-            avatarUrl.isNotEmpty
-                ? _buildNetworkImage()
-                : _buildPlaceholderImage(),
+        avatarUrl.isNotEmpty
+            ? _buildNetworkImage()
+            : _buildPlaceholderImage(),
       ),
     );
   }
@@ -144,10 +144,10 @@ class SellerProfileRefresh extends StatelessWidget {
         return Center(
           child: CircularProgressIndicator(
             value:
-                loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes!
-                    : null,
+            loadingProgress.expectedTotalBytes != null
+                ? loadingProgress.cumulativeBytesLoaded /
+                loadingProgress.expectedTotalBytes!
+                : null,
           ),
         );
       },

@@ -1,4 +1,4 @@
-// user_all_products_viewmodel.dart
+// lib/data/user_all_products/user_all_products_viewmodel.dart
 class UserAllProductsViewmodel {
   final bool success;
   final String message;
@@ -120,6 +120,12 @@ class ProductData {
       'uploaded': uploaded,
       'remaining_time': remainingTime,
       'is_in_wishlist': isInWishlist,
+      'translatedTitle': translatedTitle,
+      'translatedDescription': translatedDescription,
+      'translatedLocation': translatedLocation,
+      'translatedCondition': translatedCondition,
+      'translatedSize': translatedSize,
+      'translatedColor': translatedColor,
     };
   }
 }

@@ -93,7 +93,7 @@ class AppTranslator {
         'Error': 'Error',
         'Retry': 'Retry',
         'Something went wrong': 'Something went wrong',
-        "table":"table"
+        "table": "table",
       },
       'de': {
         'Wishlist': 'Wunschliste',
@@ -125,8 +125,7 @@ class AppTranslator {
         'Error': 'Fehler',
         'Retry': 'Wiederholen',
         'Something went wrong': 'Etwas ist schief gelaufen',
-        "table":"Tisch"
-
+        "table": "Tisch",
       },
       'fr': {
         'Wishlist': 'Liste de souhaits',
@@ -158,8 +157,7 @@ class AppTranslator {
         'Error': 'Erreur',
         'Retry': 'Réessayer',
         'Something went wrong': 'Quelque chose a mal tourné',
-        "name":"tableau"
-
+        "name": "tableau",
       },
     };
 

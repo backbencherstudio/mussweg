@@ -67,17 +67,17 @@ class _InboxPageState extends State<InboxPage> {
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(100),
-                                    child: Image.network(
-                                      (item.opponent?.avater != null)
-                                          ? "${ApiEndpoints.baseUrl}/public/storage/avatar/${item.opponent?.avater}"
-                                          : "https://nftcalendar.io/storage/uploads/2022/02/21/image-not-found_0221202211372462137974b6c1a.png",
-                                      width: 45,
-                                      height: 45,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
+                                  // ClipRRect(
+                                  //   borderRadius: BorderRadius.circular(100),
+                                  //   child: Image.network(
+                                  //     (item.opponent?.avater != null)
+                                  //         ? "${ApiEndpoints.baseUrl}/public/storage/avatar/${item.opponent?.avater}"
+                                  //         : "https://nftcalendar.io/storage/uploads/2022/02/21/image-not-found_0221202211372462137974b6c1a.png",
+                                  //     width: 45,
+                                  //     height: 45,
+                                  //     fit: BoxFit.cover,
+                                  //   ),
+                                  // ),
                                   SizedBox(width: 12.w),
                                   Expanded(
                                     child: Column(

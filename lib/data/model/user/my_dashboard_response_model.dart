@@ -1,4 +1,4 @@
-// my_dashboard_response_model.dart
+// lib/data/model/user/my_dashboard_response_model.dart
 class MyDashboardResponseModel {
   final bool success;
   final String message;
@@ -55,6 +55,13 @@ class Profile {
   final String? totalEarning;
   final String? totalPenalties;
 
+  // Translated fields
+  String? translatedName;
+  String? translatedCountry;
+  String? translatedCity;
+  String? translatedAddress;
+  String? translatedLocation;
+
   Profile({
     required this.id,
     required this.name,
@@ -70,6 +77,11 @@ class Profile {
     this.reviewCount,
     this.totalEarning,
     this.totalPenalties,
+    this.translatedName,
+    this.translatedCountry,
+    this.translatedCity,
+    this.translatedAddress,
+    this.translatedLocation,
   });
 
   factory Profile.fromJson(Map<String, dynamic> json) {
@@ -192,6 +204,9 @@ class ReviewData {
   // Translation field for comment
   String? translatedComment;
 
+  // Translated reviewer name (optional)
+  String? translatedReviewerName;
+
   ReviewData({
     required this.id,
     required this.rating,
@@ -200,6 +215,7 @@ class ReviewData {
     this.reviewerAvatar,
     required this.createdAgo,
     this.translatedComment,
+    this.translatedReviewerName,
   });
 
   factory ReviewData.fromJson(Map<String, dynamic> json) {

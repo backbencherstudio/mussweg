@@ -21,7 +21,7 @@ class ProductDetailsResponse {
 class ProductData {
   final SellerInfo? sellerInfo;
   final String? productId;
-  final List<String>? productPhoto; // Changed to List<String> for photos
+  final List<String>? productPhoto;
   final String? title;
   final String? status;
   final String? location;
@@ -35,6 +35,14 @@ class ProductData {
   final String? remainingTime;
   final String? minimumBid;
   final Category? category;
+
+  // Translated fields
+  String? translatedTitle;
+  String? translatedDescription;
+  String? translatedLocation;
+  String? translatedCondition;
+  String? translatedSize;
+  String? translatedColor;
 
   ProductData({
     this.sellerInfo,
@@ -53,6 +61,12 @@ class ProductData {
     this.remainingTime,
     this.minimumBid,
     this.category,
+    this.translatedTitle,
+    this.translatedDescription,
+    this.translatedLocation,
+    this.translatedCondition,
+    this.translatedSize,
+    this.translatedColor,
   });
 
   factory ProductData.fromJson(Map<String, dynamic> json) {
@@ -63,7 +77,7 @@ class ProductData {
       productId: json['product_id'],
       productPhoto: (json['product_photo'] as List<dynamic>?)
           ?.map((item) => item.toString())
-          .toList(), // Correctly handling the list of photo URLs
+          .toList(),
       title: json['title'],
       status: json['status'],
       location: json['location'],
@@ -110,9 +124,13 @@ class Category {
   final String? id;
   final String? categoryName;
 
+  // Translated field
+  String? translatedName;
+
   Category({
     this.id,
     this.categoryName,
+    this.translatedName,
   });
 
   factory Category.fromJson(Map<String, dynamic> json) {
