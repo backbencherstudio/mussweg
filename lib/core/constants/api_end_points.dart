@@ -1,7 +1,6 @@
 class ApiEndpoints {
   ApiEndpoints._();
-  static const String baseUrl =
-      'https://urban-louisiana-mutual-join.trycloudflare.com';
+  static const String baseUrl = 'http://192.168.7.14:5005';
 
   /// Auth
   static const String register = '$baseUrl/api/auth/register';
@@ -102,4 +101,6 @@ class ApiEndpoints {
   static String myOrderList = "$baseUrl/api/order/my-orders";
   static String stripPayment(String orderId) =>
       "$baseUrl/api/payment/stripe/pay/$orderId";
+
+  /// Twint payment
 }

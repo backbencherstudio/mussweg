@@ -52,9 +52,9 @@ class AllCategoryProvider extends ChangeNotifier {
         notifyListeners();
         _errorMessage = response.data['message'];
         _categoryModel = CategoryModel.fromJson(response.data);
-        setFashionCategoryId(_categoryModel?.data.firstWhere((e) => e.categoryName == 'Fashion').categoryId ?? '');
-        setHomeCategoryId(_categoryModel?.data.firstWhere((e) => e.categoryName == 'Home').categoryId ?? '');
-        setElectronicsCategoryId(_categoryModel?.data.firstWhere((e) => e.categoryName == 'Electronices').categoryId ?? '');
+        setFashionCategoryId(_categoryModel?.data.firstWhere((e) => e.categoryName == 'fashion').categoryId ?? '');
+        setHomeCategoryId(_categoryModel?.data.firstWhere((e) => e.categoryName == 'home').categoryId ?? '');
+        setElectronicsCategoryId(_categoryModel?.data.firstWhere((e) => e.categoryName == 'electronics').categoryId ?? '');
         notifyListeners();
         return response.data['success'];
       } else {
