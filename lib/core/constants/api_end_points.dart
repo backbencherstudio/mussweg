@@ -34,7 +34,7 @@ class ApiEndpoints {
   static String updateProductById(String id) =>
       '$baseUrl/api/products/updatebyid/$id';
 
-  static String createBoost = '$baseUrl/api/products/create-boost';
+  //static String createBoost = '$baseUrl/api/products/create-boost';
 
   static String getProductBids(String id) =>
       '$baseUrl/api/bid/singleproductbid/$id';
@@ -102,5 +102,7 @@ class ApiEndpoints {
   static String stripPayment(String orderId) =>
       "$baseUrl/api/payment/stripe/pay/$orderId";
 
-  /// Twint payment
+  /// boost payment
+  static String createBoost = "$baseUrl/api/boost/create-boost";
+
 }

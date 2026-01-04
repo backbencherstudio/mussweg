@@ -1,40 +1,47 @@
 // lib/data/user_all_products/user_all_products_viewmodel.dart
+
 class UserAllProductsViewmodel {
-  final bool success;
-  final String message;
   final List<ProductData> data;
   final Pagination pagination;
 
   UserAllProductsViewmodel({
-    required this.success,
-    required this.message,
     required this.data,
     required this.pagination,
   });
 
-  factory UserAllProductsViewmodel.fromJson(Map<String, dynamic> json) {
-    return UserAllProductsViewmodel(
-      success: json['success'] ?? false,
-      message: json['message'] ?? '',
-      data: (json['data'] as List<dynamic>?)
-          ?.map((item) => ProductData.fromJson(item))
-          .toList() ??
-          [],
-      pagination: json['pagination'] != null
-          ? Pagination.fromJson(json['pagination'])
-          : Pagination.empty(),
-    );
-  }
+  /// Handles BOTH List and Map responses safely
+  factory UserAllProductsViewmodel.fromJson(dynamic json) {
+    // CASE 1: API returns List directly
+    if (json is List) {
+      return UserAllProductsViewmodel(
+        data: json
+            .map((e) => ProductData.fromJson(e as Map<String, dynamic>))
+            .toList(),
+        pagination: Pagination.empty(),
+      );
+    }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data.map((e) => e.toJson()).toList(),
-      'pagination': pagination.toJson(),
-    };
+    // CASE 2: API returns Map with data + pagination
+    if (json is Map<String, dynamic>) {
+      final dataList = json['data'];
+
+      return UserAllProductsViewmodel(
+        data: (dataList is List
+            ? dataList
+            : dataList?['products'] ?? [])
+            .map<ProductData>(
+                (e) => ProductData.fromJson(e as Map<String, dynamic>))
+            .toList(),
+        pagination: json['pagination'] != null
+            ? Pagination.fromJson(json['pagination'])
+            : Pagination.empty(),
+      );
+    }
+
+    throw Exception('Invalid API response');
   }
 }
+
 
 class ProductData {
   final String id;
@@ -84,13 +91,15 @@ class ProductData {
   factory ProductData.fromJson(Map<String, dynamic> json) {
     return ProductData(
       id: json['id'] ?? '',
-      photo: (json['photo'] as List<dynamic>?)
-          ?.map((e) => e.toString())
-          .toList() ??
+      photo:
+          (json['photo'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
           [],
-      productPhotoUrl: (json['product_photo_url'] as List<dynamic>?)
-          ?.map((e) => e.toString())
-          .toList() ??
+      productPhotoUrl:
+          (json['product_photo_url'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
           [],
       title: json['title'] ?? '',
       price: json['price']?.toString() ?? '0',

@@ -54,7 +54,6 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => UpdateItemService()),
     ChangeNotifierProvider(create: (_) => TransactionService()),
     ChangeNotifierProvider(create: (_) => NotificationService()),
-    ChangeNotifierProvider(create: (_) => BoostProductService()),
     ChangeNotifierProvider(create: (_) => SearchProvider()),
     ChangeNotifierProvider(create: (_) => RegisterProvider()),
     ChangeNotifierProvider(create: (_) => FavoriteProvider()),
@@ -94,6 +93,7 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => PaymentScreenProvider()),
     ChangeNotifierProvider(create: (_) => LanguageProvider()),
     ChangeNotifierProvider(create: (_) => NotificationScreenProvider()),
+    ChangeNotifierProvider(create: (_) => BoostProductService()),
   ];
   static List<SingleChildWidget> getProviders() {
     return providers;
