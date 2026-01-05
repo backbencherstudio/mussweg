@@ -274,7 +274,7 @@ class _BoostProductPageState extends State<BoostProductPage> {
                             if (result) {
                               Navigator.pushReplacementNamed(
                                 context,
-                                RouteNames.boostSuccessPage,
+                                RouteNames.boostProductByStatus,
                               );
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(

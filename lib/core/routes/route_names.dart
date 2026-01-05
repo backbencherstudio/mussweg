@@ -48,4 +48,6 @@ class RouteNames {
   static const String disposalScreen = '/disposalScreen';
   static const String orderIdWithPayment = '/orderIdWithPayment';
   static const String notificationScreen = '/notificationScreen';
+  static const String boostProductByStatus = '/boostProductByStatus';
+  static const String boostProductPayment = '/boostProductPayment';
 }

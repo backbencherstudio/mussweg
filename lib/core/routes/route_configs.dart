@@ -40,6 +40,8 @@ import '../../views/notification/notification_screen.dart';
 import '../../views/order_placed/screen/order_placed_screen.dart';
 import '../../views/profile/profile_screen.dart';
 import '../../views/profile/screens/boost_product/boost_product.dart';
+import '../../views/profile/screens/boost_product/boost_product_by_status.dart';
+import '../../views/profile/screens/boost_product/boost_product_payment.dart';
 import '../../views/profile/screens/boost_product/boost_success_page.dart';
 import '../../views/profile/screens/languages/language_page.dart';
 import '../../views/profile/screens/transaction/transactions_history.dart';
@@ -70,6 +72,7 @@ class AppRoutes {
     RouteNames.editProductPage: (context) => const EditProductPage(),
     RouteNames.boostProductPage: (context) =>  BoostProductPage(),
     RouteNames.boostSuccessPage: (context) => const BoostSuccessPage(),
+    RouteNames.boostProductByStatus: (context) => const BoostProductByStatus(),
     RouteNames.onboardingScreen: (context) => const OnboardingScreen(),
     RouteNames.inboxPage: (context) => const InboxPage(),
     RouteNames.accountSettingsPage: (context) => const AccountSettingsPage(),
@@ -99,5 +102,6 @@ class AppRoutes {
     RouteNames.disposalScreen:(context) => const DisposalItemsScreen(),
     RouteNames.orderIdWithPayment:(context) => const OrderIdWithPayment(),
     RouteNames.notificationScreen:(context) => const NotificationScreen(),
+    RouteNames.boostProductPayment:(context) => const BoostProductPayment(),
   };
 }

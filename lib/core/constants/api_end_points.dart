@@ -1,6 +1,6 @@
 class ApiEndpoints {
   ApiEndpoints._();
-  static const String baseUrl = 'http://192.168.7.14:5005';
+  static const String baseUrl = 'http://192.168.7.27:5005';
 
   /// Auth
   static const String register = '$baseUrl/api/auth/register';
@@ -104,5 +104,6 @@ class ApiEndpoints {
 
   /// boost payment
   static String createBoost = "$baseUrl/api/boost/create-boost";
-
+  static String boostedProductByStatus =
+      "$baseUrl/api/boost/boosted-products-status";
 }

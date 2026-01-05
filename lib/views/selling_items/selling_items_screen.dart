@@ -31,7 +31,6 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
       listen: false,
     );
 
-    // Fetch all records on screen load
     provider.allSelProduct();
     provider.pendingSelProduct();
     provider.confirmSelProduct();
@@ -62,7 +61,6 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
         padding: EdgeInsets.all(16.0.w),
         child: Column(
           children: [
-            // ========================== TABS ==========================
             SizedBox(
               height: 35.h,
               child: ListView.builder(
@@ -217,8 +215,6 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
       ),
     );
   }
-
-  // =====================================================
   int _parseToInt(dynamic value) {
     if (value == null) return 0;
     if (value is int) return value;
@@ -235,7 +231,6 @@ class _SellingItemsScreenState extends State<SellingItemsScreen> {
     return 0.0;
   }
 
-  // =====================================================
   Widget buildItemRow(String? name, double price, int quantity) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 4.h),
