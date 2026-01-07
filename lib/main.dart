@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import 'core/provider/app_provider.dart';
 import 'core/routes/route_configs.dart';
@@ -22,16 +23,17 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Lock portrait mode
+  //  Stripe initialize
+  Stripe.publishableKey =
+      'pk_test_51SHzu30wRGwz8zPLYHj5wFVrYkJTKLX7gZkbuWxxncXu93Zea0gg1qMoICYIgRf7BQbfKhSs0ENAmUCei8jiwiXd00PezqFPhR';
+  await Stripe.instance.applySettings();
+
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  // Initialize ScreenUtil
   await ScreenUtil.ensureScreenSize();
 
-  // Initialize Notification Service
   await NotificationService().init(navigatorKey);
 
   runApp(const MyApp());

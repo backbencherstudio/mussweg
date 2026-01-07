@@ -72,6 +72,7 @@ class _StripeCheckoutScreenState extends State<StripeCheckoutScreen> {
                   textColor: Colors.white,
                   buttonColor: Colors.redAccent,
                   onPressed: () async {
+                    debugPrint("THe client secret is $clientSecret");
                     setState(() => _isProcessing = true);
                     try {
                       await Stripe.instance.confirmPayment(

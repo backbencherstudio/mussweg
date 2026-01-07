@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:mussweg/views/cart/view_model/payment_screen_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/routes/route_names.dart';
-import '../../../../view_model/boost_product/boost_product_create_provider.dart';
+import '../../../auth/disposal/get_disposal_items_provider.dart';
 import '../../../checkout/widgets/checkout_form.dart';
 
-class BoostProductPayment extends StatefulWidget {
-  const BoostProductPayment({super.key});
+class DisposalPayment extends StatefulWidget {
+  const DisposalPayment({super.key});
 
   @override
-  State<BoostProductPayment> createState() => _BoostProductPaymentState();
+  State<DisposalPayment> createState() => _DisposalPaymentState();
 }
 
-class _BoostProductPaymentState extends State<BoostProductPayment> {
+class _DisposalPaymentState extends State<DisposalPayment> {
   @override
   Widget build(BuildContext context) {
     // Extract arguments directly in build method
@@ -57,7 +56,7 @@ class _BoostProductPaymentState extends State<BoostProductPayment> {
                         onTap: () {},
                       ),
                       SizedBox(height: 6.h),
-                      Consumer<BoostProductCreateProvider>(
+                      Consumer<GetDisposalItemsProvider>(
                         builder: (context, provider, child) {
                           return CheckoutFormButton(
                             image: 'assets/icons/stripe-icon.png',

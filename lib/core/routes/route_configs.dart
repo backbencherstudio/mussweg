@@ -43,6 +43,7 @@ import '../../views/profile/screens/boost_product/boost_product.dart';
 import '../../views/profile/screens/boost_product/boost_product_by_status.dart';
 import '../../views/profile/screens/boost_product/boost_product_payment.dart';
 import '../../views/profile/screens/boost_product/boost_success_page.dart';
+import '../../views/profile/screens/disposal/disposal_payment.dart';
 import '../../views/profile/screens/languages/language_page.dart';
 import '../../views/profile/screens/transaction/transactions_history.dart';
 import '../../views/profile/screens/view_profile/edit_product_page.dart';
@@ -103,5 +104,6 @@ class AppRoutes {
     RouteNames.orderIdWithPayment:(context) => const OrderIdWithPayment(),
     RouteNames.notificationScreen:(context) => const NotificationScreen(),
     RouteNames.boostProductPayment:(context) => const BoostProductPayment(),
+    RouteNames.disposalPayment:(context) => const DisposalPayment(),
   };
 }

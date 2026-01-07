@@ -33,17 +33,6 @@ class PickupOptionWidget extends StatelessWidget {
 
         _optionTile(
           context,
-          title: "Send the Item to us",
-          value: PickupOption.sendToUs,
-          selected: selected == PickupOption.sendToUs,
-          onTap: () {
-            provider.selectOption(PickupOption.sendToUs);
-            context.read<MusswegProductScreenProvider>().setType('SEND_IN');
-          },
-        ),
-        SizedBox(height: 10.h),
-        _optionTile(
-          context,
           title: "Arrange a pickup at home",
           value: PickupOption.pickupAtHome,
           selected: selected == PickupOption.pickupAtHome,

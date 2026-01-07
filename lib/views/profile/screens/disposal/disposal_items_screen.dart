@@ -3,8 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mussweg/data/model/disposal/disposal_item.dart';
 import 'package:mussweg/views/profile/widgets/simple_apppbar.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../core/constants/api_end_points.dart';
+import '../../../../core/routes/route_names.dart';
 import '../../../auth/disposal/get_disposal_items_provider.dart';
 
 class DisposalItemsScreen extends StatefulWidget {
@@ -37,11 +37,12 @@ class _DisposalItemsScreenState extends State<DisposalItemsScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<GetDisposalItemsProvider>(context, listen: false)
-          .getDisposalItems(status: "PICKUP");
+      Provider.of<GetDisposalItemsProvider>(
+        context,
+        listen: false,
+      ).getDisposalItems(status: "PICKUP");
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +157,8 @@ class _DisposalItemsScreenState extends State<DisposalItemsScreen> {
 class DisposalItemCard extends StatelessWidget {
   const DisposalItemCard({
     super.key,
-    required this.item, required this.selectedIndex
+    required this.item,
+    required this.selectedIndex,
   });
 
   final DisposalItem item;
@@ -167,7 +169,7 @@ class DisposalItemCard extends StatelessWidget {
       case 0:
         return Colors.red.shade100;
       case 1:
-        return Colors.grey.shade200;
+        return Colors.grey;
       case 2:
         return Colors.red;
       case 3:
@@ -295,7 +297,9 @@ class DisposalItemCard extends StatelessWidget {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.35,
                     child: Text(
-                      selectedIndex == 4 ? item.comment ?? '' : 'Size ${item.productsize}\n(${item.condition} condition)',
+                      selectedIndex == 4
+                          ? item.comment ?? ''
+                          : 'Size ${item.productsize}\n(${item.condition} condition)',
                       style: TextStyle(
                         color: Colors.grey.shade600,
                         fontSize: 13,
@@ -318,7 +322,9 @@ class DisposalItemCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  selectedIndex == 4 ? item.penaltyAmount ?? '' : '\$${item.finalTotalAmount} (${item.paymentStatus})',
+                  selectedIndex == 4
+                      ? item.penaltyAmount ?? ''
+                      : '\$${item.finalTotalAmount} (${item.paymentStatus})',
                   style: const TextStyle(
                     color: Colors.red,
                     fontWeight: FontWeight.bold,
@@ -327,7 +333,14 @@ class DisposalItemCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    debugPrint("The disposal Id is ${item.disposalId}");
+                    Navigator.pushNamed(
+                      context,
+                      RouteNames.disposalPayment,
+                      arguments: item.disposalId,
+                    );
+                  },
                   child: Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: 10.w,

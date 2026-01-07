@@ -1,4 +1,5 @@
 class DisposalItem {
+  final String disposalId;
   final String productname;
   final String? productsize;
   final String condition;
@@ -12,6 +13,7 @@ class DisposalItem {
   final String? penaltyAmount;
 
   DisposalItem({
+    required this.disposalId,
     required this.productname,
     this.productsize,
     required this.condition,
@@ -27,15 +29,16 @@ class DisposalItem {
 
   factory DisposalItem.fromJson(Map<String, dynamic> json) {
     return DisposalItem(
-      productname: json['productname'] ?? '',
+      disposalId: json['disposalId'] as String,
+      productname: json['productname'] as String,
       productsize: json['productsize'],
-      condition: json['condition'] ?? '',
-      finalTotalAmount: json['final_total_amount'] ?? '',
-      productquantity: json['productquantity'] ?? 0,
-      productphoto: json['productphoto'] ?? '',
-      photoUrl: json['photoUrl'] ?? '',
-      status: json['status'] ?? '',
-      paymentStatus: json['payment_status'] ?? '',
+      condition: json['condition'] as String,
+      finalTotalAmount: json['final_total_amount'].toString(),
+      productquantity: json['productquantity'] as int,
+      productphoto: json['productphoto'],
+      photoUrl: json['photoUrl'],
+      status: json['status'] as String,
+      paymentStatus: json['payment_status'] as String,
       comment: json['comment'],
       penaltyAmount: json['penaltyAmount'],
     );
