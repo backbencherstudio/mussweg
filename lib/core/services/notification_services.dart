@@ -1,27 +1,32 @@
+import 'dart:io';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:mussweg/views/notification/notification_screen_provider.dart';
 import 'package:provider/provider.dart';
+
+import '../../views/notification/notification_screen_provider.dart';
 import 'fm_token_storage.dart';
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  debugPrint('Handling background message: ${message.messageId}');
-}
-
 class NotificationService {
-  static final NotificationService _instance = NotificationService._internal();
+  static final NotificationService _instance =
+  NotificationService._internal();
+
   factory NotificationService() => _instance;
   NotificationService._internal();
 
-  final FcmTokenStorage _fcmTokenStorage = FcmTokenStorage();
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  final FcmTokenStorage _fcmTokenStorage = FcmTokenStorage();
 
   Future<void> init(GlobalKey<NavigatorState> navigatorKey) async {
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     await _requestPermission();
-    await _getToken();
+    await _waitForApnsTokenIfIOS(); // 🔥 iOS FIX
+    await _getAndSaveFcmToken();
     _setupListeners(navigatorKey);
   }
+
+  // ---------------------------------------------------------------------------
+  // Permission
+  // ---------------------------------------------------------------------------
 
   Future<void> _requestPermission() async {
     final settings = await _messaging.requestPermission(
@@ -29,83 +34,115 @@ class NotificationService {
       badge: true,
       sound: true,
     );
-    debugPrint('User granted permission: ${settings.authorizationStatus}');
+
+    debugPrint(
+      'User granted permission: ${settings.authorizationStatus}',
+    );
   }
 
-  Future<void> _getToken() async {
+  // ---------------------------------------------------------------------------
+  // iOS APNs handling (CRITICAL)
+  // ---------------------------------------------------------------------------
+
+  Future<void> _waitForApnsTokenIfIOS() async {
+    if (!Platform.isIOS) return;
+
+    String? apnsToken;
+
+    while (apnsToken == null) {
+      apnsToken = await _messaging.getAPNSToken();
+      if (apnsToken == null) {
+        await Future.delayed(const Duration(milliseconds: 500));
+      }
+    }
+
+    debugPrint('APNs token ready');
+  }
+
+  // ---------------------------------------------------------------------------
+  // FCM Token
+  // ---------------------------------------------------------------------------
+
+  Future<void> _getAndSaveFcmToken() async {
     final token = await _messaging.getToken();
     debugPrint('FCM token: $token');
 
     if (token != null) {
-      _fcmTokenStorage.saveFcmToken(token);
-      debugPrint('FCM token save: $token');
+      await _fcmTokenStorage.saveFcmToken(token);
     }
 
-    _messaging.onTokenRefresh.listen((newToken) {
+    _messaging.onTokenRefresh.listen((newToken) async {
       debugPrint('FCM token refreshed: $newToken');
-      _fcmTokenStorage.saveFcmToken(newToken);
-      // sendTokenToServer(newToken); // if needed
+      await _fcmTokenStorage.saveFcmToken(newToken);
     });
   }
 
-  void _setupListeners(GlobalKey<NavigatorState> navigatorKey) {
-    // Foreground messages
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      debugPrint('FCM onMessage: ${message.notification?.title}');
-      _refreshNotificationsIfPossible(navigatorKey);
+  // ---------------------------------------------------------------------------
+  // Message listeners
+  // ---------------------------------------------------------------------------
 
-      final ctx = navigatorKey.currentContext;
-      if (ctx != null && message.notification != null) {
+  void _setupListeners(GlobalKey<NavigatorState> navigatorKey) {
+    // Foreground
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      debugPrint('FCM onMessage');
+
+      _refreshNotifications(navigatorKey);
+
+      final context = navigatorKey.currentContext;
+      if (context != null && message.notification != null) {
         _showDialog(
-          ctx,
+          context,
           message.notification!.title,
           message.notification!.body,
         );
       }
     });
 
-    // Background → Foreground
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    // Background → foreground
+    FirebaseMessaging.onMessageOpenedApp.listen((_) {
       debugPrint('FCM onMessageOpenedApp');
-      _refreshNotificationsIfPossible(navigatorKey);
+      _refreshNotifications(navigatorKey);
     });
 
-    // Terminated → Opened
+    // Terminated
     _messaging.getInitialMessage().then((message) {
       if (message != null) {
         debugPrint('FCM getInitialMessage');
-        _refreshNotificationsIfPossible(navigatorKey);
+        _refreshNotifications(navigatorKey);
       }
     });
   }
 
-  void _refreshNotificationsIfPossible(GlobalKey<NavigatorState> navigatorKey) {
-    final ctx = navigatorKey.currentContext;
-    if (ctx == null) {
-      debugPrint('No context available to refresh provider');
-      return;
-    }
+  // ---------------------------------------------------------------------------
+  // Helpers
+  // ---------------------------------------------------------------------------
+
+  void _refreshNotifications(GlobalKey<NavigatorState> navigatorKey) {
+    final context = navigatorKey.currentContext;
+    if (context == null) return;
 
     try {
-      final provider = Provider.of<NotificationScreenProvider>(
-        ctx,
+      Provider.of<NotificationScreenProvider>(
+        context,
         listen: false,
-      );
-      provider.refreshNotifications();
+      ).refreshNotifications();
     } catch (e) {
-      debugPrint('Failed to refresh notifications: $e');
+      debugPrint('Provider refresh failed: $e');
     }
   }
 
-  void _showDialog(BuildContext context, String? title, String? body) {
+  void _showDialog(
+      BuildContext context,
+      String? title,
+      String? body,
+      ) {
     if (Navigator.canPop(context)) {
       Navigator.pop(context);
     }
 
     showDialog(
       context: context,
-      builder:
-          (_) => AlertDialog(
+      builder: (_) => AlertDialog(
         title: Text(title ?? ''),
         content: Text(body ?? ''),
         actions: [

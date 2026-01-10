@@ -10,6 +10,8 @@ import '../../../view_model/auth/login/get_me_viewmodel.dart';
 import '../../../view_model/auth/login/login_viewmodel.dart';
 import '../../../view_model/auth/login/user_profile_get_me_provider.dart';
 import '../../../view_model/home_provider/all_category_provider.dart';
+import '../../widgets/apple_button.dart';
+import '../../widgets/google_button.dart';
 import '../sign_up/widgets/buttons.dart';
 import '../sign_up/widgets/signup_form.dart';
 
@@ -95,19 +97,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
+
               SizedBox(height: 20.h),
               _buildOrJoinWithDivider(),
               SizedBox(height: 20.h),
-              const SignUpFormButton(
-                title: 'Sign In With Google',
-                image: 'assets/icons/google-icon.png',
-              ),
+              GoogleButton(),
               SizedBox(height: 10.h),
-              const SignUpFormButton(
-                title: 'Sign In With Apple',
-                image: 'assets/icons/apple-icon.png',
-              ),
+              AppleButton(),
               SizedBox(height: 30.h),
+
               _buildSignUpLink(context),
             ],
           ),
@@ -189,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 final result = await viewModel.login(
                   email: _emailController.text.trim(),
                   password: _passwordController.text.trim(),
-                  fcmToken : fcmToken
+                  fcmToken: fcmToken,
                 );
 
                 if (!mounted) return;

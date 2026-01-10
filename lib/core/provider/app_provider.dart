@@ -14,6 +14,7 @@ import 'package:mussweg/view_model/auth/signup/signup_viewmodel.dart';
 import 'package:mussweg/view_model/home_provider/home_screen_provider.dart';
 import '../../view_model/auth/forget_password/forget_password_provider.dart';
 import '../../view_model/auth/login/get_me_viewmodel.dart';
+import '../../view_model/auth/login/google_login.dart';
 import '../../view_model/auth/login/login_viewmodel.dart';
 import '../../view_model/bid/bid_for_seller_provider.dart';
 import '../../view_model/boost_product/boost_product_create_provider.dart';
@@ -94,6 +95,7 @@ class AppProviders {
     ChangeNotifierProvider(create: (_) => LanguageProvider()),
     ChangeNotifierProvider(create: (_) => NotificationScreenProvider()),
     ChangeNotifierProvider(create: (_) => BoostProductService()),
+    ChangeNotifierProvider(create: (_) => LoginViewModel()),
   ];
   static List<SingleChildWidget> getProviders() {
     return providers;

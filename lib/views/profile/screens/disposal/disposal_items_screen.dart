@@ -9,7 +9,6 @@ import '../../../auth/disposal/get_disposal_items_provider.dart';
 
 class DisposalItemsScreen extends StatefulWidget {
   const DisposalItemsScreen({super.key});
-
   @override
   State<DisposalItemsScreen> createState() => _DisposalItemsScreenState();
 }

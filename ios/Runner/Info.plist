@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -9,7 +11,7 @@
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<string>com.sva.delta.mussweg</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -23,6 +25,8 @@
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
@@ -41,9 +45,48 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
+
+	<!-- ===== AUTHENTICATION CONFIGURATIONS ===== -->
+
+	<!-- Google Sign-In Configuration -->
+	<!-- REPLACE THIS WITH YOUR ACTUAL GOOGLE IOS CLIENT ID -->
+	<key>GIDClientID</key>
+	<string>1234567890-abcdefghijklmnopqrstuvwxyz.apps.googleusercontent.com</string>
+
+	<!-- Apple Sign-In Configuration -->
+	<key>com.apple.developer.applesignin</key>
+	<array>
+		<string>Default</string>
+	</array>
+
+	<!-- URL Types for Authentication Callbacks -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<!-- Google Sign-In URL Scheme -->
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- REPLACE THIS WITH YOUR REVERSED GOOGLE IOS CLIENT ID -->
+				<!-- Example: com.googleusercontent.apps.1234567890-abcdefghijklmnopqrstuvwxyz -->
+				<string>com.googleusercontent.apps.1234567890-abcdefghijklmnopqrstuvwxyz</string>
+			</array>
+		</dict>
+
+		<!-- Apple Sign-In URL Scheme -->
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.sva.delta.mussweg</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- Your Bundle ID as URL Scheme -->
+				<string>com.sva.delta.mussweg</string>
+			</array>
+		</dict>
+	</array>
+
 </dict>
 </plist>

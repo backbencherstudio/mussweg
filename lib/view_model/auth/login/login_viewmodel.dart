@@ -12,7 +12,6 @@ class LoginScreenProvider extends ChangeNotifier {
   String? _errorMessage;
   final TokenStorage _tokenStorage = TokenStorage();
   final UserIdStorage _userIdStorage = UserIdStorage();
-  // final SocketService _socketService = SocketService();
 
   bool _isObscured = true;
   bool get isObscured => _isObscured;
@@ -25,9 +24,6 @@ class LoginScreenProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   final ApiService _apiService = ApiService();
-  // UserModel? _user;
-  // UserModel? get user => _user;
-
   Future<bool> login({
     required String email,
     required String password,

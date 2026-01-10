@@ -1,10 +1,13 @@
 class ApiEndpoints {
   ApiEndpoints._();
-  static const String baseUrl = 'http://192.168.7.27:5005';
+  static const String baseUrl =
+      'https://nerve-inserted-agents-amenities.trycloudflare.com';
 
   /// Auth
   static const String register = '$baseUrl/api/auth/register';
   static const String login = '$baseUrl/api/auth/login';
+  static const String googleAuth = '$baseUrl/api/auth/firebase/google';
+  static const String appleAuth = '$baseUrl/api/auth/firebase/apple';
   static const String verifyEmail = '$baseUrl/api/auth/verify-email';
   static const String resendCode =
       '$baseUrl/api/auth/resend-verification-email';
@@ -24,7 +27,7 @@ class ApiEndpoints {
       '$baseUrl/api/products/category/$id/latest-products/?page=$page&perPage=$limit';
   static String getWishList(int page, int limit) =>
       '$baseUrl/api/wishlist/userwishlist/?page=$page&perPage=$limit';
-  static String createWishListProduct = '$baseUrl/api/wishlist/create';
+  static String createWishListProduct = '$baseUrl/api/wishlist/toggle';
   static String updateProfile = '$baseUrl/api/auth/update';
   static String userAllProducts =
       '$baseUrl/api/products/user-all-products/?page=1&perPage=10';
