@@ -65,4 +65,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'mussweg-1a0a4.firebasestorage.app',
     iosBundleId: 'com.sva.delta.mussweg',
   );
+
 }

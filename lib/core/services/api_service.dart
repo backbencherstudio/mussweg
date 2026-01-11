@@ -1,12 +1,14 @@
 import 'package:dio/dio.dart';
-
 import '../network/network_service.dart';
 
 class ApiService {
   final Dio _dio = Network().dio;
 
   // Function to get data (GET request)
-  Future<Response> get(String path, {Map<String, dynamic>? queryParameters}) async {
+  Future<Response> get(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+  }) async {
     try {
       return await _dio.get(path, queryParameters: queryParameters);
     } catch (e) {
@@ -16,11 +18,11 @@ class ApiService {
 
   // Function to post data (POST request)
   Future<Response> post(
-      String path, {
-        Map<String, dynamic>? data,
-        FormData? formData,
-        Options? options,
-      }) async {
+    String path, {
+    Map<String, dynamic>? data,
+    FormData? formData,
+    Options? options,
+  }) async {
     try {
       // If formData is provided, use it for the POST request
       if (formData != null) {
@@ -58,5 +60,4 @@ class ApiService {
       rethrow;
     }
   }
-
 }

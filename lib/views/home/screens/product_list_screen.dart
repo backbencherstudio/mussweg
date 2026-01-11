@@ -85,7 +85,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     final data = _categoryFilter[index];
                     final isSelected = selectedFilter == data["title"];
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 8,
+                      ),
                       child: InkWell(
                         onTap: () {
                           if (data["title"] == "Filter") {
@@ -96,7 +99,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                   backgroundColor: Colors.white,
                                   insetPadding: EdgeInsets.all(16),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(16)),
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(16),
+                                    ),
                                   ),
                                   child: FilterPage(),
                                 );
@@ -109,24 +114,32 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           }
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 10,
+                          ),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(30),
-                            color: isSelected
-                                ? const Color(0xffDE3526)
-                                : const Color(0xffF1F0EE),
+                            color:
+                                isSelected
+                                    ? const Color(0xffDE3526)
+                                    : const Color(0xffF1F0EE),
                           ),
                           child: Row(
                             children: [
                               if (data["title"] == "Filter")
-                                Image.asset("assets/icons/filter.png", height: 20.h),
+                                Image.asset(
+                                  "assets/icons/filter.png",
+                                  height: 20.h,
+                                ),
                               const SizedBox(width: 10),
                               Text(
                                 data["title"],
                                 style: TextStyle(
                                   fontSize: 14.sp,
                                   fontWeight: FontWeight.w500,
-                                  color: isSelected ? Colors.white : Colors.black,
+                                  color:
+                                      isSelected ? Colors.white : Colors.black,
                                 ),
                               ),
                             ],
@@ -154,11 +167,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
               Expanded(
                 child: Consumer<CategoryBasedProductProvider>(
                   builder: (context, provider, _) {
-                    final products = provider.categoryBasedProductModel?.data ?? [];
+                    final products =
+                        provider.categoryBasedProductModel?.data ?? [];
 
-                    final displayedProducts = selectedFilter == "Oldest Product"
-                        ? products.reversed.toList()
-                        : products;
+                    final displayedProducts =
+                        selectedFilter == "Oldest Product"
+                            ? products.reversed.toList()
+                            : products;
 
                     // if (provider.isLoading) {
                     //   return const Center(child: CircularProgressIndicator());
@@ -169,7 +184,11 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image.asset('assets/images/noItem.png', height: 200.h, fit: BoxFit.fitHeight,),
+                            Image.asset(
+                              'assets/images/noItem.png',
+                              height: 200.h,
+                              fit: BoxFit.fitHeight,
+                            ),
                             SizedBox(height: 8.h),
                             Text(
                               "No Products Found",
@@ -198,14 +217,19 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       separatorBuilder: (_, __) => SizedBox(height: 10.h),
                       itemBuilder: (context, index) {
                         final product = displayedProducts[index];
-                        final imageUrl = (product.photo != null && product.photo!.isNotEmpty)
-                            ? "${ApiEndpoints.baseUrl}${product.photo?.first.replaceAll('http://localhost:5005', '')}"
-                            : null;
+                        final imageUrl =
+                            (product.photo != null && product.photo!.isNotEmpty)
+                                ? "${ApiEndpoints.baseUrl}${product.photo?.first.replaceAll('http://localhost:5005', '')}"
+                                : null;
 
                         return GestureDetector(
                           onTap: () {
-                            context.read<GetProductDetailsProvider>().getProductDetails(product.id);
-                            context.read<PlaceABidProvider>().getAllBidsForProduct(product.id);
+                            context
+                                .read<GetProductDetailsProvider>()
+                                .getProductDetails(product.id);
+                            context
+                                .read<PlaceABidProvider>()
+                                .getAllBidsForProduct(product.id);
                             Navigator.pushNamed(
                               context,
                               RouteNames.productDetailsScreen,
@@ -229,29 +253,41 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                         fit: BoxFit.cover,
                                         height: 180.h,
                                         width: double.infinity,
-                                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                                          if (loadingProgress == null) return child;
+                                        loadingBuilder: (
+                                          BuildContext context,
+                                          Widget child,
+                                          ImageChunkEvent? loadingProgress,
+                                        ) {
+                                          if (loadingProgress == null)
+                                            return child;
                                           return SizedBox(
                                             height: 180.h,
                                             width: double.infinity,
                                             child: Center(
                                               child: CircularProgressIndicator(
-                                                value: loadingProgress.expectedTotalBytes != null
-                                                    ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                                    : null,
+                                                value:
+                                                    loadingProgress
+                                                                .expectedTotalBytes !=
+                                                            null
+                                                        ? loadingProgress
+                                                                .cumulativeBytesLoaded /
+                                                            loadingProgress
+                                                                .expectedTotalBytes!
+                                                        : null,
                                               ),
                                             ),
                                           );
                                         },
-                                        errorBuilder: (_, __, ___) => Container(
-                                          height: 180.h,
-                                          width: double.infinity,
-                                          color: Colors.grey.shade50,
-                                          child: Image.asset(
-                                            'assets/images/placeholder.jpg',
-                                            fit: BoxFit.fill,
-                                          ),
-                                        ),
+                                        errorBuilder:
+                                            (_, __, ___) => Container(
+                                              height: 180.h,
+                                              width: double.infinity,
+                                              color: Colors.grey.shade50,
+                                              child: Image.asset(
+                                                'assets/images/placeholder.jpg',
+                                                fit: BoxFit.fill,
+                                              ),
+                                            ),
                                       ),
                                     ),
                                     Positioned(
@@ -259,22 +295,39 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                       left: 8.w,
                                       child: GestureDetector(
                                         onTap: () async {
-                                          final provider = context.read<FavoriteProvider>();
+                                          final provider =
+                                              context.read<FavoriteProvider>();
 
-                                          provider.toggleFavorite(product.id, !provider.isFavorite(product.id));
+                                          provider.toggleFavorite(
+                                            product.id,
+                                            !provider.isFavorite(product.id),
+                                          );
 
-                                          final result = await context.read<WishlistCreate>().createWishListProduct(product.id);
+                                          final result = await context
+                                              .read<WishlistCreate>()
+                                              .createWishListProduct(
+                                                product.id,
+                                              );
 
-                                          ScaffoldMessenger.of(context).showSnackBar(
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
                                             SnackBar(
-                                              content: Text(context.read<WishlistCreate>().errorMessage),
+                                              content: Text(
+                                                context
+                                                    .read<WishlistCreate>()
+                                                    .errorMessage,
+                                              ),
                                             ),
                                           );
 
                                           if (!result) {
-                                            provider.toggleFavorite(product.id, !provider.isFavorite(product.id));
+                                            provider.toggleFavorite(
+                                              product.id,
+                                              !provider.isFavorite(product.id),
+                                            );
                                           } else {
-                                          //  await context.read<WhistlistProviderOfGetFavouriteProduct>().getWishlistProduct();
+                                            //  await context.read<WhistlistProviderOfGetFavouriteProduct>().getWishlistProduct();
                                           }
                                         },
                                         child: Container(
@@ -286,12 +339,27 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                             color: Color(0xffC7C8C8),
                                           ),
                                           child: Icon(
-                                            context.watch<FavoriteProvider>().isFavorite(product.id) || product.isInWishlist
+                                            context
+                                                        .watch<
+                                                          FavoriteProvider
+                                                        >()
+                                                        .isFavorite(
+                                                          product.id,
+                                                        ) ||
+                                                    product.isInWishlist
                                                 ? Icons.favorite
                                                 : Icons.favorite_border,
-                                            color: context.watch<FavoriteProvider>().isFavorite(product.id) || product.isInWishlist
-                                                ? Colors.red
-                                                : Colors.white,
+                                            color:
+                                                context
+                                                            .watch<
+                                                              FavoriteProvider
+                                                            >()
+                                                            .isFavorite(
+                                                              product.id,
+                                                            ) ||
+                                                        product.isInWishlist
+                                                    ? Colors.red
+                                                    : Colors.white,
                                             size: 20.h,
                                           ),
                                         ),
@@ -302,12 +370,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                 Padding(
                                   padding: EdgeInsets.all(8.w),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     spacing: 4.h,
                                     children: [
                                       Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Expanded(
                                             child: Text(
@@ -339,11 +408,20 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                       ),
                                       Row(
                                         children: [
-                                          Icon(Icons.access_time_rounded,
-                                              color: const Color(0xff777980), size: 16.h),
+                                          Icon(
+                                            Icons.access_time_rounded,
+                                            color: const Color(0xff777980),
+                                            size: 16.h,
+                                          ),
                                           SizedBox(width: 3.w),
                                           Text(
-                                            DateFormat("dd MMM, yy h:mm a").format(DateTime.parse(product.createdTime)),
+                                            DateFormat(
+                                              "dd MMM, yy h:mm a",
+                                            ).format(
+                                              DateTime.parse(
+                                                product.createdTime,
+                                              ),
+                                            ),
                                             style: TextStyle(
                                               fontSize: 13.sp,
                                               color: const Color(0xff777980),
@@ -352,9 +430,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                           Spacer(),
                                           Text(
                                             product.boostTimeLeft == '' ||
-                                                product.boostTimeLeft == null
+                                                    product.boostTimeLeft ==
+                                                        null
                                                 ? ''
-                                                : DateFormat("dd MMM, yy h:mm a").format(DateTime.parse(product.boostTimeLeft ?? '')),
+                                                : DateFormat(
+                                                  "dd MMM, yy h:mm a",
+                                                ).format(
+                                                  DateTime.parse(
+                                                    product.boostTimeLeft ?? '',
+                                                  ),
+                                                ),
                                             style: TextStyle(
                                               fontSize: 13.sp,
                                               color: const Color(0xff1A9882),
@@ -364,52 +449,91 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                       ),
                                       SizedBox(height: 8.h),
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           SizedBox(
-                                            width: MediaQuery.of(context).size.width * 0.4,
+                                            width:
+                                                MediaQuery.of(
+                                                  context,
+                                                ).size.width *
+                                                0.4,
                                             child: OutlinedButton(
                                               style: OutlinedButton.styleFrom(
-                                                side: const BorderSide(color: Colors.red),
+                                                side: const BorderSide(
+                                                  color: Colors.red,
+                                                ),
                                                 shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(10),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
                                                 ),
                                               ),
                                               onPressed: () {
-                                                context.read<GetProductDetailsProvider>().getProductDetails(product.id);
-                                                context.read<PlaceABidProvider>().getAllBidsForProduct(product.id);
+                                                context
+                                                    .read<
+                                                      GetProductDetailsProvider
+                                                    >()
+                                                    .getProductDetails(
+                                                      product.id,
+                                                    );
+                                                context
+                                                    .read<PlaceABidProvider>()
+                                                    .getAllBidsForProduct(
+                                                      product.id,
+                                                    );
                                                 Navigator.pushNamed(
                                                   context,
-                                                  RouteNames.productDetailsScreen,
+                                                  RouteNames
+                                                      .productDetailsScreen,
                                                 );
                                               },
                                               child: const Text(
                                                 "Bid Now",
-                                                style: TextStyle(color: Colors.red),
+                                                style: TextStyle(
+                                                  color: Colors.red,
+                                                ),
                                               ),
                                             ),
                                           ),
                                           SizedBox(width: 10.w),
                                           SizedBox(
-                                            width: MediaQuery.of(context).size.width * 0.4,
+                                            width:
+                                                MediaQuery.of(
+                                                  context,
+                                                ).size.width *
+                                                0.4,
                                             child: ElevatedButton(
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor: Colors.red,
                                                 shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(10),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
                                                 ),
                                               ),
                                               onPressed: () {
-                                                context.read<GetProductDetailsProvider>().getProductDetails(product.id);
-                                                context.read<PlaceABidProvider>().getAllBidsForProduct(product.id);
+                                                context
+                                                    .read<
+                                                      GetProductDetailsProvider
+                                                    >()
+                                                    .getProductDetails(
+                                                      product.id,
+                                                    );
+                                                context
+                                                    .read<PlaceABidProvider>()
+                                                    .getAllBidsForProduct(
+                                                      product.id,
+                                                    );
                                                 Navigator.pushNamed(
                                                   context,
-                                                  RouteNames.productDetailsScreen,
+                                                  RouteNames
+                                                      .productDetailsScreen,
                                                 );
                                               },
                                               child: const Text(
                                                 "Buy Now",
-                                                style: TextStyle(color: Colors.white),
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                ),
                                               ),
                                             ),
                                           ),

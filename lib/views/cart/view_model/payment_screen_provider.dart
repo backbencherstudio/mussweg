@@ -43,6 +43,9 @@ class PaymentScreenProvider extends ChangeNotifier {
     try {
       final url = Uri.parse(ApiEndpoints.createCart);
       final token = await _tokenStorage.getToken();
+      debugPrint("THe token . ${token} ");
+      debugPrint("THe url . ${url} ");
+
       final response = await http.post(
         url,
         headers: {
@@ -51,6 +54,8 @@ class PaymentScreenProvider extends ChangeNotifier {
         },
         body: jsonEncode({"product_id": productId}),
       );
+
+      debugPrint("THe cart added. ${response.body} ");
       if (response.statusCode == 200 || response.statusCode == 201) {
         debugPrint("Cart created successfully");
       } else {

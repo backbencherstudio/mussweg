@@ -1,7 +1,14 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:mussweg/core/services/token_storage.dart';
 import '../../core/constants/api_end_points.dart';
 import '../../core/services/api_service.dart';
+import 'package:http/http.dart' as http;
+
+import '../../views/profile/model/boost_data_model.dart';
 
 class BoostProductCreateProvider extends ChangeNotifier {
   bool _isLoading = false;
@@ -105,14 +112,13 @@ class BoostProductCreateProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    final data = {
-      "product_id": _productId,
-      "boost_tier": _boostTier
-    };
+    final data = {"product_id": _productId, "boost_tier": _boostTier};
 
     try {
       final response = await _apiService.post(
-          ApiEndpoints.createBoost, data: data);
+        ApiEndpoints.createBoost,
+        data: data,
+      );
       if (response.statusCode == 200 || response.statusCode == 201) {
         _isLoading = false;
         notifyListeners();
@@ -148,6 +154,82 @@ class BoostProductCreateProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
       return false;
+    }
+  }
+
+  BoostDataModel? _boostDataModel;
+  BoostDataModel? get boostDataModel => _boostDataModel;
+  final TokenStorage _tokenStorage = TokenStorage();
+
+  /// Fetches boosted products by status
+  /// Returns true if successful, false if failed
+  Future<bool> getBoostProductByStatus(String status) async {
+    try {
+      final token = await _tokenStorage.getToken();
+
+      // Validate token exists
+      if (token == null || token.isEmpty) {
+        debugPrint("Authentication failed: No valid token available");
+        return false;
+      }
+
+      // Build URL with query parameter
+      final url = Uri.parse(
+        '${ApiEndpoints.boostedProductByStatus}?status=$status',
+      );
+
+      final response = await http.get(
+        url,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json",
+        },
+      );
+
+      final decodeData = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _boostDataModel = BoostDataModel.fromJson(decodeData);
+        debugPrint(
+          "$status boost data fetched successfully. ${decodeData['message']}",
+        );
+        return true;
+      } else {
+        debugPrint(
+          "API Error: ${decodeData['message']} (Status: ${response.statusCode})",
+        );
+        return false;
+      }
+    } catch (error) {
+      debugPrint("Network/System Error: $error");
+      return false;
+    }
+  }
+
+  Future<String> stripPayForBoost(String productId) async {
+    try {
+      final token = await _tokenStorage.getToken();
+      final url = Uri.parse(
+        ApiEndpoints.stripPayment(productId),
+      ).replace(queryParameters: {"type": "boost"});
+
+      final response = await http.post(
+        url,
+        headers: {"Authorization": "Bearer $token"},
+      );
+
+      final decodeData = jsonDecode(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        debugPrint("Stripe success message ${decodeData['message']}");
+        debugPrint("Stripe success message ${response.body}");
+        debugPrint("Stripe success message ${decodeData}");
+        return decodeData['clientSecret'];
+      } else {
+        debugPrint("Stripe failed message ${decodeData['message']}");
+        throw Exception(decodeData['message']);
+      }
+    } catch (error) {
+      throw Exception(error);
     }
   }
 }

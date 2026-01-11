@@ -55,6 +55,7 @@ class MusswegProductScreenProvider extends ChangeNotifier {
     _name = message;
     notifyListeners();
   }
+
   String _pType = '';
   String get pType => _pType;
 
@@ -62,6 +63,7 @@ class MusswegProductScreenProvider extends ChangeNotifier {
     _pType = message;
     notifyListeners();
   }
+
   String _quantity = '';
   String get quantity => _quantity;
 
@@ -92,7 +94,9 @@ class MusswegProductScreenProvider extends ChangeNotifier {
       final tempFile = File(pickedFile.path);
       final appDir = await getApplicationDocumentsDirectory();
 
-      final savedImage = await tempFile.copy('${appDir.path}/picked_image_${DateTime.now().millisecondsSinceEpoch}.jpg');
+      final savedImage = await tempFile.copy(
+        '${appDir.path}/picked_image_${DateTime.now().millisecondsSinceEpoch}.jpg',
+      );
 
       _image = savedImage;
 
@@ -102,7 +106,6 @@ class MusswegProductScreenProvider extends ChangeNotifier {
       debugPrint('No image selected.');
     }
   }
-
 
   Future<bool> createMusswegForPickup({required String placeAddress}) async {
     _isLoading = true;
@@ -130,8 +133,8 @@ class MusswegProductScreenProvider extends ChangeNotifier {
       request.fields['place_name'] = _placeName;
       request.fields['place_address'] = placeAddress;
       request.fields['place_latitude'] = _selectedLocation.latitude.toString();
-      request.fields['place_longitude'] = _selectedLocation.longitude.toString();
-
+      request.fields['place_longitude'] =
+          _selectedLocation.longitude.toString();
 
       debugPrint("The mussweg type $_type");
       debugPrint("The mussweg place name $_placeName");
@@ -141,7 +144,6 @@ class MusswegProductScreenProvider extends ChangeNotifier {
       debugPrint("The mussweg product quantity $_quantity");
       debugPrint("The mussweg latitude ${_selectedLocation.latitude}");
       debugPrint("The mussweg longitude ${_selectedLocation.longitude}");
-
 
       // IMAGE FILE
       if (_image != null) {
@@ -195,7 +197,9 @@ class MusswegProductScreenProvider extends ChangeNotifier {
     } catch (error) {
       debugPrint('Error creating post: $error');
       if (error.toString().contains('409')) {
-        setMessage('A disposal request for this product is already in progress.');
+        setMessage(
+          'A disposal request for this product is already in progress.',
+        );
       }
       _isLoading = false;
       _isUploaded = false;
@@ -281,7 +285,9 @@ class MusswegProductScreenProvider extends ChangeNotifier {
     } catch (error) {
       debugPrint('Error creating post: $error');
       if (error.toString().contains('409')) {
-        setMessage('A disposal request for this product is already in progress.');
+        setMessage(
+          'A disposal request for this product is already in progress.',
+        );
       }
       _isLoading = false;
       _isUploaded = false;

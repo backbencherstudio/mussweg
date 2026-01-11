@@ -4,6 +4,8 @@ import 'package:mussweg/view_model/home_provider/home_screen_provider.dart';
 import 'package:mussweg/view_model/auth/signup/signup_viewmodel.dart';
 import 'package:mussweg/view_model/profile/transaction_service_provider/transaction_service.dart';
 
+import '../../view_model/auth/login/google_login.dart';
+import '../../view_model/boost_product/boost_product_create_provider.dart';
 import '../../view_model/profile/boost_product_service_provider/boost_product_service.dart';
 import '../../view_model/profile/language_selected_provider/language_select.dart';
 import '../../view_model/profile/notification_service_provider/notification_service.dart';
@@ -27,8 +29,10 @@ void setup() {
   getIt.registerSingleton<TransactionService>(TransactionService());
   getIt.registerSingleton<NotificationService>(NotificationService());
   getIt.registerSingleton<BoostProductService>(BoostProductService());
+  getIt.registerSingleton<BoostProductCreateProvider>(BoostProductCreateProvider());
   getIt.registerSingleton<SearchProvider>(SearchProvider());
   getIt.registerSingleton<SellingItemScreenProvider>(SellingItemScreenProvider());
+  getIt.registerSingleton<LoginViewModel>(LoginViewModel());
 
   print('GetIt setup completed successfully'); // Optional: for debugging
 }

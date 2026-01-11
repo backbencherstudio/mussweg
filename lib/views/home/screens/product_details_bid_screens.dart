@@ -664,6 +664,9 @@ class _ProductDetailsBidScreensState extends State<ProductDetailsBidScreens> {
                                       ) {
                                         return CustomMainButton(
                                           onTap: () async {
+                                            debugPrint(
+                                              "The product id click ${product?.productId ?? ''}",
+                                            );
                                             await paymentProvider.createCart(
                                               product?.productId ?? '',
                                             );

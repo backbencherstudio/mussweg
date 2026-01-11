@@ -328,11 +328,13 @@ class UserAllProductsProvider extends ChangeNotifier {
 
         // Merge new data with existing
         _userAllProductsViewmodel = UserAllProductsViewmodel(
-          success: newData.success,
-          message: newData.message,
-          data: [..._userAllProductsViewmodel!.data, ...newData.data],
+          data: [
+            ..._userAllProductsViewmodel!.data,
+            ...newData.data,
+          ],
           pagination: newData.pagination,
         );
+
 
         notifyListeners();
         return true;
